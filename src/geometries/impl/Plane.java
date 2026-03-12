@@ -29,4 +29,13 @@ public class Plane extends Geometry {
         this.point=point;
         this.normal=normal.normalize();
     }
+
+    /**
+     * a getter for the normal
+     * @return a normal for the plane.
+     */
+    @Override
+    public Vector getNormal() {
+        return normal;
+    }
 }

@@ -3,5 +3,9 @@ package geometries.api;
 import primitives.Vector;
 
 public class Geometry  {
-    public abstract Vector getNormal(){}
+    /**
+     * a function that calculates the normal of a geometry
+     * @return a normal for the geometry
+     */
+    public abstract Vector getNormal();
 }
