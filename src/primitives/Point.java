@@ -9,7 +9,7 @@ public class Point {
     /**
      * A constant value that represents the origin in space.
      */
-    private static final Point ZERO = Point(Double3.ZERO);
+    public static final Point ZERO = new Point(Double3.ZERO);
 
     /**
      * a constructor defined by 3 double values.
@@ -46,7 +46,9 @@ public class Point {
      * @param other the point we are supposed to find the vector to.
      * @return The vector between 2 points
      */
-    private Vector substract(Point other){}
+    public Vector substract(Point other){
+        return new Vector(_xyz.subtract(other.get_xyz()));
+    }
 
     /**
      * calculates the point moved by a vector.
@@ -54,7 +56,9 @@ public class Point {
      * @param vector a vector to add to the current point
      * @return the point that was moved by a vector
      */
-    private Point add(Vector vector){}
+    public Point add(Vector vector){
+        return new Point(_xyz.subtract(vector.get_xyz()));
+    }
 
     /**
      * calculates the squared distance between 2 points.
@@ -62,7 +66,7 @@ public class Point {
      * @param point the point we are supposed to find the distance to.
      * @return the distance between 2 points squared.
      */
-    private double distanceSquared(Point point){
+    public double distanceSquared(Point point){
         // (x2-x1)^2+(y2-y1)^2+(z2-z1)^2
 
         return Math.pow(_xyz._d1()-point._xyz._d1(),2) + Math.pow(_xyz._d2()-point._xyz._d2(),2)
@@ -75,7 +79,7 @@ public class Point {
      * @param point the point we are supposed to find the distance to.
      * @return the distance between 2 points.
      */
-    private double distance(Point point){
+    public double distance(Point point){
         // \sqrt{(x2-x1)^2+(y2-y1)^2+(z2-z1)^2}
         return Math.sqrt(distanceSquared(point));
     }
