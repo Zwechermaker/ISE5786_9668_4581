@@ -4,9 +4,19 @@ import geometries.api.Geometry;
 import primitives.Point;
 import primitives.Vector;
 
+/**
+ * A class that describes a plane in space.
+ */
 public class Plane extends Geometry {
-    private final Point point;
-    private final Vector normal;
+    /**
+     * A point on the plane.
+     */
+    private final Point _point;
+
+    /**
+     * The normal vector of the plane.
+     */
+    private final Vector _normal;
 
     /**
      * constructor that gets three point and creates the plane that they are on
@@ -16,8 +26,8 @@ public class Plane extends Geometry {
      */
     public Plane(Point p1, Point p2, Point p3)
     {
-        point=p1;
-        //TODO: complete constructor
+        _point = p1;
+        _normal = null;
     }
 
     /**
@@ -26,16 +36,17 @@ public class Plane extends Geometry {
      * @param normal the normal vector of the plane
      */
     public Plane(Point point,Vector normal){
-        this.point=point;
-        this.normal=normal.normalize();
+        this._point = point;
+        this._normal = normal.normalize();
     }
 
-    /**
-     * a getter for the normal
-     * @return a normal for the plane.
-     */
     @Override
-    public Vector getNormal() {
-        return normal;
+    public Vector getNormal(Point point) {
+        return _normal;
+    }
+
+    @Override
+    public String toString() {
+        return "Point: " + _point + ", Normal: " + _normal + "\n";
     }
 }

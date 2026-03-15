@@ -3,9 +3,19 @@ package geometries.impl;
 import geometries.api.Geometry;
 import primitives.Util;
 
-public class RadialGeometry extends Geometry {
-    protected final double radius ;
-    protected final double radiusSquared;
+/**
+ * An abstract class that represents a radial geometry in space.
+ */
+public abstract class RadialGeometry extends Geometry {
+    /**
+     * The radius of the radial geometry.
+     */
+    protected final double _radius ;
+
+    /**
+     * The radius squared of the radial geometry.
+     */
+    protected final double _radiusSquared;
 
     /**
      * constructor for radial geometry's
@@ -16,8 +26,12 @@ public class RadialGeometry extends Geometry {
         {
             throw new IllegalArgumentException("Radius cannot be less or equal to 0.");
         }
-        this.radius=radius;
-        radiusSquared=Math.pow(radius,2);
+        this._radius = radius;
+        _radiusSquared = radius * radius;
     }
 
+    @Override
+    public String toString() {
+        return "_radius: " + _radius + ", ";
+    }
 }

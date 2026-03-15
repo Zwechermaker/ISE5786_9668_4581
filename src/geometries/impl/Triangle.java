@@ -3,9 +3,12 @@ package geometries.impl;
 import primitives.Point;
 import primitives.Vector;
 
+/**
+ * A class that represents a triangle in space.
+ */
 public class Triangle extends Polygon{
     /**
-     *A parameter contsructor for a triangle
+     *A parameter constructor for a triangle
      * @param p1 a point in the triangle
      * @param p2 a point in the triangle
      * @param p3 a point in the triangle
@@ -15,7 +18,7 @@ public class Triangle extends Polygon{
     }
 
     @Override
-    public Vector getNormal(){
+    public Vector getNormal(Point point){
         return null;
     }
 }

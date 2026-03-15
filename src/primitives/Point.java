@@ -1,10 +1,13 @@
 package primitives;
 
+/**
+ * A class that describes a point in space.
+ */
 public class Point {
     /**
      * A double3 that represents a point in space
      */
-    private final Double3 _xyz;
+    protected final Double3 _xyz;
 
     /**
      * A constant value that represents the origin in space.
@@ -31,23 +34,15 @@ public class Point {
         _xyz = xyz;
     }
 
-    /**
-     * A getter for the xyz variable.
-     *
-     * @return the numerical values of the points in a double3 environment.
-     */
-    public Double3 get_xyz(){
-        return _xyz;
-    }
 
     /**
      * calculate the vector between 2 points.
      *
-     * @param other the point we are supposed to find the vector to.
+     * @param point the point we are supposed to find the vector to.
      * @return The vector between 2 points
      */
-    public Vector substract(Point other){
-        return new Vector(_xyz.subtract(other.get_xyz()));
+    public Vector subtract(Point point){
+        return new Vector(_xyz.subtract(point._xyz));
     }
 
     /**
@@ -57,7 +52,7 @@ public class Point {
      * @return the point that was moved by a vector
      */
     public Point add(Vector vector){
-        return new Point(_xyz.subtract(vector.get_xyz()));
+        return new Point(_xyz.add(vector._xyz));
     }
 
     /**
@@ -66,11 +61,12 @@ public class Point {
      * @param point the point we are supposed to find the distance to.
      * @return the distance between 2 points squared.
      */
-    public double distanceSquared(Point point){
-        // (x2-x1)^2+(y2-y1)^2+(z2-z1)^2
+    public double distanceSquared(Point point) {
+        // (x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2
 
-        return Math.pow(_xyz._d1()-point._xyz._d1(),2) + Math.pow(_xyz._d2()-point._xyz._d2(),2)
-                + Math.pow(_xyz._d3()-point._xyz._d3(),2);
+        return (_xyz._d1() - point._xyz._d1()) * (_xyz._d1() - point._xyz._d1())
+                + (_xyz._d2() - point._xyz._d2()) * (_xyz._d2() - point._xyz._d2())
+                + (_xyz._d3() - point._xyz._d3()) * (_xyz._d3() - point._xyz._d3());
     }
 
     /**
@@ -82,5 +78,22 @@ public class Point {
     public double distance(Point point){
         // \sqrt{(x2-x1)^2+(y2-y1)^2+(z2-z1)^2}
         return Math.sqrt(distanceSquared(point));
+    }
+
+
+    @Override
+    public String toString() {
+        return _xyz.toString();
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Point point = (Point) obj;
+
+        return _xyz.equals(point._xyz);
     }
 }

@@ -1,10 +1,17 @@
 package geometries.impl;
 
+import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+/**
+ * A class that represents a tube in space.
+ */
 public class Tube extends RadialGeometry{
-    private final Ray exis;
+    /**
+     * The axis of the tube.
+     */
+    protected final Ray _axis;
 
     /**
      * A parameter constructor for a tube
@@ -13,11 +20,16 @@ public class Tube extends RadialGeometry{
      */
     public Tube(double radius,Ray axis){
         super(radius);
-        exis=axis;
+        _axis = axis;
     }
 
     @Override
-    public Vector getNormal(){
+    public Vector getNormal(Point point){
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "axis: " + _axis + "\n";
     }
 }
