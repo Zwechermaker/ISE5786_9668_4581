@@ -6,12 +6,9 @@ package primitives;
  * <p>
  * The class provides operations related to floating-point accuracy control,
  * sign comparison, and simple numeric utilities.
- * </p>
- * <p>
  * The implementation is optimized for performance and therefore avoids
  * expensive floating-point operations where possible, relying instead on
  * direct manipulation of the IEEE-754 {@code double} representation.
- * </p>
  * This class cannot be instantiated.
  * @author Dan Zilberstein
  */
@@ -48,7 +45,6 @@ public final class Util {
     * </pre>
     * 
     * where the stored exponent is biased by 1023.
-    * </p>
     * @param  num the number
     * @return     the unbiased exponent
     */
@@ -73,7 +69,6 @@ public final class Util {
     * <p>
     * This helps eliminate floating-point noise that may accumulate
     * in geometric calculations.
-    * </p>
     * @param  number the number to align
     * @return        0.0 if the value is considered zero, otherwise the original
     *                value
@@ -84,7 +79,6 @@ public final class Util {
     * Checks whether two numbers have the same sign.
     * <p>
     * Zero is considered neither positive nor negative.
-    * </p>
     * @param  n1 first number
     * @param  n2 second number
     * @return    {@code true} if both numbers are positive or both are negative
