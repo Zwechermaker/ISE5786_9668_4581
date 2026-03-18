@@ -1,5 +1,7 @@
 package primitives;
 
+import java.util.Objects;
+
 /**
  * A class that describes a Ray, an infinite line in space that starts at a point.
  */
@@ -38,6 +40,21 @@ public class Ray {
      */
     public Point origin() {
         return _origin;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Ray ray = (Ray) obj;
+        return Objects.equals(_origin, ray._origin)
+                && Objects.equals(_direction, ray._direction);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_origin, _direction);
     }
 
     @Override

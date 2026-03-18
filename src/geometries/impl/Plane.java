@@ -3,6 +3,7 @@ package geometries.impl;
 import geometries.api.Geometry;
 import primitives.Point;
 import primitives.Vector;
+import java.util.Objects;
 
 /**
  * A class that describes a plane in space.
@@ -48,5 +49,20 @@ public class Plane extends Geometry {
     @Override
     public String toString() {
         return "Point: " + _point + ", Normal: " + _normal + "\n";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Plane plane = (Plane) obj;
+        return Objects.equals(_point, plane._point)
+                && Objects.equals(_normal, plane._normal);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_point, _normal);
     }
 }

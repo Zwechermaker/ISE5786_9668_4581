@@ -2,6 +2,7 @@ package geometries.impl;
 
 import primitives.Point;
 import primitives.Vector;
+import java.util.Objects;
 
 /**
  * A class that represents a sphere in space.
@@ -30,5 +31,20 @@ public class Sphere extends RadialGeometry{
     @Override
     public String toString() {
         return super.toString() + "center: " + _center + "\n";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        if (!super.equals(obj)) return false; // if there is inheritance
+        Sphere sphere = (Sphere) obj;
+        return Objects.equals(_center, sphere._center);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), _center);
     }
 }

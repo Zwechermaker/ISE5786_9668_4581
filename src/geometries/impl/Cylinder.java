@@ -1,5 +1,8 @@
 package geometries.impl;
 
+import primitives.Util;
+import java.util.Objects;
+
 /**
  * A class that represents a cylinder in space.
  */
@@ -26,5 +29,20 @@ public class Cylinder extends Tube{
     @Override
     public String toString() {
         return super.toString() + ", height: " + height + "\n";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        if (!super.equals(obj)) return false; // if there is inheritance
+        Cylinder cylinder = (Cylinder) obj;
+        return Util.isZero(height - cylinder.height);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), height);
     }
 }

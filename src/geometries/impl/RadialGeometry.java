@@ -2,6 +2,7 @@ package geometries.impl;
 
 import geometries.api.Geometry;
 import primitives.Util;
+import java.util.Objects;
 
 /**
  * An abstract class that represents a radial geometry in space.
@@ -33,5 +34,19 @@ public abstract class RadialGeometry extends Geometry {
     @Override
     public String toString() {
         return "_radius: " + _radius + ", ";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        RadialGeometry radialGeometry = (RadialGeometry) obj;
+        return Util.isZero(_radius - radialGeometry._radius);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_radius);
     }
 }

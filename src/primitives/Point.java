@@ -1,5 +1,7 @@
 package primitives;
 
+import java.util.Objects;
+
 /**
  * A class that describes a point in space.
  */
@@ -94,6 +96,11 @@ public class Point {
 
         Point point = (Point) obj;
 
-        return _xyz.equals(point._xyz);
+        return Objects.equals(_xyz, point._xyz);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_xyz);
     }
 }
