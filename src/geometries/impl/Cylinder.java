@@ -1,8 +1,9 @@
 package geometries.impl;
 
+import primitives.Point;
 import primitives.Util;
 import java.util.Objects;
-
+import primitives.Vector;
 /**
  * A class that represents a cylinder in space.
  */
@@ -44,5 +45,11 @@ public class Cylinder extends Tube{
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), height);
+    }
+
+
+    @Override
+    public Vector getNormal(Point point){
+        return null;
     }
 }
