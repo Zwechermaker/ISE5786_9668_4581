@@ -44,7 +44,11 @@ public class Point {
      * @return The vector between 2 points
      */
     public Vector subtract(Point point){
-        return new Vector(_xyz.subtract(point._xyz));
+        try{
+            return new Vector(_xyz.subtract(point._xyz));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Cannot subtract a point from itself.");
+        }
     }
 
     /**
