@@ -8,6 +8,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * Unit tests for the Point class.
  */
 class PointTest {
+    /**
+     * Default constructor for Javadoc purposes.
+     */
+    PointTest() {}
+
     // ================== Test Constants ==================
     /** A small tolerance for floating-point comparisons */
     private static final double DELTA = 1E-15;

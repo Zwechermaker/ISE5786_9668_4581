@@ -8,6 +8,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * Unit tests for the Vector class.
  */
 class VectorTest {
+    /**
+     * Default constructor for Javadoc purposes.
+     */
+    VectorTest() {}
+
     // ================== Test Constants ==================
     /** A small tolerance for floating-point comparisons */
     private static final double DELTA = 1E-15;
@@ -23,6 +28,9 @@ class VectorTest {
     private static final Vector V_ORTHOGONAL = new Vector(1, -2, 1);
 
     // ================== Error Messages ==================
+    private static final String ERROR_CONSTRUCTOR_ZERO = "ERROR: Vector(0,0,0) should throw an exception";
+    private static final String ERROR_CONSTRUCTOR_ZERO_DOUBLE3 = "ERROR: Vector(Double3.ZERO) should throw an exception";
+    private static final String ERROR_CONSTRUCTOR_NEAR_ZERO = "ERROR: Vector with near-zero components should throw an exception";
     private static final String ERROR_ADD_GENERAL = "ERROR: add() for two vectors does not work correctly";
     private static final String ERROR_ADD_ZERO = "ERROR: add() with a vector and its opposite should throw an exception";
     private static final String ERROR_SUBTRACT_GENERAL = "ERROR: subtract() for two vectors does not work correctly";
@@ -49,6 +57,27 @@ class VectorTest {
     private static final String ERROR_NORMALIZE_DIRECTION = "ERROR: normalize() changes the vector's direction";
     private static final String ERROR_NORMALIZE_OPPOSITE_DIRECTION = "ERROR: normalize() creates a vector in the opposite direction";
     private static final String ERROR_NORMALIZE_UNIT_VECTOR = "ERROR: normalize() on a unit vector does not return an equal vector";
+
+    /**
+     * Test method for {@link primitives.Vector#Vector(double, double, double)} and {@link primitives.Vector#Vector(Double3)}.
+     */
+    @Test
+    void testConstructor() {
+        // ================== Equivalence Partitions Tests ==================
+        // EP01: Valid vector
+        assertDoesNotThrow(() -> new Vector(1, 2, 3), "ERROR: Valid vector constructor throws an exception");
+
+        // ================== Boundary Values Tests ==================
+        // BVA01: Zero vector from doubles
+        assertThrows(IllegalArgumentException.class, () -> new Vector(0, 0, 0), ERROR_CONSTRUCTOR_ZERO);
+
+        // BVA02: Zero vector from Double3
+        assertThrows(IllegalArgumentException.class, () -> new Vector(Double3.ZERO), ERROR_CONSTRUCTOR_ZERO_DOUBLE3);
+
+        // BVA03: Near-zero vector
+        assertThrows(IllegalArgumentException.class, () -> new Vector(1e-16, 1e-16, 1e-16), ERROR_CONSTRUCTOR_NEAR_ZERO);
+
+    }
 
     /**
      * Test method for {@link primitives.Vector#add(primitives.Vector)}.
