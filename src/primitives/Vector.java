@@ -52,7 +52,7 @@ public class Vector extends Point{
     public Vector add(Vector vector){
         try{
         return new Vector(super.add(vector)._xyz);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Cannot add a vector to its negation.");
         }
 
@@ -66,7 +66,7 @@ public class Vector extends Point{
     public Vector scale(double scalar){
         try{
             return new Vector(super._xyz.scale(scalar));
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Cannon scale a vector by zero.");
         }
     }
@@ -93,7 +93,7 @@ public class Vector extends Point{
                     _xyz._d3() * vector._xyz._d1() - _xyz._d1() * vector._xyz._d3(),
                     _xyz._d1() * vector._xyz._d2() - _xyz._d2() * vector._xyz._d1()
             );
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Cannot perform cross product on two orthogonal vectors.");
         }
     }

@@ -2,6 +2,7 @@ package geometries.impl;
 
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 import java.util.Objects;
 
@@ -25,8 +26,25 @@ public class Tube extends RadialGeometry{
     }
 
     @Override
-    public Vector getNormal(Point point){
-        return null;
+    public Vector getNormal(Point point) {
+        double projection = _axis.direction().dotProduct(point.subtract(_axis.origin()));
+        return getNormal(point, projection); // Pass it to the helper
+    }
+
+    /**
+     * A helper method for getting the normal of the tube
+     * (saves time by reducing number of projection calculations)
+     * @param point the point to calculate the normal for
+     * @param projection the length of the projection of the point on the axis
+     * @return the normal of the tube
+     */
+    protected Vector getNormal(Point point, double projection) {
+        if (Util.isZero(projection)) {
+            return point.subtract(_axis.origin()).normalize();
+        }
+        Vector scaledDirection = _axis.direction().scale(projection);
+        Point projectionPoint = _axis.origin().add(scaledDirection);
+        return point.subtract(projectionPoint).normalize();
     }
 
     @Override

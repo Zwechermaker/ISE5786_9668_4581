@@ -27,8 +27,12 @@ public class Plane extends Geometry {
      */
     public Plane(Point p1, Point p2, Point p3)
     {
+        try{
+            _normal = (p2.subtract(p1)).crossProduct(p3.subtract(p1)).normalize();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Points are collinear");
+        }
         _point = p1;
-        _normal = null;
     }
 
     /**

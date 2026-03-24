@@ -46,7 +46,7 @@ public class Point {
     public Vector subtract(Point point){
         try{
             return new Vector(_xyz.subtract(point._xyz));
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Cannot subtract a point from itself.");
         }
     }

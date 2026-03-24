@@ -50,6 +50,19 @@ public class Cylinder extends Tube{
 
     @Override
     public Vector getNormal(Point point){
-        return null;
+        if (point.equals(_axis.origin())) {
+            return _axis.direction().scale(-1).normalize();
+        }
+
+        double projection = _axis.direction().dotProduct(point.subtract(_axis.origin()));
+
+        if (Util.isZero(projection)) {
+            return _axis.direction().scale(-1).normalize();
+        } else if (Util.isZero(projection - height)) {
+            return _axis.direction().normalize();
+        } else {
+            // Pass the already calculated projection down to the parent!
+            return super.getNormal(point, projection);
+        }
     }
 }

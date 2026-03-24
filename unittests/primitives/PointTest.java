@@ -14,41 +14,18 @@ class PointTest {
     PointTest() {}
 
     // ================== Test Constants ==================
-    /** A small tolerance for floating-point comparisons */
+    /** A small tolerance for floating-point comparisons. */
     private static final double DELTA = 1E-15;
-
-    // ================== Test Points ==================
-    /** A point for tests at (1,1,1) */
+    /** A point for tests at (1,1,1). */
     private static final Point P1 = new Point(1, 1, 1);
-    /** A point for tests at (2,3,4) */
+    /** A point for tests at (2,3,4). */
     private static final Point P2 = new Point(2, 3, 4);
-    /** A point for tests at (-1,-1,-1) */
+    /** A point for tests at (-1,-1,-1). */
     private static final Point P_NEGATIVE = new Point(-1, -1, -1);
-
-    // ================== Test Vectors ==================
-    /** A vector for tests to (1,1,1) */
+    /** A vector for tests to (1,1,1). */
     private static final Vector V1 = new Vector(1, 1, 1);
-    /** A vector for tests to (-1,-1,-1) */
+    /** A vector for tests to (-1,-1,-1). */
     private static final Vector V_NEGATIVE = new Vector(-1, -1, -1);
-
-    // ================== Error Messages ==================
-    private static final String ERROR_SUBTRACT_SAME_QUADRANT = "ERROR: subtract() for points in the same quadrant does not work correctly";
-    private static final String ERROR_SUBTRACT_DIFFERENT_QUADRANTS = "ERROR: subtract() for points in different quadrants does not work correctly";
-    private static final String ERROR_SUBTRACT_SELF = "ERROR: subtract() of a point from itself should throw an exception";
-    private static final String ERROR_SUBTRACT_FROM_ORIGIN = "ERROR: subtract() of a point from the origin does not work correctly";
-    private static final String ERROR_SUBTRACT_ORIGIN = "ERROR: subtract() of the origin from a point does not work correctly";
-    private static final String ERROR_SUBTRACT_ON_AXIS = "ERROR: subtract() for points on the same axis does not work correctly";
-    private static final String ERROR_ADD_VECTOR = "ERROR: add() for a vector to a point does not work correctly";
-    private static final String ERROR_ADD_TO_ORIGIN = "ERROR: add() a vector to the origin point does not work correctly";
-    private static final String ERROR_ADD_RESULTING_IN_ORIGIN = "ERROR: add() a vector to a point resulting in the origin does not work correctly";
-    private static final String ERROR_DISTANCE_SQ_SELF = "ERROR: distanceSquared() between a point and itself should be 0";
-    private static final String ERROR_DISTANCE_SQ_GENERAL = "ERROR: distanceSquared() returns wrong value";
-    private static final String ERROR_DISTANCE_SQ_SYMMETRY = "ERROR: distanceSquared() is not symmetric";
-    private static final String ERROR_DISTANCE_SELF = "ERROR: distance() between a point and itself should be 0";
-    private static final String ERROR_DISTANCE_GENERAL = "ERROR: distance() returns wrong value";
-    private static final String ERROR_DISTANCE_SYMMETRY = "ERROR: distance() is not symmetric";
-    private static final String ERROR_DISTANCE_CONSISTENCY = "ERROR: distance() and distanceSquared() are not consistent";
-
 
     /**
      * Test method for {@link primitives.Point#subtract(primitives.Point)}.
@@ -56,26 +33,26 @@ class PointTest {
     @Test
     void testSubtract() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: Subtracting a point from another point in the same quadrant
-        assertEquals(new Vector(1, 2, 3), P2.subtract(P1), ERROR_SUBTRACT_SAME_QUADRANT);
+        // TC01: Subtracting a point from another point in the same quadrant
+        assertEquals(new Vector(1, 2, 3), P2.subtract(P1), "ERROR: subtract() for points in the same quadrant does not work correctly");
 
-        // EP02: Subtracting a point from another point in a different quadrant
-        assertEquals(new Vector(2, 2, 2), P1.subtract(P_NEGATIVE), ERROR_SUBTRACT_DIFFERENT_QUADRANTS);
+        // TC02: Subtracting a point from another point in a different quadrant
+        assertEquals(new Vector(2, 2, 2), P1.subtract(P_NEGATIVE), "ERROR: subtract() for points in different quadrants does not work correctly");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Subtracting a point from itself
-        assertThrows(IllegalArgumentException.class, () -> P1.subtract(P1), ERROR_SUBTRACT_SELF);
+        // TC03: Subtracting a point from itself
+        assertThrows(IllegalArgumentException.class, () -> P1.subtract(P1), "ERROR: subtract() of a point from itself should throw an exception");
 
-        // BVA02: Subtracting the origin from a point
-        assertEquals(V1, P1.subtract(Point.ZERO), ERROR_SUBTRACT_ORIGIN);
+        // TC04: Subtracting the origin from a point
+        assertEquals(V1, P1.subtract(Point.ZERO), "ERROR: subtract() of the origin from a point does not work correctly");
 
-        // BVA03: Subtracting a point from the origin
-        assertEquals(V_NEGATIVE, Point.ZERO.subtract(P1), ERROR_SUBTRACT_FROM_ORIGIN);
+        // TC05: Subtracting a point from the origin
+        assertEquals(V_NEGATIVE, Point.ZERO.subtract(P1), "ERROR: subtract() of a point from the origin does not work correctly");
 
-        // BVA04: Subtracting points on the same axis
+        // TC06: Subtracting points on the same axis
         Point p_x1 = new Point(1, 0, 0);
         Point p_x2 = new Point(5, 0, 0);
-        assertEquals(new Vector(4, 0, 0), p_x2.subtract(p_x1), ERROR_SUBTRACT_ON_AXIS);
+        assertEquals(new Vector(4, 0, 0), p_x2.subtract(p_x1), "ERROR: subtract() for points on the same axis does not work correctly");
     }
 
     /**
@@ -84,15 +61,15 @@ class PointTest {
     @Test
     void testAdd() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: Adding a vector to a point
-        assertEquals(P2, P1.add(new Vector(1, 2, 3)), ERROR_ADD_VECTOR);
+        // TC07: Adding a vector to a point
+        assertEquals(P2, P1.add(new Vector(1, 2, 3)), "ERROR: add() for a vector to a point does not work correctly");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Adding a vector to a point to get the origin
-        assertEquals(Point.ZERO, P1.add(V_NEGATIVE), ERROR_ADD_RESULTING_IN_ORIGIN);
+        // TC08: Adding a vector to a point to get the origin
+        assertEquals(Point.ZERO, P1.add(V_NEGATIVE), "ERROR: add() a vector to a point resulting in the origin does not work correctly");
 
-        // BVA02: Adding a vector to the origin
-        assertEquals(P1, Point.ZERO.add(V1), ERROR_ADD_TO_ORIGIN);
+        // TC09: Adding a vector to the origin
+        assertEquals(P1, Point.ZERO.add(V1), "ERROR: add() a vector to the origin point does not work correctly");
     }
 
     /**
@@ -101,15 +78,15 @@ class PointTest {
     @Test
     void testDistanceSquared() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: General case
-        assertEquals(14, P1.distanceSquared(P2), DELTA, ERROR_DISTANCE_SQ_GENERAL);
+        // TC10: General case
+        assertEquals(14, P1.distanceSquared(P2), DELTA, "ERROR: distanceSquared() returns wrong value");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Distance to self
-        assertEquals(0, P1.distanceSquared(P1), DELTA, ERROR_DISTANCE_SQ_SELF);
+        // TC11: Distance to self
+        assertEquals(0, P1.distanceSquared(P1), DELTA, "ERROR: distanceSquared() between a point and itself should be 0");
 
-        // BVA02: Symmetry check
-        assertEquals(P1.distanceSquared(P2), P2.distanceSquared(P1), DELTA, ERROR_DISTANCE_SQ_SYMMETRY);
+        // TC12: Symmetry check
+        assertEquals(P1.distanceSquared(P2), P2.distanceSquared(P1), DELTA, "ERROR: distanceSquared() is not symmetric");
     }
 
     /**
@@ -118,17 +95,17 @@ class PointTest {
     @Test
     void testDistance() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: General case
-        assertEquals(Math.sqrt(14), P1.distance(P2), DELTA, ERROR_DISTANCE_GENERAL);
+        // TC13: General case
+        assertEquals(Math.sqrt(14), P1.distance(P2), DELTA, "ERROR: distance() returns wrong value");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Distance to self
-        assertEquals(0, P1.distance(P1), DELTA, ERROR_DISTANCE_SELF);
+        // TC14: Distance to self
+        assertEquals(0, P1.distance(P1), DELTA, "ERROR: distance() between a point and itself should be 0");
 
-        // BVA02: Symmetry check
-        assertEquals(P1.distance(P2), P2.distance(P1), DELTA, ERROR_DISTANCE_SYMMETRY);
+        // TC15: Symmetry check
+        assertEquals(P1.distance(P2), P2.distance(P1), DELTA, "ERROR: distance() is not symmetric");
 
-        // BVA03: Consistency with distanceSquared
-        assertEquals(P1.distance(P2), Math.sqrt(P1.distanceSquared(P2)), DELTA, ERROR_DISTANCE_CONSISTENCY);
+        // TC16: Consistency with distanceSquared
+        assertEquals(P1.distance(P2), Math.sqrt(P1.distanceSquared(P2)), DELTA, "ERROR: distance() and distanceSquared() are not consistent");
     }
 }

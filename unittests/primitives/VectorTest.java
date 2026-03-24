@@ -14,49 +14,16 @@ class VectorTest {
     VectorTest() {}
 
     // ================== Test Constants ==================
-    /** A small tolerance for floating-point comparisons */
+    /** A small tolerance for floating-point comparisons. */
     private static final double DELTA = 1E-15;
-
-    // ================== Test Vectors ==================
-    /** A vector for tests to (1,1,1) */
+    /** A vector for tests to (1,1,1). */
     private static final Vector V1 = new Vector(1, 1, 1);
-    /** A vector for tests to (2,3,4) */
+    /** A vector for tests to (2,3,4). */
     private static final Vector V2 = new Vector(2, 3, 4);
-    /** A vector for tests to (-1,-1,-1) */
+    /** A vector for tests to (-1,-1,-1). */
     private static final Vector V_NEGATIVE = new Vector(-1, -1, -1);
-    /** An orthogonal vector for tests */
+    /** An orthogonal vector for tests. */
     private static final Vector V_ORTHOGONAL = new Vector(1, -2, 1);
-
-    // ================== Error Messages ==================
-    private static final String ERROR_CONSTRUCTOR_ZERO = "ERROR: Vector(0,0,0) should throw an exception";
-    private static final String ERROR_CONSTRUCTOR_ZERO_DOUBLE3 = "ERROR: Vector(Double3.ZERO) should throw an exception";
-    private static final String ERROR_CONSTRUCTOR_NEAR_ZERO = "ERROR: Vector with near-zero components should throw an exception";
-    private static final String ERROR_ADD_GENERAL = "ERROR: add() for two vectors does not work correctly";
-    private static final String ERROR_ADD_ZERO = "ERROR: add() with a vector and its opposite should throw an exception";
-    private static final String ERROR_SUBTRACT_GENERAL = "ERROR: subtract() for two vectors does not work correctly";
-    private static final String ERROR_SUBTRACT_ZERO = "ERROR: subtract() with a vector from itself should throw an exception";
-    private static final String ERROR_SCALE_POSITIVE = "ERROR: scale() with a positive number does not work correctly";
-    private static final String ERROR_SCALE_NEGATIVE = "ERROR: scale() with a negative number does not work correctly";
-    private static final String ERROR_SCALE_ONE = "ERROR: scale() with 1 does not return an equal vector";
-    private static final String ERROR_SCALE_MINUS_ONE = "ERROR: scale() with -1 does not return the opposite vector";
-    private static final String ERROR_SCALE_ZERO = "ERROR: scale() with 0 should throw an exception";
-    private static final String ERROR_DOT_PRODUCT_GENERAL = "ERROR: dotProduct() returns wrong value";
-    private static final String ERROR_DOT_PRODUCT_ORTHOGONAL = "ERROR: dotProduct() for orthogonal vectors is not zero";
-    private static final String ERROR_DOT_PRODUCT_SELF = "ERROR: dotProduct() with self does not equal lengthSquared()";
-    private static final String ERROR_DOT_PRODUCT_COMMUTATIVE = "ERROR: dotProduct() is not commutative";
-    private static final String ERROR_CROSS_PRODUCT_GENERAL = "ERROR: crossProduct() returns wrong value";
-    private static final String ERROR_CROSS_PRODUCT_PARALLEL = "ERROR: crossProduct() for parallel vectors should throw an exception";
-    private static final String ERROR_CROSS_PRODUCT_ORTHOGONALITY = "ERROR: crossProduct() result is not orthogonal to its operands";
-    private static final String ERROR_CROSS_PRODUCT_ANTI_COMMUTATIVE = "ERROR: crossProduct() is not anti-commutative";
-    private static final String ERROR_LENGTH_SQ_GENERAL = "ERROR: lengthSquared() returns wrong value";
-    private static final String ERROR_LENGTH_SQ_UNIT = "ERROR: lengthSquared() for a unit vector should be 1";
-    private static final String ERROR_LENGTH_GENERAL = "ERROR: length() returns wrong value";
-    private static final String ERROR_LENGTH_UNIT = "ERROR: length() for a unit vector should be 1";
-    private static final String ERROR_LENGTH_CONSISTENCY = "ERROR: length() and lengthSquared() are not consistent";
-    private static final String ERROR_NORMALIZE_LENGTH = "ERROR: normalize() does not create a unit vector";
-    private static final String ERROR_NORMALIZE_DIRECTION = "ERROR: normalize() changes the vector's direction";
-    private static final String ERROR_NORMALIZE_OPPOSITE_DIRECTION = "ERROR: normalize() creates a vector in the opposite direction";
-    private static final String ERROR_NORMALIZE_UNIT_VECTOR = "ERROR: normalize() on a unit vector does not return an equal vector";
 
     /**
      * Test method for {@link primitives.Vector#Vector(double, double, double)} and {@link primitives.Vector#Vector(Double3)}.
@@ -64,19 +31,18 @@ class VectorTest {
     @Test
     void testConstructor() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: Valid vector
+        // TC01: Valid vector
         assertDoesNotThrow(() -> new Vector(1, 2, 3), "ERROR: Valid vector constructor throws an exception");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Zero vector from doubles
-        assertThrows(IllegalArgumentException.class, () -> new Vector(0, 0, 0), ERROR_CONSTRUCTOR_ZERO);
+        // TC02: Zero vector from doubles
+        assertThrows(IllegalArgumentException.class, () -> new Vector(0, 0, 0), "ERROR: Vector(0,0,0) should throw an exception");
 
-        // BVA02: Zero vector from Double3
-        assertThrows(IllegalArgumentException.class, () -> new Vector(Double3.ZERO), ERROR_CONSTRUCTOR_ZERO_DOUBLE3);
+        // TC03: Zero vector from Double3
+        assertThrows(IllegalArgumentException.class, () -> new Vector(Double3.ZERO), "ERROR: Vector(Double3.ZERO) should throw an exception");
 
-        // BVA03: Near-zero vector
-        assertThrows(IllegalArgumentException.class, () -> new Vector(1e-16, 1e-16, 1e-16), ERROR_CONSTRUCTOR_NEAR_ZERO);
-
+        // TC04: Near-zero vector
+        assertThrows(IllegalArgumentException.class, () -> new Vector(1e-16, 1e-16, 1e-16), "ERROR: Vector with near-zero components should throw an exception");
     }
 
     /**
@@ -85,12 +51,12 @@ class VectorTest {
     @Test
     void testAdd() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: Adding two vectors
-        assertEquals(new Vector(3, 4, 5), V1.add(V2), ERROR_ADD_GENERAL);
+        // TC05: Adding two vectors
+        assertEquals(new Vector(3, 4, 5), V1.add(V2), "ERROR: add() for two vectors does not work correctly");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Adding a vector to its opposite
-        assertThrows(IllegalArgumentException.class, () -> V1.add(V_NEGATIVE), ERROR_ADD_ZERO);
+        // TC06: Adding a vector to its opposite
+        assertThrows(IllegalArgumentException.class, () -> V1.add(V_NEGATIVE), "ERROR: add() with a vector and its opposite should throw an exception");
     }
 
     /**
@@ -99,12 +65,12 @@ class VectorTest {
     @Test
     void testSubtract() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: Subtracting two vectors
-        assertEquals(new Vector(-1, -2, -3), V1.subtract(V2), ERROR_SUBTRACT_GENERAL);
+        // TC07: Subtracting two vectors
+        assertEquals(new Vector(-1, -2, -3), V1.subtract(V2), "ERROR: subtract() for two vectors does not work correctly");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Subtracting a vector from itself
-        assertThrows(IllegalArgumentException.class, () -> V1.subtract(V1), ERROR_SUBTRACT_ZERO);
+        // TC08: Subtracting a vector from itself
+        assertThrows(IllegalArgumentException.class, () -> V1.subtract(V1), "ERROR: subtract() with a vector from itself should throw an exception");
     }
 
     /**
@@ -113,21 +79,21 @@ class VectorTest {
     @Test
     void testScale() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: Scaling by a positive number
-        assertEquals(new Vector(2, 2, 2), V1.scale(2), ERROR_SCALE_POSITIVE);
+        // TC09: Scaling by a positive number
+        assertEquals(new Vector(2, 2, 2), V1.scale(2), "ERROR: scale() with a positive number does not work correctly");
 
-        // EP02: Scaling by a negative number
-        assertEquals(new Vector(-2, -2, -2), V1.scale(-2), ERROR_SCALE_NEGATIVE);
+        // TC10: Scaling by a negative number
+        assertEquals(new Vector(-2, -2, -2), V1.scale(-2), "ERROR: scale() with a negative number does not work correctly");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Scaling by 1
-        assertEquals(V1, V1.scale(1), ERROR_SCALE_ONE);
+        // TC11: Scaling by 1
+        assertEquals(V1, V1.scale(1), "ERROR: scale() with 1 does not return an equal vector");
 
-        // BVA02: Scaling by -1
-        assertEquals(V_NEGATIVE, V1.scale(-1), ERROR_SCALE_MINUS_ONE);
+        // TC12: Scaling by -1
+        assertEquals(V_NEGATIVE, V1.scale(-1), "ERROR: scale() with -1 does not return the opposite vector");
 
-        // BVA03: Scaling by 0
-        assertThrows(IllegalArgumentException.class, () -> V1.scale(0), ERROR_SCALE_ZERO);
+        // TC13: Scaling by 0
+        assertThrows(IllegalArgumentException.class, () -> V1.scale(0), "ERROR: scale() with 0 should throw an exception");
     }
 
     /**
@@ -136,18 +102,18 @@ class VectorTest {
     @Test
     void testDotProduct() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: General case
-        assertEquals(9, V1.dotProduct(V2), DELTA, ERROR_DOT_PRODUCT_GENERAL);
+        // TC14: General case
+        assertEquals(9, V1.dotProduct(V2), DELTA, "ERROR: dotProduct() returns wrong value");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Orthogonal vectors
-        assertEquals(0, V1.dotProduct(V_ORTHOGONAL), DELTA, ERROR_DOT_PRODUCT_ORTHOGONAL);
+        // TC15: Orthogonal vectors
+        assertEquals(0, V1.dotProduct(V_ORTHOGONAL), DELTA, "ERROR: dotProduct() for orthogonal vectors is not zero");
 
-        // BVA02: Dot product with self
-        assertEquals(V1.lengthSquared(), V1.dotProduct(V1), DELTA, ERROR_DOT_PRODUCT_SELF);
+        // TC16: Dot product with self
+        assertEquals(V1.lengthSquared(), V1.dotProduct(V1), DELTA, "ERROR: dotProduct() with self does not equal lengthSquared()");
 
-        // BVA03: Commutativity
-        assertEquals(V1.dotProduct(V2), V2.dotProduct(V1), DELTA, ERROR_DOT_PRODUCT_COMMUTATIVE);
+        // TC17: Commutativity
+        assertEquals(V1.dotProduct(V2), V2.dotProduct(V1), DELTA, "ERROR: dotProduct() is not commutative");
     }
 
     /**
@@ -156,20 +122,20 @@ class VectorTest {
     @Test
     void testCrossProduct() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: General case
+        // TC18: General case
         Vector result = V1.crossProduct(V2);
-        assertEquals(new Vector(1, -2, 1), result, ERROR_CROSS_PRODUCT_GENERAL);
+        assertEquals(new Vector(1, -2, 1), result, "ERROR: crossProduct() returns wrong value");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Parallel vectors
-        assertThrows(IllegalArgumentException.class, () -> V1.crossProduct(V1.scale(2)), ERROR_CROSS_PRODUCT_PARALLEL);
+        // TC19: Parallel vectors
+        assertThrows(IllegalArgumentException.class, () -> V1.crossProduct(V1.scale(2)), "ERROR: crossProduct() for parallel vectors should throw an exception");
 
-        // BVA02: Orthogonality
-        assertEquals(0, result.dotProduct(V1), DELTA, ERROR_CROSS_PRODUCT_ORTHOGONALITY);
-        assertEquals(0, result.dotProduct(V2), DELTA, ERROR_CROSS_PRODUCT_ORTHOGONALITY);
+        // TC20: Orthogonality
+        assertEquals(0, result.dotProduct(V1), DELTA, "ERROR: crossProduct() result is not orthogonal to its operands");
+        assertEquals(0, result.dotProduct(V2), DELTA, "ERROR: crossProduct() result is not orthogonal to its operands");
 
-        // BVA03: Anti-commutativity
-        assertEquals(result, V2.crossProduct(V1).scale(-1), ERROR_CROSS_PRODUCT_ANTI_COMMUTATIVE);
+        // TC21: Anti-commutativity
+        assertEquals(result, V2.crossProduct(V1).scale(-1), "ERROR: crossProduct() is not anti-commutative");
     }
 
     /**
@@ -178,12 +144,12 @@ class VectorTest {
     @Test
     void testLengthSquared() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: General case
-        assertEquals(3, V1.lengthSquared(), DELTA, ERROR_LENGTH_SQ_GENERAL);
+        // TC22: General case
+        assertEquals(3, V1.lengthSquared(), DELTA, "ERROR: lengthSquared() returns wrong value");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Unit vector
-        assertEquals(1, Vector.AXIS_X.lengthSquared(), DELTA, ERROR_LENGTH_SQ_UNIT);
+        // TC23: Unit vector
+        assertEquals(1, Vector.AXIS_X.lengthSquared(), DELTA, "ERROR: lengthSquared() for a unit vector should be 1");
     }
 
     /**
@@ -192,15 +158,15 @@ class VectorTest {
     @Test
     void testLength() {
         // ================== Equivalence Partitions Tests ==================
-        // EP01: General case
-        assertEquals(Math.sqrt(3), V1.length(), DELTA, ERROR_LENGTH_GENERAL);
+        // TC24: General case
+        assertEquals(Math.sqrt(3), V1.length(), DELTA, "ERROR: length() returns wrong value");
 
         // ================== Boundary Values Tests ==================
-        // BVA01: Unit vector
-        assertEquals(1, Vector.AXIS_X.length(), DELTA, ERROR_LENGTH_UNIT);
+        // TC25: Unit vector
+        assertEquals(1, Vector.AXIS_X.length(), DELTA, "ERROR: length() for a unit vector should be 1");
 
-        // BVA02: Consistency with lengthSquared
-        assertEquals(V1.length(), Math.sqrt(V1.lengthSquared()), DELTA, ERROR_LENGTH_CONSISTENCY);
+        // TC26: Consistency with lengthSquared
+        assertEquals(V1.length(), Math.sqrt(V1.lengthSquared()), DELTA, "ERROR: length() and lengthSquared() are not consistent");
     }
 
     /**
@@ -210,18 +176,17 @@ class VectorTest {
     void testNormalize() {
         Vector u = V1.normalize();
         // ================== Equivalence Partitions Tests ==================
-        // EP01: Check if the vector is a unit vector
-        assertEquals(1, u.length(), DELTA, ERROR_NORMALIZE_LENGTH);
+        // TC27: Check if the vector is a unit vector
+        assertEquals(1, u.length(), DELTA, "ERROR: normalize() does not create a unit vector");
 
-        // EP02: Check if the original vector and the unit vector are parallel
-        assertThrows(IllegalArgumentException.class, () -> V1.crossProduct(u), ERROR_NORMALIZE_DIRECTION);
+        // TC28: Check if the original vector and the unit vector are parallel
+        assertThrows(IllegalArgumentException.class, () -> V1.crossProduct(u), "ERROR: normalize() changes the vector's direction");
 
-        // EP03: Check if the angle between the original vector and the unit vector is 90 degrees.
-        assertTrue(V1.dotProduct(u) > 0, ERROR_NORMALIZE_OPPOSITE_DIRECTION);
+        // TC29: Check if the angle between the original vector and the unit vector is 90 degrees.
+        assertTrue(V1.dotProduct(u) > 0, "ERROR: normalize() creates a vector in the opposite direction");
 
         // ================== Boundary Values Tests ==================
-
-        // BVA01: Normalizing a unit vector
-        assertEquals(Vector.AXIS_X, Vector.AXIS_X.normalize(), ERROR_NORMALIZE_UNIT_VECTOR);
+        // TC30: Normalizing a unit vector
+        assertEquals(Vector.AXIS_X, Vector.AXIS_X.normalize(), "ERROR: normalize() on a unit vector does not return an equal vector");
     }
 }
