@@ -4,6 +4,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Util;
 import primitives.Vector;
+
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -65,5 +67,10 @@ public class Tube extends RadialGeometry{
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), _axis);
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray){
+        return null;
     }
 }

@@ -50,12 +50,7 @@ public final class Vector extends Point{
      * @return the addition  result
      */
     public Vector add(Vector vector){
-        try{
         return new Vector(super.add(vector)._xyz);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Cannot add a vector to its negation.");
-        }
-
     }
 
     /**
@@ -64,11 +59,8 @@ public final class Vector extends Point{
      * @return the scaled vector
      */
     public Vector scale(double scalar){
-        try{
             return new Vector(super._xyz.scale(scalar));
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Cannon scale a vector by zero.");
-        }
+
     }
 
     /**
@@ -87,15 +79,12 @@ public final class Vector extends Point{
      * @return the vector that is perpendicular to both of them
      */
     public Vector crossProduct(Vector vector) {
-        try{
             return new Vector(
                     _xyz._d2() * vector._xyz._d3() - _xyz._d3() * vector._xyz._d2(),
                     _xyz._d3() * vector._xyz._d1() - _xyz._d1() * vector._xyz._d3(),
                     _xyz._d1() * vector._xyz._d2() - _xyz._d2() * vector._xyz._d1()
             );
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Cannot perform cross product on two orthogonal vectors.");
-        }
+
     }
     /**
      * a function that calculates the length of the vector squared

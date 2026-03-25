@@ -2,7 +2,10 @@ package geometries.impl;
 
 import geometries.api.Geometry;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
+
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,13 +30,9 @@ public final class Plane extends Geometry {
      */
     public Plane(Point p1, Point p2, Point p3)
     {
-        try{
             // if p1=p2, p2-p1 fails. if p3=p1 p3-p1 fails. if p3=p2 then p2-p1=p3-p1 so (p2-p1).crossProduct(p3-p1) fails.
             // if the points are on the same line, p2-p1 is parallel to p3-p1 so (p2-p1).crossProduct(p3-p1) fails.
             _normal = (p2.subtract(p1)).crossProduct(p3.subtract(p1)).normalize();
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Points are collinear");
-        }
         _point = p1;
     }
 
@@ -70,5 +69,10 @@ public final class Plane extends Geometry {
     @Override
     public int hashCode() {
         return Objects.hash(_point, _normal);
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray){
+    return null;
     }
 }

@@ -6,7 +6,7 @@ import primitives.Vector;
 /**
  * an abstract class that represents a geometry in space
  */
-public abstract class Geometry {
+public abstract class Geometry extends Intersectable {
     /**
      * A constructor for a geometry (for javadoc purposes)
      */
