@@ -42,7 +42,7 @@ class VectorTest {
         assertThrows(IllegalArgumentException.class, () -> new Vector(Double3.ZERO), "ERROR: Vector(Double3.ZERO) should throw an exception");
 
         // TC04: Near-zero vector
-        assertThrows(IllegalArgumentException.class, () -> new Vector(1e-16, 1e-16, 1e-16), "ERROR: Vector with near-zero components should throw an exception");
+        assertThrows(IllegalArgumentException.class, () -> new Vector(DELTA, DELTA, DELTA), "ERROR: Vector with near-zero components should throw an exception");
     }
 
     /**
@@ -182,7 +182,7 @@ class VectorTest {
         // TC28: Check if the original vector and the unit vector are parallel
         assertThrows(IllegalArgumentException.class, () -> V1.crossProduct(u), "ERROR: normalize() changes the vector's direction");
 
-        // TC29: Check if the angle between the original vector and the unit vector is 90 degrees.
+        // TC29: Check if the angle between the original vector and the unit vector is 0 degrees.
         assertTrue(V1.dotProduct(u) > 0, "ERROR: normalize() creates a vector in the opposite direction");
 
         // ================== Boundary Values Tests ==================

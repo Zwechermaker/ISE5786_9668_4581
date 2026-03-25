@@ -3,7 +3,7 @@ package primitives;
 /**
  * A vector class that describes a geometric vector in space.
  */
-public class Vector extends Point{
+public final class Vector extends Point{
     /**
      * A constant that describes a unit vector in the x direction
      */

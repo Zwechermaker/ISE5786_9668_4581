@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * A class that describes a plane in space.
  */
-public class Plane extends Geometry {
+public final class Plane extends Geometry {
     /**
      * A point on the plane.
      */

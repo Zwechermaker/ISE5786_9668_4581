@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * A class that describes a Ray, an infinite line in space that starts at a point.
  */
-public class Ray {
+public final class Ray {
     /**
      * the origin point of the ray
      */

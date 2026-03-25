@@ -6,7 +6,7 @@ import primitives.Vector;
 /**
  * A class that represents a triangle in space.
  */
-public class Triangle extends Polygon{
+public final class Triangle extends Polygon{
     /**
      *A parameter constructor for a triangle
      * @param p1 a point in the triangle

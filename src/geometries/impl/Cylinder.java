@@ -7,7 +7,7 @@ import primitives.Vector;
 /**
  * A class that represents a cylinder in space.
  */
-public class Cylinder extends Tube{
+public final class Cylinder extends Tube{
     /**
      * The height of the cylinder.
      */
@@ -61,7 +61,7 @@ public class Cylinder extends Tube{
         } else if (Util.isZero(projection - height)) {
             return _axis.direction().normalize();
         } else {
-            // Pass the already calculated projection down to the parent!
+            // Pass the already calculated projection down to the parent
             return super.getNormal(point, projection);
         }
     }

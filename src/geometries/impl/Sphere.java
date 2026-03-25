@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * A class that represents a sphere in space.
  */
-public class Sphere extends RadialGeometry{
+public final class Sphere extends RadialGeometry{
     /**
      * The center of the sphere.
      */

@@ -37,6 +37,10 @@ class SphereTest {
         // TC02: Zero radius
         assertThrows(IllegalArgumentException.class, () -> new Sphere(CENTER, 0),
                 "Constructed a sphere with zero radius");
+
+        // TC03: Negative radius
+        assertThrows(IllegalArgumentException.class, () -> new Sphere(CENTER, -5),
+                "Constructed a sphere with negative radius");
     }
 
     /**
@@ -45,9 +49,8 @@ class SphereTest {
     @Test
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============
-        // TC03: A random point on the sphere
+        // TC04: A random point on the sphere
         Point pointOnSphere = new Point(3, 4, 0);
-        Vector normal = SPHERE.getNormal(pointOnSphere);
-        assertEquals(new Vector(3, 4, 0).normalize(), normal, "getNormal() for sphere is wrong");
+        assertEquals(new Vector(3, 4, 0).normalize(), SPHERE.getNormal(pointOnSphere), "getNormal() for sphere is wrong");
     }
 }
