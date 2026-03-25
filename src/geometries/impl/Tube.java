@@ -28,6 +28,9 @@ public class Tube extends RadialGeometry{
     @Override
     public Vector getNormal(Point point) {
         double projection = _axis.direction().dotProduct(point.subtract(_axis.origin()));
+        if (Util.isZero(projection)) {
+            return point.subtract(_axis.origin()).normalize();
+        }
         return getNormal(point, projection); // Pass it to the helper
     }
 
@@ -39,9 +42,6 @@ public class Tube extends RadialGeometry{
      * @return the normal of the tube
      */
     protected Vector getNormal(Point point, double projection) {
-        if (Util.isZero(projection)) {
-            return point.subtract(_axis.origin()).normalize();
-        }
         Vector scaledDirection = _axis.direction().scale(projection);
         Point projectionPoint = _axis.origin().add(scaledDirection);
         return point.subtract(projectionPoint).normalize();

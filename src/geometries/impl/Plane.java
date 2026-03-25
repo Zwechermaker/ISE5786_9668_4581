@@ -28,6 +28,8 @@ public final class Plane extends Geometry {
     public Plane(Point p1, Point p2, Point p3)
     {
         try{
+            // if p1=p2, p2-p1 fails. if p3=p1 p3-p1 fails. if p3=p2 then p2-p1=p3-p1 so (p2-p1).crossProduct(p3-p1) fails.
+            // if the points are on the same line, p2-p1 is parallel to p3-p1 so (p2-p1).crossProduct(p3-p1) fails.
             _normal = (p2.subtract(p1)).crossProduct(p3.subtract(p1)).normalize();
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Points are collinear");
