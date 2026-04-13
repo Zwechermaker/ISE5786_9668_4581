@@ -77,7 +77,5 @@ public final class Sphere extends RadialGeometry{
         }
 
         return List.of(ray.getPoint(QPdist + projMiddle),ray.getPoint(projMiddle - QPdist));
-
-
     }
 }
