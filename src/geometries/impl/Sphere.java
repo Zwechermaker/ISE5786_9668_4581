@@ -52,6 +52,32 @@ public final class Sphere extends RadialGeometry{
     }
     @Override
     public List<Point> findIntersections(Ray ray){
-    return null;
+        Vector midCircVec = _center.subtract(ray.origin());
+        double projMiddle = ray.direction().dotProduct(midCircVec);
+
+        double OQdist = Math.sqrt(midCircVec.lengthSquared()-projMiddle*projMiddle);
+        if(OQdist > _radius){
+            return null;
+        }
+
+        double QPdist = Math.sqrt(_radiusSquared*_radiusSquared - OQdist*OQdist);
+
+        double t1 = projMiddle + QPdist;
+        double t2 = projMiddle - QPdist;
+
+        if(t1 < 0 && t2 < 0){
+            return null;
+        }
+
+        if(t1 < 0){
+            return List.of(ray.getPoint(t2));
+        }
+        if(t2 < 0){
+            return List.of(ray.getPoint(t1));
+        }
+
+        return List.of(ray.getPoint(QPdist + projMiddle),ray.getPoint(projMiddle - QPdist));
+
+
     }
 }

@@ -3,6 +3,7 @@ package geometries.impl;
 import geometries.api.Geometry;
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 
 import java.util.List;
@@ -73,6 +74,16 @@ public final class Plane extends Geometry {
 
     @Override
     public List<Point> findIntersections(Ray ray){
-    return null;
+        double nv = _normal.dotProduct(ray.direction());
+        if(Util.isZero(nv) || ray.origin().equals(_point)){
+            return null;
+        }
+        Vector planeVec = _point.subtract(ray.origin());
+        double parameter = _normal.dotProduct(planeVec) / nv;
+
+        if(Util.isZero(parameter) || parameter < 0){
+            return null;
+        }
+        return List.of(ray.getPoint(parameter));
     }
 }
