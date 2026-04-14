@@ -48,7 +48,10 @@ public class Tube extends RadialGeometry{
         Point projectionPoint = _axis.origin().add(scaledDirection);
         return point.subtract(projectionPoint).normalize();
     }
-
+    @Override
+    public List<Point> findIntersections(Ray ray){
+        return null;
+    }
     @Override
     public String toString() {
         return super.toString() + "axis: " + _axis + "\n";
@@ -69,8 +72,5 @@ public class Tube extends RadialGeometry{
         return Objects.hash(super.hashCode(), _axis);
     }
 
-    @Override
-    public List<Point> findIntersections(Ray ray){
-        return null;
-    }
+
 }
