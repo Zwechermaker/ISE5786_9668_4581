@@ -47,13 +47,14 @@ public final class Ray {
      * @param parameter for p_0+parameter*v
      */
     public Point getPoint(double parameter){
-        if(Util.isZero(parameter)){
-            return _origin;
-        }
         if(Util.alignZero(parameter) < 0)
             throw new IllegalArgumentException("Parameter cannot be negative");
 
-        return _origin.add(_direction.scale(parameter));
+        try {
+            return _origin.add(_direction.scale(parameter));
+        } catch(IllegalArgumentException e){
+            return _origin;
+        }
     }
     @Override
     public boolean equals(Object obj) {

@@ -2,6 +2,7 @@ package geometries.impl;
 
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 
 import java.util.List;
@@ -50,32 +51,40 @@ public final class Sphere extends RadialGeometry{
     public int hashCode() {
         return Objects.hash(super.hashCode(), _center);
     }
+
     @Override
     public List<Point> findIntersections(Ray ray){
+        //if the ray starts at the center of the sphere.
+        if (_center.equals(ray.origin())) {
+            return List.of(ray.getPoint(_radius));
+        }
         Vector midCircVec = _center.subtract(ray.origin());
         double projMiddle = ray.direction().dotProduct(midCircVec);
 
         double OQdist = Math.sqrt(midCircVec.lengthSquared()-projMiddle*projMiddle);
-        if(OQdist > _radius){
+
+        //if ray is tangent to the sphere or completely misses it.
+        if(Util.alignZero(OQdist-_radius) >= 0){
             return null;
         }
 
-        double QPdist = Math.sqrt(_radiusSquared*_radiusSquared - OQdist*OQdist);
+        double QPdist = Math.sqrt(_radiusSquared- OQdist*OQdist);
 
-        double t1 = projMiddle + QPdist;
-        double t2 = projMiddle - QPdist;
 
-        if(t1 < 0 && t2 < 0){
+        double t1 = Util.alignZero(projMiddle + QPdist);
+        double t2 = Util.alignZero(projMiddle - QPdist);
+
+        if(t1 <= 0 && t2 <= 0){
             return null;
         }
 
-        if(t1 < 0){
+        if(t1 <= 0){
             return List.of(ray.getPoint(t2));
         }
-        if(t2 < 0){
+        if(t2 <= 0){
             return List.of(ray.getPoint(t1));
         }
-blallamsfls
-        return List.of(ray.getPoint(QPdist + projMiddle),ray.getPoint(projMiddle - QPdist));
+
+        return List.of(ray.getPoint(t1), ray.getPoint(t2));
     }
 }
