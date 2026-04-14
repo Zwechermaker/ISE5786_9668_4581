@@ -53,38 +53,40 @@ public final class Sphere extends RadialGeometry{
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray){
-        //if the ray starts at the center of the sphere.
+    public List<Point> findIntersections(Ray ray) {
+        // if the ray starts at the center of the sphere.
         if (_center.equals(ray.origin())) {
             return List.of(ray.getPoint(_radius));
         }
+
         Vector midCircVec = _center.subtract(ray.origin());
         double projMiddle = ray.direction().dotProduct(midCircVec);
 
-        double OQdist = Math.sqrt(midCircVec.lengthSquared()-projMiddle*projMiddle);
+        double oqDist = Math.sqrt(midCircVec.lengthSquared() - projMiddle * projMiddle);
 
-        //if ray is tangent to the sphere or completely misses it.
-        if(Util.alignZero(OQdist-_radius) >= 0){
+        // if ray is tangent to the sphere or completely misses it.
+        if (Util.alignZero(oqDist - _radius) >= 0) {
             return null;
         }
 
-        double QPdist = Math.sqrt(_radiusSquared- OQdist*OQdist);
+        double qpDist = Math.sqrt(_radiusSquared - oqDist * oqDist);
 
+        double t1 = Util.alignZero(projMiddle + qpDist);
+        double t2 = Util.alignZero(projMiddle - qpDist);
 
-        double t1 = Util.alignZero(projMiddle + QPdist);
-        double t2 = Util.alignZero(projMiddle - QPdist);
-
-        if(t1 <= 0 && t2 <= 0){
+        //check the number of intersections and return them
+        if (t1 <= 0 && t2 <= 0) {
             return null;
         }
 
-        if(t1 <= 0){
+        if (t1 <= 0) {
             return List.of(ray.getPoint(t2));
         }
-        if(t2 <= 0){
+        if (t2 <= 0) {
             return List.of(ray.getPoint(t1));
         }
 
-        return List.of(ray.getPoint(t1), ray.getPoint(t2));
+        //return the points, closest first.
+        return List.of(ray.getPoint(t2), ray.getPoint(t1));
     }
 }
