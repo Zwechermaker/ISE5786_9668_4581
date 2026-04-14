@@ -45,6 +45,7 @@ public final class Ray {
     /**
      * getting the point p_0+t*v
      * @param parameter for p_0+parameter*v
+     * @return the point p_0+parameter*v
      */
     public Point getPoint(double parameter){
         try {

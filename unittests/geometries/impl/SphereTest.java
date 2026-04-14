@@ -22,6 +22,8 @@ class SphereTest {
     /** A sphere for testing. */
     private static final Sphere SPHERE = new Sphere(CENTER, RADIUS);
 
+    /** Default constructor to satisfy JavaDoc generator */
+    SphereTest() { /* to satisfy JavaDoc generator */ }
     /**
      * Test method for {@link geometries.impl.Sphere#Sphere(Point, double)}.
      */

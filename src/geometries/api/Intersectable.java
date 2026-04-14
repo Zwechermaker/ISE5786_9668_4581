@@ -13,4 +13,7 @@ public abstract class Intersectable {
      * @return a list of intersection points (null if there isn't any)
      */
     public abstract List<Point> findIntersections(Ray ray);
+
+    /** Default constructor to satisfy JavaDoc generator */
+    Intersectable() { /* to satisfy JavaDoc generator */ }
 }
