@@ -31,7 +31,7 @@ class GeometriesTest {
 
         // TC01: Add multiple geometries at once
         geometries.add(plane, sphere);
-        // Ray piercing both the plane (1 pt) and the sphere (2 pts) -> Total 3 points
+        // Ray hits the plane and the sphere at 2 points. total 3 points.
         List<Point> result = geometries.findIntersections(new Ray(new Point(0, 0, -1), new Vector(0, 0, 1)));
         assertNotNull(result, "Adding multiple geometries failed");
         assertEquals(3, result.size(), "Adding multiple geometries resulted in wrong intersection count");
@@ -39,7 +39,7 @@ class GeometriesTest {
 
         // =============== Boundary Values Tests ==================
 
-        // TC02: Add no geometries (empty varargs)
+        // TC02: Add no geometries
         Geometries emptyGeometries = new Geometries();
         assertDoesNotThrow(() -> emptyGeometries.add(), "Adding nothing should not throw an exception");
         assertNull(emptyGeometries.findIntersections(new Ray(new Point(0, 0, -1), new Vector(0, 0, 1))),
@@ -48,7 +48,7 @@ class GeometriesTest {
         // TC03: Add a single geometry
         Geometries singleGeometry = new Geometries();
         singleGeometry.add(plane);
-        // Ray piercing only the plane -> Total 1 point
+        // Ray hits only the plane, total of one point.
         result = singleGeometry.findIntersections(new Ray(new Point(0, 0, -1), new Vector(0, 0, 1)));
         assertNotNull(result, "Adding a single geometry failed");
         assertEquals(1, result.size(), "Adding a single geometry resulted in wrong intersection count");
@@ -72,7 +72,7 @@ class GeometriesTest {
         // ============ Equivalence Partitions Tests ==============
 
         // TC01: Some geometries intersect, but not all of them
-        // Ray starts at z=1.5, pointing UP.
+        // Ray starts at z=1.5, pointing up.
         // Misses the plane (starts after it). Hits the sphere once (starts inside). Hits the triangle once. -> Total 2 points.
         List<Point> result = geometries.findIntersections(new Ray(new Point(0, 0, 1.5), new Vector(0, 0, 1)));
         assertNotNull(result, "Should not return null when there are intersections");
@@ -88,7 +88,7 @@ class GeometriesTest {
                 "BVA: Empty geometries collection must return null");
 
         // TC03: No geometries intersect
-        // Ray starts at z=5, pointing UP (away from all shapes).
+        // Ray starts at z=5, pointing up (away from all shapes).
         assertNull(geometries.findIntersections(new Ray(new Point(0, 0, 5), new Vector(0, 0, 1))),
                 "BVA: No geometries intersect must return null (not an empty list)");
 

@@ -35,16 +35,18 @@ public class Geometries extends Intersectable{
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray){
-        List<Point> totalList = null;
-        for (Intersectable geometry : geometries) {
-            var list = geometry.findIntersections(ray);
-            if (list != null)
-                if (totalList == null)
-                    totalList = new LinkedList<>(list);
-                else
-                    totalList.addAll(list);
+    public List<Point> findIntersections(Ray ray) {
+        List<Point> result = null;
+
+        for (Intersectable geo : geometries) {
+            List<Point> geoPoints = geo.findIntersections(ray);
+            if (geoPoints != null) {
+                if (result == null) {
+                    result = new ArrayList<>();
+                }
+                result.addAll(geoPoints);
+            }
         }
-        return totalList;
+        return result;
     }
 }
