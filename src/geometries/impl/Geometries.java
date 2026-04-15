@@ -1,16 +1,16 @@
-package geometries.api;
+package geometries.impl;
 
+import geometries.api.Intersectable;
 import primitives.Point;
 import primitives.Ray;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
  * A composite class that represents a collection of intersectables.
  */
-public class Geometries extends Intersectable{
+public class Geometries extends Intersectable {
     /**
      * A list of intersectables.
      */
@@ -21,7 +21,7 @@ public class Geometries extends Intersectable{
      * @param geometries a list of geometries to initialize the composite with.
      */
     public Geometries(Intersectable... geometries){
-        add(geometries);
+                add(geometries);
     }
 
     /**

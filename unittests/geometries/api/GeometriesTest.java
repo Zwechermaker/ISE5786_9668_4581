@@ -1,5 +1,6 @@
 package geometries.api;
 
+import geometries.impl.Geometries;
 import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
@@ -19,7 +20,7 @@ class GeometriesTest {
     /** Default constructor to satisfy JavaDoc generator */
     GeometriesTest() { /* to satisfy JavaDoc generator */ }
     /**
-     * Test method for {@link geometries.api.Geometries#add(Intersectable...)}.
+     * Test method for {@link Geometries#add(Intersectable...)}.
      */
     @Test
     void testAdd() {
@@ -55,7 +56,7 @@ class GeometriesTest {
     }
 
     /**
-     * Test method for {@link geometries.api.Geometries#findIntersections(primitives.Ray)}.
+     * Test method for {@link Geometries#findIntersections(primitives.Ray)}.
      */
     @Test
     void testFindIntersections() {
