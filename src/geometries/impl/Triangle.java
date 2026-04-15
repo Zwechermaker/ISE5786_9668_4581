@@ -28,11 +28,11 @@ public final class Triangle extends Polygon{
         Vector edge2 = _vertices.get(2).subtract(_vertices.get(0));
 
         //calculate "result" vector.
-        Vector tVec = ray.origin().subtract(_vertices.get(0));
+        Vector result = ray.origin().subtract(_vertices.get(0));
 
         //precalculate vectors used in cramer's rule
         Vector P = ray.direction().crossProduct(edge2);
-        Vector Q = tVec.crossProduct(edge1);
+        Vector Q = result.crossProduct(edge1);
 
         //calculate determinant of the matrix
         double det = edge1.dotProduct(P);
@@ -42,7 +42,7 @@ public final class Triangle extends Polygon{
             return null;
         }
         //calculate u using cramer's rule (u is the edge 1 barycentric component)
-        double u = P.dotProduct(tVec) / det;
+        double u = P.dotProduct(result) / det;
         //if the point is outside or on the edge
         if (Util.alignZero(u) <= 0 || Util.alignZero(u - 1) >= 0){
             return null;
