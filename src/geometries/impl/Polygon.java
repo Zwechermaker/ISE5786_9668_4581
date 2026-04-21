@@ -1,5 +1,6 @@
 package geometries.impl;
 
+import static java.lang.Boolean.TRUE;
 import static primitives.Util.isZero;
 
 import java.util.List;
@@ -78,6 +79,34 @@ public class Polygon extends Geometry {
    public Vector getNormal(Point point) { return _plane.getNormal(point); }
    @Override
   public List<Point> findIntersections(Ray ray){
-      return null;
+
+      List<Point> lst = _plane.findIntersections(ray);
+
+      //If there were no intersections with the plane to begin with.
+      if (lst == null){
+         return null;
+      }
+
+      //check if the point intersects the polygon inside the plane.
+      Vector vecIterate1 = _vertices.getFirst().subtract(ray.origin());
+      Boolean positive = null;
+      for (int i = 0; i < _size; i++){
+          //set up the next edge to check.
+          Vector vecIterate2 = _vertices.get((i + 1) % _size).subtract(ray.origin());
+
+          //set up the normal for the plane between the edge and the ray.
+          Vector normal = vecIterate1.crossProduct(vecIterate2);
+          double val = Util.alignZero(normal.dotProduct(ray.direction()));
+
+          if (i == 0){
+              positive = val > 0;
+          } if(positive != val > 0 || val == 0){
+              return null;
+          }
+
+          vecIterate1 = vecIterate2;
+      }
+
+      return lst;
    }
 }
