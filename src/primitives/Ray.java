@@ -64,21 +64,19 @@ public final class Ray {
      * @return a list of points created by getPoint according to the order
      */
     public List<Point> getPoints(double t1, double t2){
+        t1 = Util.alignZero(t1);
+        t2 = Util.alignZero(t2);
         if (t2 < t1){
-            //swap values.
-            t1 += t2;
-            t2 = t1 - t2;
-            t1 -= t2;
+            double temp = t1;
+            t1 = t2;
+            t2 = temp;
         }
-        if (t1 <= 0 && t2 <= 0) {
+        if (t2 <= 0) {
             return null;
         }
 
         if (t1 <= 0) {
             return List.of(getPoint(t2));
-        }
-        if (t2 <= 0) {
-            return List.of(getPoint(t1));
         }
 
         //return the points, closest first.

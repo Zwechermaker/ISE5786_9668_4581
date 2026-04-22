@@ -14,7 +14,12 @@ public final class Cylinder extends Tube{
     /**
      * The height of the cylinder.
      */
-    private final double height;
+    private final double _height;
+
+    private final Plane _topPlane;
+    private final Plane _bottomPlane;
+
+    private final Point _topCenter;
 
     /**
      * A parameter constructor for a cylinder
@@ -27,15 +32,77 @@ public final class Cylinder extends Tube{
         if (primitives.Util.alignZero(height) <= 0) {
             throw new IllegalArgumentException("Cylinder height must be greater than 0");
         }
-        this.height = height;
+        this._height = height;
+
+        _topCenter = axis.getPoint(height);
+        _topPlane = new Plane(_topCenter, axis.direction().scale(-1));
+        _bottomPlane = new Plane(_axis.origin(), axis.direction());
     }
-    @Override
-    public List<Point> findIntersections(Ray ray){
+
+    /**
+     * Helper method to check if a ray intersects a cylinder cap.
+     * @param capPlane the plane of the cap
+     * @param capCenter the center point of the cap
+     * @param ray the ray to check
+     * @return the intersection point if valid. if it isn't: null.
+     */
+    private Point getCapIntersection(Plane capPlane, Point capCenter, Ray ray) {
+        List<Point> hits = capPlane.findIntersections(ray);
+        if (hits == null) {
+            return null;
+        }
+
+        Point p = hits.get(0);
+        // check if the intersection isn't too far from the axis.
+        if (Util.alignZero(p.distanceSquared(capCenter) - _radiusSquared) < 0) {
+            return p;
+        }
         return null;
     }
     @Override
+    public List<Point> findIntersections(Ray ray) {
+        List<Point> lst = super.findIntersections(ray);
+
+        Point p1 = null;
+        Point p2 = null;
+
+        if (lst != null) {
+            for (Point point : lst) {
+                double height = point.subtract(_axis.origin()).dotProduct(_axis.direction());
+
+                if (Util.alignZero(height) >= 0 && Util.alignZero(height - this._height) <= 0) {
+                    if (p1 == null) p1 = point; else p2 = point;
+                }
+            }
+        }
+
+        if (p2 == null) {
+            Point pBottom = getCapIntersection(_bottomPlane, _axis.origin(), ray);
+            if (pBottom != null) {
+                if (p1 == null) p1 = pBottom; else p2 = pBottom;
+            }
+        }
+
+        if (p2 == null) {
+            Point pTop = getCapIntersection(_topPlane, _topCenter, ray);
+            if (pTop != null) {
+                if (p1 == null) p1 = pTop; else p2 = pTop;
+            }
+        }
+
+        if (p1 == null) {
+            return null;
+        }
+        if (p2 == null) {
+            return List.of(p1);
+        }
+
+        return List.of(p1, p2);
+    }
+
+    @Override
     public String toString() {
-        return super.toString() + ", height: " + height + "\n";
+        return super.toString() + ", height: " + _height + "\n";
     }
 
     @Override
@@ -45,12 +112,12 @@ public final class Cylinder extends Tube{
 
         if (!super.equals(obj)) return false; // if there is inheritance
         Cylinder cylinder = (Cylinder) obj;
-        return Util.isZero(height - cylinder.height);
+        return Util.isZero(_height - cylinder._height);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), height);
+        return Objects.hash(super.hashCode(), _height);
     }
 
 
@@ -64,7 +131,7 @@ public final class Cylinder extends Tube{
 
         if (Util.isZero(projection)) {
             return _axis.direction().scale(-1).normalize();
-        } else if (Util.isZero(projection - height)) {
+        } else if (Util.isZero(projection - _height)) {
             return _axis.direction().normalize();
         } else {
             // Pass the already calculated projection down to the parent

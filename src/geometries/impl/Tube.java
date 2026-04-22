@@ -63,23 +63,21 @@ public class Tube extends RadialGeometry{
         double b = 0;
         double c = -_radiusSquared;
 
-        try {
-            // if ray origin is axis origin.
-            Vector deltaOrigin = ray.origin().subtract(_axis.origin());
+
 
             try {
+                // if ray origin is axis origin it will throw an error.
+                Vector deltaOrigin = ray.origin().subtract(_axis.origin());
+
                 Vector deltaOriginOrthogonal = deltaOrigin.orthogonalComponent(_axis.direction());
 
                 b = 2 * vOrthogonal.dotProduct(deltaOriginOrthogonal);
                 c = deltaOriginOrthogonal.lengthSquared() - _radiusSquared;
 
             } catch (IllegalArgumentException e) {
-                // if delta origin is parallel to the axis, we claim that b = 0 and c is updated.
-                c = deltaOrigin.lengthSquared() - _radiusSquared;
+                // if delta origin is parallel to the axis or starts at the center base
+                // we claim that b = 0 and c is -radiusSquared.
             }
-        } catch (IllegalArgumentException e) {
-            // deltaOrigin is the zero vector so b remains 0 and c remains -radiusSquared.
-        }
         double discriminant = b * b - 4 * a * c;
 
         if (Util.alignZero(discriminant) <= 0){
@@ -87,8 +85,9 @@ public class Tube extends RadialGeometry{
         }
 
         double discriminantSquareRoot = Math.sqrt(discriminant);
-        double t1 = Util.alignZero((-b - discriminantSquareRoot) / (2 * a));
-        double t2 = Util.alignZero((-b + discriminantSquareRoot) / (2 * a));
+
+        double t1 = (-b - discriminantSquareRoot) / (2 * a);
+        double t2 = (-b + discriminantSquareRoot) / (2 * a);
 
         return ray.getPoints(t1, t2);
     }
