@@ -2,6 +2,8 @@ package primitives;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,6 +26,7 @@ class RayTest {
     private static final Vector V_NORMALIZED = new Vector(1, 0, 0);
     /** A ray for tests. */
     private static final Ray RAY = new Ray(P1, V_NORMALIZED);
+
     /**
      * Test method for {@link primitives.Ray#Ray(Point, Vector)}.
      */
@@ -38,6 +41,7 @@ class RayTest {
         // TC02: Creating a ray with an already normalized vector
         assertEquals(V_NORMALIZED, RAY.direction(), "ERROR: Ray constructor modifies an already normalized vector");
     }
+
     /**
      * Test method for {@link primitives.Ray#getPoint(double)}.
      */
@@ -45,13 +49,59 @@ class RayTest {
     void testGetPoint() {
         // ================== Equivalence Partitions Tests ==================
         // TC03: Parameter is positive
-        assertEquals(new Point(3,2,3), RAY.getPoint(2), "ERROR: getPoint fails for positive parameter");
+        assertEquals(new Point(3, 2, 3), RAY.getPoint(2), "ERROR: getPoint fails for positive parameter");
 
         // TC04: Parameter is negative
-        assertEquals(new Point(-1,2,3), RAY.getPoint(-2), "ERROR: getPoint fails for negative parameter");
+        assertEquals(new Point(-1, 2, 3), RAY.getPoint(-2), "ERROR: getPoint fails for negative parameter");
 
         // ================== Boundary Values Tests ==================
         // TC05: Parameter is zero
         assertEquals(P1, RAY.getPoint(0), "ERROR: getPoint fails for zero parameter");
+    }
+
+    /**
+     * Test method for {@link primitives.Ray#getPoints(double, double)}.
+     * Tests sorting and filtering of intersection points (t > 0).
+     */
+    @Test
+    void testGetPoints() {
+        // ================== Equivalence Partitions Tests ==================
+        // TC06: Both parameters are positive and in order
+        assertEquals(List.of(new Point(3, 2, 3), new Point(4, 2, 3)),
+                RAY.getPoints(2, 3),
+                "ERROR: getPoints fails for positive parameters in order");
+
+        // TC07: Both parameters are positive but reversed (should sort closest first)
+        assertEquals(List.of(new Point(3, 2, 3), new Point(4, 2, 3)),
+                RAY.getPoints(3, 2),
+                "ERROR: getPoints fails to sort reversed positive parameters");
+
+        // TC08: Both parameters are negative (should return null)
+        assertNull(RAY.getPoints(-2, -3),
+                "ERROR: getPoints should return null for two negative parameters");
+
+        // TC09: Mixed sign parameters (should filter out the negative, returning 1 point)
+        assertEquals(List.of(new Point(4, 2, 3)),
+                RAY.getPoints(-2, 3),
+                "ERROR: getPoints fails to filter mixed sign parameters");
+
+        // ================== Boundary Values Tests ==================
+        // TC10: Both parameters are zero (should return null)
+        assertNull(RAY.getPoints(0, 0),
+                "ERROR: getPoints should return null when both parameters are zero");
+
+        // TC11: One parameter is zero, one positive (should filter out zero, returning 1 point)
+        assertEquals(List.of(new Point(3, 2, 3)),
+                RAY.getPoints(0, 2),
+                "ERROR: getPoints fails when one parameter is zero and the other positive");
+
+        // TC12: One parameter is zero, one negative (should return null)
+        assertNull(RAY.getPoints(0, -2),
+                "ERROR: getPoints should return null when parameters are zero and negative");
+
+        // TC13: Identical positive parameters
+        assertEquals(List.of(new Point(3, 2, 3), new Point(3, 2, 3)),
+                RAY.getPoints(2, 2),
+                "ERROR: getPoints fails for identical positive parameters");
     }
 }

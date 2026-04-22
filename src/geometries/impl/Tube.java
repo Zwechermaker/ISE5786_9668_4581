@@ -50,7 +50,47 @@ public class Tube extends RadialGeometry{
     }
     @Override
     public List<Point> findIntersections(Ray ray){
-        return null;
+        Vector vOrthogonal;
+        try {
+            vOrthogonal = ray.direction().orthogonalComponent(_axis.direction());
+        } catch (IllegalArgumentException e){
+            //a zero vector is created only if the ray is parallel to the axis
+            return null;
+        }
+
+        //calculate the coefficients of the quadratic equation:
+        double a = vOrthogonal.lengthSquared();
+        double b = 0;
+        double c = -_radiusSquared;
+
+        try {
+            // if ray origin is axis origin.
+            Vector deltaOrigin = ray.origin().subtract(_axis.origin());
+
+            try {
+                Vector deltaOriginOrthogonal = deltaOrigin.orthogonalComponent(_axis.direction());
+
+                b = 2 * vOrthogonal.dotProduct(deltaOriginOrthogonal);
+                c = deltaOriginOrthogonal.lengthSquared() - _radiusSquared;
+
+            } catch (IllegalArgumentException e) {
+                // if delta origin is parallel to the axis, we claim that b = 0 and c is updated.
+                c = deltaOrigin.lengthSquared() - _radiusSquared;
+            }
+        } catch (IllegalArgumentException e) {
+            // deltaOrigin is the zero vector so b remains 0 and c remains -radiusSquared.
+        }
+        double discriminant = b * b - 4 * a * c;
+
+        if (Util.alignZero(discriminant) <= 0){
+            return null;
+        }
+
+        double discriminantSquareRoot = Math.sqrt(discriminant);
+        double t1 = Util.alignZero((-b - discriminantSquareRoot) / (2 * a));
+        double t2 = Util.alignZero((-b + discriminantSquareRoot) / (2 * a));
+
+        return ray.getPoints(t1, t2);
     }
     @Override
     public String toString() {

@@ -189,4 +189,26 @@ class VectorTest {
         // TC30: Normalizing a unit vector
         assertEquals(Vector.AXIS_X, Vector.AXIS_X.normalize(), "ERROR: normalize() on a unit vector does not return an equal vector");
     }
+
+    /**
+     * Test method for {@link primitives.Vector#orthogonalComponent(primitives.Vector)}.
+     */
+    @Test
+    void testOrthogonalComponent() {
+        Vector v = new Vector(1, 2, 3);
+        Vector axis = new Vector(1, 0, 0);
+
+        // ================== Equivalence Partitions Tests ==================
+        // TC31: General case (getting orthogonal component relative to an axis)
+        assertEquals(new Vector(0, 2, 3), v.orthogonalComponent(axis), "ERROR: orthogonalComponent() returns wrong vector");
+
+        // ================== Boundary Values Tests ==================
+        // TC32: Vector is already completely orthogonal to the axis
+        Vector vOrthogonal = new Vector(0, 5, 5);
+        assertEquals(vOrthogonal, vOrthogonal.orthogonalComponent(axis), "ERROR: orthogonalComponent() should return the original vector if already orthogonal");
+
+        // TC33: Vector is completely parallel to the axis (should yield zero vector, thus throwing exception)
+        Vector vParallel = new Vector(5, 0, 0);
+        assertThrows(IllegalArgumentException.class, () -> vParallel.orthogonalComponent(axis), "ERROR: orthogonalComponent() for a parallel vector should throw an exception due to zero vector creation");
+    }
 }

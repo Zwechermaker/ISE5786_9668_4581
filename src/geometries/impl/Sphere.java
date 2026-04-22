@@ -71,22 +71,9 @@ public final class Sphere extends RadialGeometry{
 
         double qpDist = Math.sqrt(_radiusSquared - oqDist * oqDist);
 
-        double t1 = Util.alignZero(projMiddle + qpDist);
-        double t2 = Util.alignZero(projMiddle - qpDist);
+        double t1 = Util.alignZero(projMiddle - qpDist);
+        double t2 = Util.alignZero(projMiddle + qpDist);
 
-        //check the number of intersections and return them
-        if (t1 <= 0 && t2 <= 0) {
-            return null;
-        }
-
-        if (t1 <= 0) {
-            return List.of(ray.getPoint(t2));
-        }
-        if (t2 <= 0) {
-            return List.of(ray.getPoint(t1));
-        }
-
-        //return the points, closest first.
-        return List.of(ray.getPoint(t2), ray.getPoint(t1));
+        return ray.getPoints(t1, t2);
     }
 }

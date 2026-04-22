@@ -110,6 +110,24 @@ public final class Vector extends Point{
         return this.scale(1/length());
     }
 
+    /**
+     * calculates the orthogonal component of a vector relative to an axis
+     * @param axis a vector to find the orthogonal component relative to.
+     * @return the orthogonal component of the vector relative to the axis
+     */
+    public Vector orthogonalComponent(Vector axis){
+        double scaleFactor = this.dotProduct(axis) / axis.lengthSquared();
+        Vector projection = null;
+
+        //if zero vector is created, vectors are already orthogonal.
+        try{
+            projection = axis.scale(scaleFactor);
+        } catch (IllegalArgumentException e){
+            return this;
+        }
+
+        return this.subtract(projection);
+    }
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
