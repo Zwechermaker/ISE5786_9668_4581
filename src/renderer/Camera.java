@@ -5,7 +5,6 @@ import primitives.Ray;
 import primitives.Util;
 import primitives.Vector;
 
-import java.util.Locale;
 import java.util.MissingResourceException;
 
 public class Camera implements Cloneable {
@@ -60,11 +59,11 @@ public class Camera implements Cloneable {
     /**
      * the amount of pixels on the x axis
      */
-    private int _xJ;
+    private int _nX;
     /**
      * the amount of pixels on the y axis
      */
-    private int _yI;
+    private int _nY;
 
     /**
      * default constructor for camera
@@ -81,8 +80,11 @@ public class Camera implements Cloneable {
      */
     public Ray constructRay(int column, int row){
         Point pIJ = _vpCenter;
-        if (!Util.isZero(_xJ)) pIJ = pIJ.add(_vRight.scale(_xJ));
-        if (!Util.isZero(_yI)) pIJ = pIJ.add(_vUp.scale(_yI));
+        double xJ = (column - ((double) (_nX - 1) / 2)) * _pixelWidth;
+        double yI = -(row - ((double) (_nY - 1) / 2)) * _pixelHeight;
+
+        if (!Util.isZero(xJ)) pIJ = pIJ.add(_vRight.scale(xJ));
+        if (!Util.isZero(yI)) pIJ = pIJ.add(_vUp.scale(yI));
         return new Ray(_p0, pIJ.subtract(_p0));
     }
 
@@ -91,7 +93,7 @@ public class Camera implements Cloneable {
      * @return a new builder for camera
      */
     public static Builder getBuilder() {
-        return null;
+        return new Builder();
     }
 
     /**
@@ -148,6 +150,7 @@ public class Camera implements Cloneable {
          * @return a Builder for camera with the set direction
          */
         public Builder setDirection(Point target) {
+
             return setDirection(target, Vector.AXIS_y);
         }
 
@@ -195,31 +198,53 @@ public class Camera implements Cloneable {
          * @return a Builder for camera with the resolution
          */
         public Builder setResolution(int width, int height) {
-            _camera._xJ = width;
-            _camera._yI = height;
+            _camera._nX = width;
+            _camera._nY = height;
             return this;
         }
 
+        /**
+         * checks the resolution of the camera and sets all relevant values.
+         */
         void checkResolution(){
-            if (_camera._xJ <= 0 || _camera._yI <= 0){
+            if (_camera._nX <= 0 || _camera._nY <= 0){
                 throw new IllegalArgumentException("Resolution must be positive");
             }
         }
+
+        /**
+         * checks the location and direction of the camera and sets all relevant values.
+         */
         void checkLocationAndDirection(){
             if (_camera._p0 == null){
                 throw new MissingResourceException("Location must be set", "Camera", "_p0");
             }
             if (_camera._vTo == null){
-                _camera._vTo = _target.subtract(_camera._p0);
+                _camera._vTo = _target.subtract(_camera._p0).normalize();
             }
+            _camera._vTo = _camera._vTo.normalize();
+            if (_vUpTemp == null) {
+                _vUpTemp = Vector.AXIS_y;
+            }
+            _camera._vUp = _vUpTemp.orthogonalComponent(_camera._vTo).normalize();
+
+            _camera._vRight = _camera._vUp.crossProduct(_camera._vTo);
         }
+
+        /**
+         * checks the view plane and sets all relevant values.
+         */
         void checkViewPlane(){
             if (Util.alignZero(_camera._width) <= 0 || Util.alignZero(_camera._height) <= 0){
                 throw new IllegalArgumentException("View plane size must be positive");
             }
-            _camera._pixelWidth = _camera._width / _camera._xJ;
-            _camera._pixelHeight = _camera._height / _camera._yI;
-            _camera._vpCenter = _camera._p0.add(_vToTemp.scale(_camera._distance));
+            _camera._pixelWidth = _camera._width / _camera._nX;
+            _camera._pixelHeight = _camera._height / _camera._nY;
+            _camera._vpCenter = _camera._p0.add(_camera._vTo.scale(_camera._distance));
+
+            if (Util.alignZero(_camera._distance) <= 0){
+                throw new IllegalArgumentException("View plane distance must be positive");
+            }
         }
         /**
          * builds the camera
