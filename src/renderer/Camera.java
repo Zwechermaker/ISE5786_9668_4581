@@ -165,6 +165,15 @@ public class Camera implements  Cloneable {
             return this;
         }
 
+        void checkResolution(){
+
+        }
+        void checkLocationAndDirection(){
+
+        }
+        void checkViewPlane(){
+
+        }
         /**
          * builds the camera
          * @return the camera
