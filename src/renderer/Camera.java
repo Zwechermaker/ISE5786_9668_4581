@@ -2,11 +2,13 @@ package renderer;
 
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
 
-public class Camera implements  Cloneable {
+public class Camera implements Cloneable {
 
     /**
      * The origin point of the camera.
@@ -56,6 +58,15 @@ public class Camera implements  Cloneable {
     private double _pixelHeight;
 
     /**
+     * the amount of pixels on the x axis
+     */
+    private int _xJ;
+    /**
+     * the amount of pixels on the y axis
+     */
+    private int _yI;
+
+    /**
      * default constructor for camera
      */
     private Camera() {
@@ -69,7 +80,10 @@ public class Camera implements  Cloneable {
      * @return the ray
      */
     public Ray constructRay(int column, int row){
-        return null;
+        Point pIJ = _vpCenter;
+        if (!Util.isZero(_xJ)) pIJ = pIJ.add(_vRight.scale(_xJ));
+        if (!Util.isZero(_yI)) pIJ = pIJ.add(_vUp.scale(_yI));
+        return new Ray(_p0, pIJ.subtract(_p0));
     }
 
     /**
@@ -89,7 +103,20 @@ public class Camera implements  Cloneable {
          */
         private final Camera _camera = new Camera();
 
+        /**
+         * temporary variable for initialization of the direction
+         */
         private Point _target = null;
+        /**
+         * temporary variable for holding the up direction for the camera
+         */
+        private Vector _vUpTemp = null;
+        /**
+         * temporary variable for holding the to direction for the camera
+         */
+        private Vector _vToTemp = null;
+
+
 
         /**
          * setter for the origin point of the camera
@@ -108,7 +135,11 @@ public class Camera implements  Cloneable {
          * @return a Builder for camera with the set direction
          */
         public Builder setDirection(Vector to,Vector up) {
-            return null;
+            _camera._vTo = to;
+            _vToTemp = to;
+            _vUpTemp = up;
+            _target = null;
+            return this;
         }
 
         /**
@@ -117,18 +148,22 @@ public class Camera implements  Cloneable {
          * @return a Builder for camera with the set direction
          */
         public Builder setDirection(Point target) {
-            _target = target;
-            return this;
+            return setDirection(target, Vector.AXIS_y);
         }
 
         /**
          * setter for the direction of the camera
+         * (sets the temporary variable of target to allow for different orders of initialization)
          * @param target the point the camera points to
          * @param up the vector the camera points up
          * @return a Builder for camera with the set direction
          */
         public Builder setDirection(Point target, Vector up) {
-            return null;
+            _target = target;
+            _vUpTemp = up;
+            _vToTemp = null;
+            return this;
+
         }
 
         /**
@@ -155,24 +190,36 @@ public class Camera implements  Cloneable {
 
         /**
          * setter for the resolution
-         * @param pixelWidth of a pixel
-         * @param pixelHeight of a pixel
+         * @param width of a pixel
+         * @param height of a pixel
          * @return a Builder for camera with the resolution
          */
-        public Builder setResolution(int pixelWidth, int pixelHeight) {
-            _camera._pixelWidth = pixelWidth;
-            _camera._pixelHeight = pixelHeight;
+        public Builder setResolution(int width, int height) {
+            _camera._xJ = width;
+            _camera._yI = height;
             return this;
         }
 
         void checkResolution(){
-
+            if (_camera._xJ <= 0 || _camera._yI <= 0){
+                throw new IllegalArgumentException("Resolution must be positive");
+            }
         }
         void checkLocationAndDirection(){
-
+            if (_camera._p0 == null){
+                throw new MissingResourceException("Location must be set", "Camera", "_p0");
+            }
+            if (_camera._vTo == null){
+                _camera._vTo = _target.subtract(_camera._p0);
+            }
         }
         void checkViewPlane(){
-
+            if (Util.alignZero(_camera._width) <= 0 || Util.alignZero(_camera._height) <= 0){
+                throw new IllegalArgumentException("View plane size must be positive");
+            }
+            _camera._pixelWidth = _camera._width / _camera._xJ;
+            _camera._pixelHeight = _camera._height / _camera._yI;
+            _camera._vpCenter = _camera._p0.add(_vToTemp.scale(_camera._distance));
         }
         /**
          * builds the camera
