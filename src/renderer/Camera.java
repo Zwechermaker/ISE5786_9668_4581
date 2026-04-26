@@ -11,22 +11,22 @@ public class Camera implements  Cloneable {
     /**
      * The origin point of the camera.
      */
-    private final Point _p0 = null;
+    private Point _p0 = null;
 
     /**
      * The forward vector (towards the scene).
      */
-    private final Vector _vTo = null;
+    private Vector _vTo = null;
 
     /**
      * The upward vector.
      */
-    private final Vector _vUp = null;
+    private Vector _vUp = null;
 
     /**
      * The rightward vector.
      */
-    private final Vector _vRight = null;
+    private Vector _vRight = null;
 
     /**
      * The width of the view plane.
@@ -87,7 +87,9 @@ public class Camera implements  Cloneable {
         /**
          * camera object to build
          */
-        private final Camera camera = new Camera();
+        private final Camera _camera = new Camera();
+
+        private Point _target = null;
 
         /**
          * setter for the origin point of the camera
@@ -95,13 +97,14 @@ public class Camera implements  Cloneable {
          * @return a Builder for camera with the origin point
          */
         public Builder setLocation(Point p0) {
-            return null;
+            _camera._p0 = p0;
+            return this;
         }
 
         /**
          * setter for the direction of the camera
          * @param to vector pointing were the camera points to
-         * @param up vector pointing were the camer points up
+         * @param up vector pointing were the camera points up
          * @return a Builder for camera with the set direction
          */
         public Builder setDirection(Vector to,Vector up) {
@@ -114,7 +117,8 @@ public class Camera implements  Cloneable {
          * @return a Builder for camera with the set direction
          */
         public Builder setDirection(Point target) {
-            return null;
+            _target = target;
+            return this;
         }
 
         /**
@@ -128,23 +132,15 @@ public class Camera implements  Cloneable {
         }
 
         /**
-         * setter for the resolution
-         * @param pixelWidth of a pixel
-         * @param pixelHeight of a pixel
-         * @return a Builder for camera with the resolution
-         */
-        public Builder setResolution(int pixelWidth, int pixelHeight) {
-            return null;
-        }
-
-        /**
          * setter for the size of the view plane
          * @param width of the view plane
          * @param height of the view plane
          * @return a Builder for camera with the size of the view plane
          */
         public Builder setVpSize(int width, int height){
-            return null;
+            _camera._width = width;
+            _camera._height = height;
+            return this;
         }
 
         /**
@@ -153,16 +149,36 @@ public class Camera implements  Cloneable {
          * @return a Builder for camera with the distance from the camera to the view plane
          */
         public Builder setVpDistance(double distance) {
-            return null;
+            _camera._distance = distance;
+            return this;
         }
 
+        /**
+         * setter for the resolution
+         * @param pixelWidth of a pixel
+         * @param pixelHeight of a pixel
+         * @return a Builder for camera with the resolution
+         */
+        public Builder setResolution(int pixelWidth, int pixelHeight) {
+            _camera._pixelWidth = pixelWidth;
+            _camera._pixelHeight = pixelHeight;
+            return this;
+        }
 
         /**
          * builds the camera
          * @return the camera
          */
         public Camera build() {
-            return null;
+            checkResolution();
+            checkLocationAndDirection();
+            checkViewPlane();
+
+            try {
+                return (Camera)_camera.clone();
+            } catch (CloneNotSupportedException _) {
+                return null;
+            }
         }
     }
 }
