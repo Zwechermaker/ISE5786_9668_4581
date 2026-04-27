@@ -7,7 +7,12 @@ import primitives.Vector;
 
 import java.util.MissingResourceException;
 
+
 public class Camera implements Cloneable {
+    /**
+     * default resolution for the camera
+     */
+    private static final int DEFAULT_PIXEL_NUM = 1;
 
     /**
      * The origin point of the camera.
@@ -59,11 +64,11 @@ public class Camera implements Cloneable {
     /**
      * the amount of pixels on the x axis
      */
-    private int _nX;
+    private int _nX = DEFAULT_PIXEL_NUM;
     /**
      * the amount of pixels on the y axis
      */
-    private int _nY;
+    private int _nY = DEFAULT_PIXEL_NUM;
 
     /**
      * default constructor for camera
@@ -175,7 +180,7 @@ public class Camera implements Cloneable {
          * @param height of the view plane
          * @return a Builder for camera with the size of the view plane
          */
-        public Builder setVpSize(int width, int height){
+        public Builder setVpSize(double width, double height){
             _camera._width = width;
             _camera._height = height;
             return this;
@@ -193,13 +198,13 @@ public class Camera implements Cloneable {
 
         /**
          * setter for the resolution
-         * @param width of a pixel
-         * @param height of a pixel
+         * @param nX amount of pixels on the x axis
+         * @param nY amount of pixels on the y axis
          * @return a Builder for camera with the resolution
          */
-        public Builder setResolution(int width, int height) {
-            _camera._nX = width;
-            _camera._nY = height;
+        public Builder setResolution(int nX, int nY) {
+            _camera._nX = nX;
+            _camera._nY = nY;
             return this;
         }
 
@@ -219,8 +224,11 @@ public class Camera implements Cloneable {
             if (_camera._p0 == null){
                 throw new MissingResourceException("Location must be set", "Camera", "_p0");
             }
+            if (_camera._vTo == null && _target == null) {
+                throw new MissingResourceException("Direction must be set", "Camera", "_vTo");
+            }
             if (_camera._vTo == null){
-                _camera._vTo = _target.subtract(_camera._p0).normalize();
+                _camera._vTo = _target.subtract(_camera._p0);
             }
             _camera._vTo = _camera._vTo.normalize();
             if (_vUpTemp == null) {
@@ -228,7 +236,7 @@ public class Camera implements Cloneable {
             }
             _camera._vUp = _vUpTemp.orthogonalComponent(_camera._vTo).normalize();
 
-            _camera._vRight = _camera._vUp.crossProduct(_camera._vTo);
+            _camera._vRight = _camera._vTo.crossProduct(_camera._vUp);
         }
 
         /**
@@ -238,13 +246,12 @@ public class Camera implements Cloneable {
             if (Util.alignZero(_camera._width) <= 0 || Util.alignZero(_camera._height) <= 0){
                 throw new IllegalArgumentException("View plane size must be positive");
             }
-            _camera._pixelWidth = _camera._width / _camera._nX;
-            _camera._pixelHeight = _camera._height / _camera._nY;
-            _camera._vpCenter = _camera._p0.add(_camera._vTo.scale(_camera._distance));
-
             if (Util.alignZero(_camera._distance) <= 0){
                 throw new IllegalArgumentException("View plane distance must be positive");
             }
+            _camera._pixelWidth = _camera._width / _camera._nX;
+            _camera._pixelHeight = _camera._height / _camera._nY;
+            _camera._vpCenter = _camera._p0.add(_camera._vTo.scale(_camera._distance));
         }
         /**
          * builds the camera
