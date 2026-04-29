@@ -27,6 +27,11 @@ class RayTest {
     /** A ray for tests. */
     private static final Ray RAY = new Ray(P1, V_NORMALIZED);
 
+    // Points at varying distances from the Ray's head (P1) for closest point tests
+    private static final Point P_CLOSE = new Point(2, 2, 3); // Distance of 1
+    private static final Point P_FAR_1 = new Point(3, 2, 3); // Distance of 2
+    private static final Point P_FAR_2 = new Point(4, 2, 3); // Distance of 3
+
     /**
      * Test method for {@link primitives.Ray#Ray(Point, Vector)}.
      */
@@ -103,5 +108,29 @@ class RayTest {
         assertEquals(List.of(new Point(3, 2, 3), new Point(3, 2, 3)),
                 RAY.getPoints(2, 2),
                 "ERROR: getPoints fails for identical positive parameters");
+    }
+
+    /**
+     * Test method for {@link primitives.Ray#findClosestPoint(List)}.
+     */
+    @Test
+    void testFindClosestPoint() {
+        // ================== Equivalence Partitions Tests ==================
+        // TC14: A middle point is the closest to the ray's head
+        assertEquals(P_CLOSE, RAY.findClosestPoint(List.of(P_FAR_1, P_CLOSE, P_FAR_2)),
+                "ERROR: findClosestPoint fails when the closest point is in the middle of the list");
+
+        // ================== Boundary Values Tests ==================
+        // TC15: Empty list (should return null)
+        assertNull(RAY.findClosestPoint(List.of()),
+                "ERROR: findClosestPoint should return null for an empty list");
+
+        // TC16: The first point is the closest to the ray's head
+        assertEquals(P_CLOSE, RAY.findClosestPoint(List.of(P_CLOSE, P_FAR_1, P_FAR_2)),
+                "ERROR: findClosestPoint fails when the closest point is the first in the list");
+
+        // TC17: The last point is the closest to the ray's head
+        assertEquals(P_CLOSE, RAY.findClosestPoint(List.of(P_FAR_1, P_FAR_2, P_CLOSE)),
+                "ERROR: findClosestPoint fails when the closest point is the last in the list");
     }
 }

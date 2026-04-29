@@ -102,4 +102,24 @@ public final class Ray {
     public String toString() {
         return "_origin: " + _origin + ", _direction: " + _direction + "\n";
     }
+
+    /**
+     * finds the closest point in the list
+     * @param points the list of points
+     * @return the closest one
+     */
+    public Point findClosestPoint(List <Point> points){
+        if(points == null){
+            return null;
+        }
+        Point currentClosestPoint = null;
+        double closestCurentDistance = Double.POSITIVE_INFINITY;
+        for(Point currentPoint : points){
+            if(currentPoint.distanceSquared(_origin) < closestCurentDistance){
+                closestCurentDistance = currentPoint.distanceSquared(_origin);
+                currentClosestPoint = currentPoint;
+            }
+        }
+        return currentClosestPoint;
+    }
 }
