@@ -21,11 +21,6 @@ class CameraIntersectionIntegration{
     /** Default constructor to satisfy documentation tools. */
     CameraIntersectionIntegration() { /* Default constructor to satisfy documentation tools */ }
 
-    /** Forward direction used in cameras. */
-    private static final Vector V_TO = new Vector(0, 0, -1);
-
-    /** Up direction used in cameras. */
-    private static final Vector V_UP = new Vector(0, 1, 0);
 
     /** First camera location used in tests. */
     private static final Point LOCATION_1 = Point.ZERO;
@@ -38,9 +33,6 @@ class CameraIntersectionIntegration{
 
     /** Default view-plane size used in tests. */
     private static final double VP_SIZE = 3d;
-
-    /** Default resolution for both X and Y axis. */
-    private static final int RESOLUTION = 3;
 
     /** Common point used for Plane generation in tests. */
     private static final Point PLANE_POINT = new Point(0, 0, -2);
@@ -55,24 +47,26 @@ class CameraIntersectionIntegration{
     private static final String ERROR_INTERSECTIONS = "Bad amount of intersections";
 
     /**
-     * camera used across different tests cases
+     * Shared camera builder used across different test cases
      */
-    private final Camera camera1 = Camera.getBuilder()
-            .setLocation(LOCATION_1)
-            .setDirection(V_TO, V_UP)
-            .setVpDistance(VP_DISTANCE)
-            .setVpSize(VP_SIZE, VP_SIZE)
-            .setResolution(RESOLUTION, RESOLUTION)
-            .build();
+    private final Camera.Builder baseCameraBuilder = Camera.getBuilder()
+            .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0))
+            .setVpDistance(1)
+            .setVpSize(3, 3)
+            .setResolution(3, 3);
+
     /**
-     * camera used across different tests cases
+     * camera 1 used across different test cases
      */
-    private final Camera camera2 = Camera.getBuilder()
+    private final Camera camera1 = baseCameraBuilder
+            .setLocation(LOCATION_1)
+            .build();
+
+    /**
+     * camera 2 used across different test cases
+     */
+    private final Camera camera2 = baseCameraBuilder
             .setLocation(LOCATION_2)
-            .setDirection(V_TO, V_UP)
-            .setVpDistance(VP_DISTANCE)
-            .setVpSize(VP_SIZE, VP_SIZE)
-            .setResolution(RESOLUTION, RESOLUTION)
             .build();
 
     /**
@@ -85,9 +79,9 @@ class CameraIntersectionIntegration{
     private void assertIntersectionsCount(Camera camera, Intersectable body, int expected, String errorMsg) {
         int count = 0;
 
-        // Iterate over all pixels according to the resolution
-        for (int i = 0; i < RESOLUTION; ++i) {
-            for (int j = 0; j < RESOLUTION; ++j) {
+        // iterate over all pixels according to the resolution
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
                 // Generates a ray and calculates intersections
                 List<Point> intersections = body.findIntersections(camera.constructRay(i,j));
                 if (intersections != null) {

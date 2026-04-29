@@ -239,10 +239,10 @@ public class Camera implements Cloneable {
             if (_vUpTemp == null) {
                 _vUpTemp = Vector.AXIS_y;
             }
-            _camera._vUp = _vUpTemp.orthogonalComponent(_camera._vTo).normalize();
+            _camera._vRight = _camera._vTo.crossProduct(_vUpTemp).normalize();
 
-            //no need for normalization as the result of to orthogonal normalized vectors.
-            _camera._vRight = _camera._vTo.crossProduct(_camera._vUp);
+            // no need for normilization (as the cross product of 2 orthogonal normalized vectors(
+            _camera._vUp = _camera._vRight.crossProduct(_camera._vTo);
         }
 
         /**
