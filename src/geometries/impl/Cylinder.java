@@ -16,9 +16,19 @@ public final class Cylinder extends Tube{
      */
     private final double _height;
 
+    /**
+     * a plane at the top of the cylinder for ray-intersections purposes
+     */
     private final Plane _topPlane;
+
+    /**
+     * a plane at the bottom of the cylinder for ray-intersections purposes
+     */
     private final Plane _bottomPlane;
 
+    /**
+     * a point at the center of the top base for ray-intersection purposes.
+     */
     private final Point _topCenter;
 
     /**

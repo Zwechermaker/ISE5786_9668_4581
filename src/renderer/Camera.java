@@ -7,7 +7,9 @@ import primitives.Vector;
 
 import java.util.MissingResourceException;
 
-
+/**
+ * a class that describes a camera and view plane for ray construction.
+ */
 public class Camera implements Cloneable {
     /**
      * default resolution for the camera
@@ -105,6 +107,9 @@ public class Camera implements Cloneable {
      * a builder class for camera
      */
     public static class Builder {
+        /** Default constructor to satisfy documentation tools. */
+        Builder() { /* Default constructor to satisfy documentation tools */ }
+
         /**
          * camera object to build
          */
@@ -236,6 +241,7 @@ public class Camera implements Cloneable {
             }
             _camera._vUp = _vUpTemp.orthogonalComponent(_camera._vTo).normalize();
 
+            //no need for normalization as the result of to orthogonal normalized vectors.
             _camera._vRight = _camera._vTo.crossProduct(_camera._vUp);
         }
 
