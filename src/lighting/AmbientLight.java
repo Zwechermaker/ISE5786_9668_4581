@@ -19,7 +19,7 @@ public final class AmbientLight {
      * a constructor for the intensity
      * @param color the ambient light color
      */
-    AmbientLight(Color color) {
+    public AmbientLight(Color color) {
         intensity = color;
     }
 

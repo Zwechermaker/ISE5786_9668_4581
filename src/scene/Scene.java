@@ -2,8 +2,8 @@ package scene;
 
 import geometries.impl.Geometries;
 import lighting.AmbientLight;
+import primitives.Color;
 
-import java.awt.*;
 
 /**
  * passive data stucture of the scene
@@ -27,7 +27,7 @@ public class Scene {
      * @param ambient the ambient light of the scene
      * @return this
      */
-    public Scene setAmbient(AmbientLight ambient) {
+    public Scene setAmbientLight(AmbientLight ambient) {
         this.ambient = ambient;
         return this;
     }
@@ -37,7 +37,7 @@ public class Scene {
      * @param backGround the color of the background
      * @return this
      */
-    public Scene setBackGround(Color backGround) {
+    public Scene setBackground(Color backGround) {
         this.backGround = backGround;
         return this;
     }

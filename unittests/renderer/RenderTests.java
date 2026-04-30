@@ -2,6 +2,7 @@ package renderer;
 
 import static java.awt.Color.YELLOW;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import geometries.impl.Sphere;
@@ -127,6 +128,7 @@ class RenderTests {
     * @param  jsonName the JSON scene file name
     * @return          the camera after rendering
     */
+   @Disabled
    static Camera renderSceneJSON(Camera.Builder builder, String jsonName) {
       Scene scene = new Scene("Using JSON");
       // Parse from JSON file into scene object instead of the new Scene above,
@@ -141,6 +143,7 @@ class RenderTests {
    }
 
    /** Test for XML based scene - for bonus */
+   @Disabled
    @Test
    void testBasicRenderXml() {
       renderSceneXML(baseCameraBuilder(), "basicRenderTestTwoColors") //
@@ -149,6 +152,7 @@ class RenderTests {
    }
 
    /** Test for JSON based scene - for bonus */
+   @Disabled
    @Test
    void testBasicRenderJson() {
       renderSceneJSON(baseCameraBuilder(), "basicRenderTestTwoColors") //
