@@ -4,13 +4,29 @@ import org.junit.jupiter.api.Test;
 import primitives.Color;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+/**
+ * Unit tests for the ImageWriter class.
+ */
 class ImageWriterTest {
+    /** The horizontal resolution of the test image. */
     private final static int resolutionX = 800;
+
+    /** The vertical resolution of the test image. */
     private final static int resolutionY = 500;
+
+    /** The size of the grid squares in pixels. */
     private final static int squareSize = 50;
+
+    /** The color used for the grid lines. */
     private final static Color netColor = new Color(214, 41, 140);
+
+    /** The background color used inside the grid squares. */
     private final static Color gridColor = new Color(41, 214, 115);
+    /**
+     * Default constructor for Javadoc purposes.
+     */
+    ImageWriterTest() {}
+    /** Tests the creation of an image with a basic grid pattern and writes it to a file. */
 
     @Test
     void testImageWriter() {

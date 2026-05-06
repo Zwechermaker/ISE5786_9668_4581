@@ -56,7 +56,7 @@ public final class Cylinder extends Tube{
      * @param ray the ray to check
      * @return the intersection point if valid. if it isn't: null.
      */
-    private Point getCapIntersection(Plane capPlane, Point capCenter, Ray ray) {
+    private Point getDiscIntersection(Plane capPlane, Point capCenter, Ray ray) {
         List<Point> hits = capPlane.findIntersections(ray);
         if (hits == null) {
             return null;
@@ -73,41 +73,45 @@ public final class Cylinder extends Tube{
     public List<Point> findIntersections(Ray ray) {
         List<Point> lst = super.findIntersections(ray);
 
-        Point p1 = null;
-        Point p2 = null;
+        Point[] foundIntersections = new Point[2];
+        int count = 0;
 
         if (lst != null) {
             for (Point point : lst) {
                 double height = point.subtract(_axis.origin()).dotProduct(_axis.direction());
 
                 if (Util.alignZero(height) >= 0 && Util.alignZero(height - this._height) <= 0) {
-                    if (p1 == null) p1 = point; else p2 = point;
+                    foundIntersections[count++] = point;
                 }
             }
         }
 
-        if (p2 == null) {
-            Point pBottom = getCapIntersection(_bottomPlane, _axis.origin(), ray);
+        if (count < 2) {
+            Point pBottom = getDiscIntersection(_bottomPlane, _axis.origin(), ray);
             if (pBottom != null) {
-                if (p1 == null) p1 = pBottom; else p2 = pBottom;
+                foundIntersections[count++] = pBottom;
             }
         }
 
-        if (p2 == null) {
-            Point pTop = getCapIntersection(_topPlane, _topCenter, ray);
+        if (count < 2) {
+            Point pTop = getDiscIntersection(_topPlane, _topCenter, ray);
             if (pTop != null) {
-                if (p1 == null) p1 = pTop; else p2 = pTop;
+                foundIntersections[count++] = pTop;
             }
         }
 
-        if (p1 == null) {
+        if (count == 0) {
             return null;
         }
-        if (p2 == null) {
-            return List.of(p1);
+        if (count == 1) {
+            return List.of(foundIntersections[0]);
         }
 
-        return List.of(p1, p2);
+        // return sorted by distance from ray origin.
+        if (foundIntersections[0].distanceSquared(ray.origin()) > foundIntersections[1].distanceSquared(ray.origin())) {
+            return List.of(foundIntersections[1], foundIntersections[0]);
+        }
+        return List.of(foundIntersections[0], foundIntersections[1]);
     }
 
     @Override

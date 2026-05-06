@@ -107,6 +107,7 @@ class RenderTests {
     * @param  xmlName the XML scene file name
     * @return         the camera after rendering
     */
+   @Disabled
    Camera renderSceneXML(Camera.Builder builder, String xmlName) {
       Scene scene = new Scene("Using XML");
       // Parse from XML file into scene object instead of the new Scene above,

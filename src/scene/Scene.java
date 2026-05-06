@@ -9,9 +9,22 @@ import primitives.Color;
  * passive data stucture of the scene
  */
 public class Scene {
+    /** the name of the scene. */
     public String name;
+
+    /**
+     * the ambient light of the scene, default is no ambient light.
+     */
     public AmbientLight ambient = AmbientLight.NONE;
+
+    /**
+     * the background color of the scene, default is black.
+     */
     public Color backGround = Color.BLACK;
+
+    /**
+     * the collection of 3D geometries present in the scene.
+    */
     public Geometries geometries = new Geometries();
 
     /**

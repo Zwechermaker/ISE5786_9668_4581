@@ -6,6 +6,9 @@ import primitives.Ray;
 
 import java.util.List;
 
+/**
+ * a class that describes a basic ray tracer.
+ */
 public class SimpleRayTracer extends RayTracerBase {
 
     @Override

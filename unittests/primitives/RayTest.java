@@ -28,9 +28,14 @@ class RayTest {
     private static final Ray RAY = new Ray(P1, V_NORMALIZED);
 
     // Points at varying distances from the Ray's head (P1) for closest point tests
-    private static final Point P_CLOSE = new Point(2, 2, 3); // Distance of 1
-    private static final Point P_FAR_1 = new Point(3, 2, 3); // Distance of 2
-    private static final Point P_FAR_2 = new Point(4, 2, 3); // Distance of 3
+    /** A point for tests at (2, 2, 3) representing a distance of 1. */
+    private static final Point P_CLOSE = new Point(2, 2, 3);
+
+    /** A point for tests at (3, 2, 3) representing a distance of 2. */
+    private static final Point P_FAR_1 = new Point(3, 2, 3);
+
+    /** A point for tests at (4, 2, 3) representing a distance of 3. */
+    private static final Point P_FAR_2 = new Point(4, 2, 3);
 
     /**
      * Test method for {@link primitives.Ray#Ray(Point, Vector)}.
