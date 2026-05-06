@@ -13,6 +13,7 @@ public class SimpleRayTracer extends RayTracerBase {
 
     @Override
     public Color traceRay(Ray ray) {
+        //does not violate the law of demeter because scene is a passive data structure
         List<Point> intersections = _scene.geometries.findIntersections(ray);
         if (intersections == null) {
             return _scene.backGround;

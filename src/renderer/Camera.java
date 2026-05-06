@@ -179,12 +179,6 @@ public class Camera implements Cloneable {
          * temporary variable for holding the up direction for the camera
          */
         private Vector _vUpTemp = null;
-        /**
-         * temporary variable for holding the to direction for the camera
-         */
-        private Vector _vToTemp = null;
-        //TODO: check if we need this variable.
-
 
         /**
          * setter for the origin point of the camera
@@ -204,7 +198,6 @@ public class Camera implements Cloneable {
          */
         public Builder setDirection(Vector to,Vector up) {
             _camera._vTo = to;
-            _vToTemp = to;
             _vUpTemp = up;
             _target = null;
             return this;
@@ -230,7 +223,6 @@ public class Camera implements Cloneable {
         public Builder setDirection(Point target, Vector up) {
             _target = target;
             _vUpTemp = up;
-            _vToTemp = null;
             return this;
 
         }

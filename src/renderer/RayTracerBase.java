@@ -22,7 +22,7 @@ abstract class RayTracerBase {
     abstract Color traceRay(Ray ray);
 
     /**
-     * Constructor for RayTracerBase
+     *  Constructor for RayTracerBase
      * @param scene the scene to trace rays in
      */
     RayTracerBase(Scene scene) {
