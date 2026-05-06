@@ -22,7 +22,7 @@ public final class Triangle extends Polygon{
     }
 
     @Override
-    public List<Intersection> findIntersections(Ray ray) {
+    public List<Intersection> calcIntersectionsHelper(Ray ray) {
         //calculating two edge vectors (containing the first vertex)
         Vector edge1 = _vertices.get(1).subtract(_vertices.get(0));
         Vector edge2 = _vertices.get(2).subtract(_vertices.get(0));
@@ -58,11 +58,7 @@ public final class Triangle extends Polygon{
         //calculating t using cramer's rule
         double t = Q.dotProduct(edge2) / det;
 
-        //if the triangle is behind the ray
-        if (Util.alignZero(t) <= 0){
-            return null;
-        }
-        //return the point
-        return List.of(ray.getPoint(t));
+        //if the triangle is behind the ray, return null
+        return getPoints(ray, t);
     }
 }

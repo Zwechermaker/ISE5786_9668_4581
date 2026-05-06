@@ -11,7 +11,7 @@ public final class Vector extends Point{
     /**
      * A constant that describes a unit vector in the y direction
      */
-    public static final Vector AXIS_y = new Vector(0,1,0);
+    public static final Vector AXIS_Y = new Vector(0,1,0);
     /**
      * A constant that describes a unit vector in the z direction
      */

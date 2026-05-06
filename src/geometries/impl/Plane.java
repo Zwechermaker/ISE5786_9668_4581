@@ -66,7 +66,7 @@ public final class Plane extends Geometry {
         if (Util.alignZero(parameter) <= 0){
             return null;
         }
-        return List.of(new Intersection(this, ray.getPoint(parameter)));
+        return getPoints(ray, parameter);
     }
 
     @Override

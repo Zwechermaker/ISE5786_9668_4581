@@ -2,8 +2,8 @@ package renderer;
 
 import geometries.api.Intersectable;
 import primitives.Color;
-import primitives.Point;
 import primitives.Ray;
+import geometries.api.Intersectable.Intersection;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public class SimpleRayTracer extends RayTracerBase {
     @Override
     public Color traceRay(Ray ray) {
         //does not violate the law of demeter because scene is a passive data structure
-        List<Point> intersections = _scene.geometries.calcIntersections(ray);
+        List<Intersection> intersections = _scene.geometries.calcIntersections(ray);
         return intersections == null
                 ? _scene.background
                 : calcColor(ray.findClosestIntersection(intersections));
@@ -35,7 +35,7 @@ public class SimpleRayTracer extends RayTracerBase {
      * @return the color the intersection holds
      */
     private Color calcColor(Intersectable.Intersection intersection){
-        return _scene.ambientLight.getIntensity()
+        return _scene.ambientLight.getIntensity().scale(intersection.material._kA)
                 .add(intersection.geometry.getEmission());
     }
 

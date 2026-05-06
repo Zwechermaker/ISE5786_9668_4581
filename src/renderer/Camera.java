@@ -210,7 +210,7 @@ public class Camera implements Cloneable {
          */
         public Builder setDirection(Point target) {
 
-            return setDirection(target, Vector.AXIS_y);
+            return setDirection(target, Vector.AXIS_Y);
         }
 
         /**
@@ -303,7 +303,7 @@ public class Camera implements Cloneable {
             }
             _camera._vTo = _camera._vTo.normalize();
             if (_vUpTemp == null) {
-                _vUpTemp = Vector.AXIS_y;
+                _vUpTemp = Vector.AXIS_Y;
             }
             _camera._vRight = _camera._vTo.crossProduct(_vUpTemp).normalize();
 

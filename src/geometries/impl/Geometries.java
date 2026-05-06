@@ -2,8 +2,10 @@ package geometries.impl;
 
 import geometries.api.Intersectable;
 import primitives.Ray;
+import primitives.Util;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -47,4 +49,6 @@ public class Geometries extends Intersectable {
         }
         return result;
     }
+
+
 }

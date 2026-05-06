@@ -57,8 +57,9 @@ public final class Cylinder extends Tube{
      * @return the intersection point if valid. if it isn't: null.
      */
     private Point getDiscIntersection(Plane capPlane, Point capCenter, Ray ray) {
+        // The new API returns List<Intersection>. A ray intersects a plane at most once.
         List<Point> hits = capPlane.findIntersections(ray);
-        if (hits == null) {
+        if (hits == null || hits.isEmpty()) {
             return null;
         }
 
@@ -70,15 +71,17 @@ public final class Cylinder extends Tube{
         return null;
     }
     @Override
-    protected List<Intersection> findIntersections(Ray ray) {
-        List<Point> lst = super.findIntersections(ray);
+    public List<Intersection> calcIntersectionsHelper(Ray ray) {
+        // Get intersections from the infinite tube body
+        List<Intersection> lst = super.calcIntersectionsHelper(ray);
 
         Point[] foundIntersections = new Point[2];
         int count = 0;
 
         if (lst != null) {
-            for (Point point : lst) {
-                double height = point.subtract(_axis.origin()).dotProduct(_axis.direction());
+            for (Intersection intersection : lst) {
+                Point point = intersection.point;
+                double height = point.subtract(_axis.origin()).dotProduct(_axis.direction()); // distance from bottom base
 
                 if (Util.alignZero(height) >= 0 && Util.alignZero(height - this._height) <= 0) {
                     foundIntersections[count++] = point;

@@ -53,10 +53,10 @@ public final class Sphere extends RadialGeometry{
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Intersection> calcIntersectionsHelper(Ray ray) {
         // if the ray starts at the center of the sphere.
         if (_center.equals(ray.origin())) {
-            return List.of(ray.getPoint(_radius));
+            return getPoints(ray, _radius);
         }
 
         Vector midCircVec = _center.subtract(ray.origin());
@@ -74,6 +74,6 @@ public final class Sphere extends RadialGeometry{
         double t1 = Util.alignZero(projMiddle - qpDist);
         double t2 = Util.alignZero(projMiddle + qpDist);
 
-        return ray.getPoints(t1, t2);
+        return getPoints(ray, t1,t2);
     }
 }

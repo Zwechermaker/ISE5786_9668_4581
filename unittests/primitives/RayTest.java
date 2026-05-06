@@ -2,10 +2,12 @@ package primitives;
 
 import org.junit.jupiter.api.Test;
 
+import geometries.impl.Sphere;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import geometries.api.Intersectable.Intersection;
 /**
  * Unit tests for the Ray class.
  */
@@ -26,6 +28,9 @@ class RayTest {
     private static final Vector V_NORMALIZED = new Vector(1, 0, 0);
     /** A ray for tests. */
     private static final Ray RAY = new Ray(P1, V_NORMALIZED);
+
+    /** A dummy geometry for creating intersections. */
+    private static final Sphere DUMMY_GEOMETRY = new Sphere(Point.ZERO, 1);
 
     // Points at varying distances from the Ray's head (P1) for closest point tests
     /** A point for tests at (2, 2, 3) representing a distance of 1. */
@@ -70,72 +75,32 @@ class RayTest {
     }
 
     /**
-     * Test method for {@link primitives.Ray#getPoints(double, double)}.
+     * Test method for {@link primitives.Ray#findClosestIntersection(List)}.
      * Tests sorting and filtering of intersection points (t > 0).
      */
     @Test
-    void testGetPoints() {
+    void testFindClosestIntersection() {
+        // Create intersection points for testing
+        Intersection iClose = new Intersection(DUMMY_GEOMETRY, P_CLOSE);
+        Intersection iFar1 = new Intersection(DUMMY_GEOMETRY, P_FAR_1);
+        Intersection iFar2 = new Intersection(DUMMY_GEOMETRY, P_FAR_2);
+
         // ================== Equivalence Partitions Tests ==================
-        // TC06: Both parameters are positive and in order
-        assertEquals(List.of(new Point(3, 2, 3), new Point(4, 2, 3)),
-                RAY.getPoints(2, 3),
-                "ERROR: getPoints fails for positive parameters in order");
-
-        // TC07: Both parameters are positive but reversed (should sort closest first)
-        assertEquals(List.of(new Point(3, 2, 3), new Point(4, 2, 3)),
-                RAY.getPoints(3, 2),
-                "ERROR: getPoints fails to sort reversed positive parameters");
-
-        // TC08: Both parameters are negative (should return null)
-        assertNull(RAY.getPoints(-2, -3),
-                "ERROR: getPoints should return null for two negative parameters");
-
-        // TC09: Mixed sign parameters (should filter out the negative, returning 1 point)
-        assertEquals(List.of(new Point(4, 2, 3)),
-                RAY.getPoints(-2, 3),
-                "ERROR: getPoints fails to filter mixed sign parameters");
+        // TC06: A middle point is the closest to the ray's head
+        assertEquals(iClose, RAY.findClosestIntersection(List.of(iFar1, iClose, iFar2)),
+                "ERROR: findClosestIntersection fails when the closest point is in the middle of the list");
 
         // ================== Boundary Values Tests ==================
-        // TC10: Both parameters are zero (should return null)
-        assertNull(RAY.getPoints(0, 0),
-                "ERROR: getPoints should return null when both parameters are zero");
+        // TC07: Empty list (should return null)
+        assertNull(RAY.findClosestIntersection(List.of()),
+                "ERROR: findClosestIntersection should return null for an empty list");
 
-        // TC11: One parameter is zero, one positive (should filter out zero, returning 1 point)
-        assertEquals(List.of(new Point(3, 2, 3)),
-                RAY.getPoints(0, 2),
-                "ERROR: getPoints fails when one parameter is zero and the other positive");
+        // TC08: The first point is the closest to the ray's head
+        assertEquals(iClose, RAY.findClosestIntersection(List.of(iClose, iFar1, iFar2)),
+                "ERROR: findClosestIntersection fails when the closest point is the first in the list");
 
-        // TC12: One parameter is zero, one negative (should return null)
-        assertNull(RAY.getPoints(0, -2),
-                "ERROR: getPoints should return null when parameters are zero and negative");
-
-        // TC13: Identical positive parameters
-        assertEquals(List.of(new Point(3, 2, 3), new Point(3, 2, 3)),
-                RAY.getPoints(2, 2),
-                "ERROR: getPoints fails for identical positive parameters");
-    }
-
-    /**
-     * Test method for {@link primitives.Ray#findClosestPoint(List)}.
-     */
-    @Test
-    void testFindClosestPoint() {
-        // ================== Equivalence Partitions Tests ==================
-        // TC14: A middle point is the closest to the ray's head
-        assertEquals(P_CLOSE, RAY.findClosestPoint(List.of(P_FAR_1, P_CLOSE, P_FAR_2)),
-                "ERROR: findClosestPoint fails when the closest point is in the middle of the list");
-
-        // ================== Boundary Values Tests ==================
-        // TC15: Empty list (should return null)
-        assertNull(RAY.findClosestPoint(List.of()),
-                "ERROR: findClosestPoint should return null for an empty list");
-
-        // TC16: The first point is the closest to the ray's head
-        assertEquals(P_CLOSE, RAY.findClosestPoint(List.of(P_CLOSE, P_FAR_1, P_FAR_2)),
-                "ERROR: findClosestPoint fails when the closest point is the first in the list");
-
-        // TC17: The last point is the closest to the ray's head
-        assertEquals(P_CLOSE, RAY.findClosestPoint(List.of(P_FAR_1, P_FAR_2, P_CLOSE)),
-                "ERROR: findClosestPoint fails when the closest point is the last in the list");
+        // TC09: The last point is the closest to the ray's head
+        assertEquals(iClose, RAY.findClosestIntersection(List.of(iFar1, iFar2, iClose)),
+                "ERROR: findClosestIntersection fails when the closest point is the last in the list");
     }
 }

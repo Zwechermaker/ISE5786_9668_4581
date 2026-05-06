@@ -1,8 +1,9 @@
 package geometries.api;
 
-import primitives.Color;
-import primitives.Point;
-import primitives.Vector;
+import primitives.*;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * an abstract class that represents a geometry in space
@@ -17,6 +18,11 @@ public abstract class Geometry extends Intersectable {
      * emission color of a geometry.
      */
     private Color _emission = Color.BLACK;
+
+    /**
+     *a material variable that defines a geometry.
+     */
+    private Material _material = new Material();
     /**
      * a function that calculates the normal of a geometry
      * @return a normal for the geometry
@@ -39,5 +45,36 @@ public abstract class Geometry extends Intersectable {
      */
     public Color getEmission(){
         return _emission;
+    }
+    /**
+     * a setter for material.
+     * @param material a material to set
+     * @return renewed object to allow for concatenation
+     */
+    public Geometry setMaterial(Material material){
+        _material = material;
+        return this;
+    }
+    public Material getMaterial(){
+        return _material;
+    }
+
+
+    /**
+     *  A function that takes parameters found in findIntersections function
+     *  and calculates a list of points on the ray based on the parameters.
+     * @param ray to find the point in.
+     * @param tValues the distances from the ray's origin to the intersection points
+     * @return A list of intersection
+     */
+    protected List<Intersection> getPoints(Ray ray, double... tValues) {
+        List<Intersection> result = null;
+        for (double t : tValues) {
+            if (Util.alignZero(t) > 0) {
+                if (result == null) result = new LinkedList<>();
+                result.add(new Intersection(this, ray.getPoint(t)));
+            }
+        }
+        return result;
     }
 }

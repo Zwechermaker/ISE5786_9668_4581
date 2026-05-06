@@ -49,7 +49,7 @@ public class Tube extends RadialGeometry{
         return point.subtract(projectionPoint).normalize();
     }
     @Override
-    public List<Point> findIntersections(Ray ray){
+    public List<Intersection> calcIntersectionsHelper(Ray ray){
         Vector vOrthogonal;
         try {
             vOrthogonal = ray.direction().orthogonalComponent(_axis.direction());
@@ -89,7 +89,7 @@ public class Tube extends RadialGeometry{
         double t1 = (-b - discriminantSquareRoot) / (2 * a);
         double t2 = (-b + discriminantSquareRoot) / (2 * a);
 
-        return ray.getPoints(t1, t2);
+        return this.getPoints(ray,t1, t2);
     }
     @Override
     public String toString() {
@@ -110,6 +110,4 @@ public class Tube extends RadialGeometry{
     public int hashCode() {
         return Objects.hash(super.hashCode(), _axis);
     }
-
-
 }

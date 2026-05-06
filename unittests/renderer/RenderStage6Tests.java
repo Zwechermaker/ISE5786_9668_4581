@@ -11,9 +11,7 @@ import org.junit.jupiter.api.Test;
 import geometries.impl.Sphere;
 import geometries.impl.Triangle;
 import lighting.AmbientLight;
-import primitives.Color;
-import primitives.Point;
-import primitives.Vector;
+import primitives.*;
 import scene.Scene;
 
 /**
@@ -91,19 +89,25 @@ class RenderStage6Tests {
     * bodies and render it into a png image with a grid
     */
    @Test
-   @Disabled("To be updated and enabled by students")
    void testRenderAmbientColor() {
-      Scene scene = new Scene("Ambient colors"); // TODO by students
+      Scene scene = new Scene("Ambient colors").setAmbientLight(new AmbientLight(new Color(WHITE)));; // TODO by students
       scene.geometries //
          .add(// center
-              new Sphere(O, RADIUS), // TODO by students
+              new Sphere(O, RADIUS)
+                      .setMaterial(new Material().setKa(new Double3(0.4))),
               // up left
-              new Triangle(P_LM, P_MT, P_LT), // TODO by students
+              new Triangle(P_LM, P_MT, P_LT)
+                      .setMaterial(new Material().setKa(new Double3(0,0.8,0)))
+                      .setEmission(new Color(GREEN)),
               // down left
-              new Triangle(P_LM, P_MB, P_LB), // TODO by students
-              // down right
-              new Triangle(P_RM, P_MB, P_RB) // TODO by students
-         );// TODO by students
+              new Triangle(P_LM, P_MB, P_LB)
+                      .setMaterial(new Material().setKa(new Double3(0.8,0,0)))
+                      .setEmission(new Color(RED)),
+                 // down right
+              new Triangle(P_RM, P_MB, P_RB)
+                      .setMaterial(new Material().setKa(new Double3(0,0,0.8)))
+                      .setEmission(new Color(BLUE))
+         );
       createImage(scene, "ambient render test");
    }
 }
