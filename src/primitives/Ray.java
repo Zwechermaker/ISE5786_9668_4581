@@ -1,5 +1,7 @@
 package primitives;
 
+import geometries.api.Intersectable;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -104,22 +106,34 @@ public final class Ray {
     }
 
     /**
-     * finds the closest point in the list
-     * @param points the list of points
-     * @return the closest one
+     * find the closest intersection.
+     * @param intersections a list of intersections
+     * @return the closest intersection
      */
-    public Point findClosestPoint(List <Point> points){
-        if(points == null){
+    public Intersectable.Intersection findClosestIntersection(List<Intersectable.Intersection> intersections){
+        if(intersections == null){
             return null;
         }
-        Point currentClosestPoint = null;
+        Intersectable.Intersection currentClosestIntersection = null;
         double closestCurentDistance = Double.POSITIVE_INFINITY;
-        for(Point currentPoint : points){
-            if(currentPoint.distanceSquared(_origin) < closestCurentDistance){
-                closestCurentDistance = currentPoint.distanceSquared(_origin);
-                currentClosestPoint = currentPoint;
+        for(Intersectable.Intersection currentIntersection : intersections){
+            if(currentIntersection.point.distanceSquared(_origin) < closestCurentDistance){
+                closestCurentDistance = currentIntersection.point.distanceSquared(_origin);
+                currentClosestIntersection = currentIntersection;
             }
         }
-        return currentClosestPoint;
+        return currentClosestIntersection;
+    }
+    /**
+     * finds the closest point in the list
+     * @param points the list of points
+     * @return the closest point
+     */
+    public Point findClosestPoint(List<Point> points) {
+        return points == null ? null
+                : findClosestIntersection(
+                points.stream()
+                        .map(point -> new Intersectable.Intersection(null, point)).toList()
+        ).point;
     }
 }

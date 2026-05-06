@@ -22,7 +22,7 @@ public final class Triangle extends Polygon{
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Intersection> findIntersections(Ray ray) {
         //calculating two edge vectors (containing the first vertex)
         Vector edge1 = _vertices.get(1).subtract(_vertices.get(0));
         Vector edge2 = _vertices.get(2).subtract(_vertices.get(0));

@@ -6,21 +6,21 @@ import primitives.Color;
 
 
 /**
- * passive data stucture of the scene
+ * passive data structure of the scene
  */
-public class Scene {
+public final class Scene {
     /** the name of the scene. */
     public String name;
 
     /**
      * the ambient light of the scene, default is no ambient light.
      */
-    public AmbientLight ambient = AmbientLight.NONE;
+    public AmbientLight ambientLight = AmbientLight.NONE;
 
     /**
      * the background color of the scene, default is black.
      */
-    public Color backGround = Color.BLACK;
+    public Color background = Color.BLACK;
 
     /**
      * the collection of 3D geometries present in the scene.
@@ -41,7 +41,7 @@ public class Scene {
      * @return this
      */
     public Scene setAmbientLight(AmbientLight ambient) {
-        this.ambient = ambient;
+        this.ambientLight = ambient;
         return this;
     }
 
@@ -51,7 +51,7 @@ public class Scene {
      * @return this
      */
     public Scene setBackground(Color backGround) {
-        this.backGround = backGround;
+        this.background = backGround;
         return this;
     }
 

@@ -53,8 +53,7 @@ public final class Plane extends Geometry {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray){
-        double nv = _normal.dotProduct(ray.direction());
+    protected List<Intersection> calcIntersectionsHelper(Ray ray) {        double nv = _normal.dotProduct(ray.direction());
 
         //if ray starts at the plane or is parallel to the plane.
         if(Util.isZero(nv) || ray.origin().equals(_point)){
@@ -64,10 +63,10 @@ public final class Plane extends Geometry {
         double parameter = _normal.dotProduct(planeVec) / nv;
 
         //if plane is behind the ray.
-        if(Util.alignZero(parameter) <= 0){
+        if (Util.alignZero(parameter) <= 0){
             return null;
         }
-        return List.of(ray.getPoint(parameter));
+        return List.of(new Intersection(this, ray.getPoint(parameter)));
     }
 
     @Override

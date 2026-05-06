@@ -70,7 +70,7 @@ public final class Cylinder extends Tube{
         return null;
     }
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    protected List<Intersection> findIntersections(Ray ray) {
         List<Point> lst = super.findIntersections(ray);
 
         Point[] foundIntersections = new Point[2];
@@ -104,14 +104,16 @@ public final class Cylinder extends Tube{
             return null;
         }
         if (count == 1) {
-            return List.of(foundIntersections[0]);
+            return List.of(new Intersection(this, foundIntersections[0]));
         }
 
         // return sorted by distance from ray origin.
         if (foundIntersections[0].distanceSquared(ray.origin()) > foundIntersections[1].distanceSquared(ray.origin())) {
-            return List.of(foundIntersections[1], foundIntersections[0]);
+            return List.of(new Intersection(this,foundIntersections[1]),
+                    new Intersection(this, foundIntersections[0]));
         }
-        return List.of(foundIntersections[0], foundIntersections[1]);
+        return List.of(new Intersection(this,foundIntersections[0]),
+                new Intersection(this, foundIntersections[1]));
     }
 
     @Override

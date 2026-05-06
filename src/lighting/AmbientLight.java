@@ -27,7 +27,7 @@ public final class AmbientLight {
      * getter fot intensity
      * @return the intensity
      */
-    public Color intensity() {
+    public Color getIntensity() {
         return intensity;
     }
 }
