@@ -102,7 +102,7 @@ public final class Ray {
 
     @Override
     public String toString() {
-        return "_origin: " + _origin + ", _direction: " + _direction + "\n";
+        return "Ray(origin=" + _origin + ", direction=" + _direction + ")";
     }
 
     /**

@@ -93,7 +93,7 @@ public class Tube extends RadialGeometry{
     }
     @Override
     public String toString() {
-        return super.toString() + "axis: " + _axis + "\n";
+        return super.toString() + ", axis: " + _axis;
     }
 
     @Override

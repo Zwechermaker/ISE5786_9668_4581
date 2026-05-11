@@ -65,4 +65,12 @@ public final class Scene {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "Scene '" + name + "' {\n" +
+               "  background: " + background + ",\n" +
+               "  ambientLight: " + ambientLight + ",\n" +
+               "  " + geometries.toString().replace("\n", "\n  ") + "\n" +
+               "}";
+    }
 }

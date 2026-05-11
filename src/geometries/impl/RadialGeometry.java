@@ -33,7 +33,7 @@ public abstract class RadialGeometry extends Geometry {
 
     @Override
     public String toString() {
-        return "_radius: " + _radius + ", ";
+        return "radius: " + _radius;
     }
 
     @Override

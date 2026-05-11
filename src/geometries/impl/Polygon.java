@@ -109,4 +109,9 @@ public class Polygon extends Geometry {
 
       return List.of(new Intersection(this, lst.get(0)));
    }
+
+    @Override
+    public String toString() {
+        return "vertices: " + _vertices + ", plane: " + _plane;
+    }
 }

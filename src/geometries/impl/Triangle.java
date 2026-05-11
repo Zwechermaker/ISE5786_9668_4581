@@ -61,4 +61,13 @@ public final class Triangle extends Polygon{
         //if the triangle is behind the ray, return null
         return getPoints(ray, t);
     }
+
+    @Override
+    public String toString() {
+        return "Triangle(\n" +
+               "  p1=" + _vertices.get(0) + ",\n" +
+               "  p2=" + _vertices.get(1) + ",\n" +
+               "  p3=" + _vertices.get(2) + "\n" +
+               ")";
+    }
 }

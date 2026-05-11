@@ -50,5 +50,14 @@ public class Geometries extends Intersectable {
         return result;
     }
 
+    @Override
+    public String toString() {
+        String result = "geometries: [\n";
 
+        for (Intersectable geo : geometries) {
+            result += "  " + geo.toString().replace("\n", "\n  ") + "\n";
+        }
+        result += "]";
+        return result;
+    }
 }

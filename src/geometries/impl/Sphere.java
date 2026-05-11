@@ -34,7 +34,7 @@ public final class Sphere extends RadialGeometry{
 
     @Override
     public String toString() {
-        return super.toString() + "center: " + _center + "\n";
+        return "Sphere(center=" + _center + ", " + super.toString() + ")";
     }
 
     @Override

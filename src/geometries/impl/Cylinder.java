@@ -121,7 +121,7 @@ public final class Cylinder extends Tube{
 
     @Override
     public String toString() {
-        return super.toString() + ", height: " + _height + "\n";
+        return super.toString() + ", height: " + _height;
     }
 
     @Override

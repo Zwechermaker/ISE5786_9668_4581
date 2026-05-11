@@ -71,7 +71,7 @@ public final class Plane extends Geometry {
 
     @Override
     public String toString() {
-        return "Point: " + _point + ", Normal: " + _normal + "\n";
+        return "point: " + _point + ", normal: " + _normal;
     }
 
     @Override
