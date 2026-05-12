@@ -12,5 +12,5 @@ public interface Parser {
      * @param scene the scene to build
      * @return the constructed scene
      */
-    Scene Parse(String fileName, Scene scene);
+    Scene parse(String fileName, Scene scene);
 }

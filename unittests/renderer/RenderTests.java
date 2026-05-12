@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import geometries.impl.Sphere;
 import geometries.impl.Triangle;
 import lighting.AmbientLight;
+import parser.Parser;
+import parser.ParserFactory;
+import parser.ParserType;
 import primitives.Color;
 import primitives.Point;
 import scene.Scene;
@@ -107,16 +110,15 @@ class RenderTests {
     * @param  xmlName the XML scene file name
     * @return         the camera after rendering
     */
-   @Disabled
    Camera renderSceneXML(Camera.Builder builder, String xmlName) {
       Scene scene = new Scene("Using XML");
-      // Parse from XML file into scene object instead of the new Scene above,
-      // Use the code you added in appropriate packages.
-      // ...
-      // NB: unit tests is not the correct place to put XML parsing code.
+      String fullPath = "structured scenes/xmlFiles/" + xmlName + ".xml";
+
+      Parser myParser = ParserFactory.getParser(ParserType.XML);
+      myParser.parse(fullPath, scene);
 
       return builder //
-         .setRayTracer(scene, RayTracerType.SIMPLE) //
+         .setRayTracer(scene, RayTracerType.SIMPLE)
          .build() //
          .renderImage(); //
    }
@@ -144,7 +146,6 @@ class RenderTests {
    }
 
    /** Test for XML based scene - for bonus */
-   @Disabled
    @Test
    void testBasicRenderXml() {
       renderSceneXML(baseCameraBuilder(), "basicRenderTestTwoColors") //
@@ -161,4 +162,3 @@ class RenderTests {
          .writeToImage("render test json");
    }
 }
-

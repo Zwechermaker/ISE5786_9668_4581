@@ -14,6 +14,10 @@ import lighting.AmbientLight;
 import primitives.*;
 import scene.Scene;
 
+import parser.Parser;
+import parser.ParserFactory;
+import parser.ParserType;
+
 /**
  * Test rendering a basic image
  * @author Dan
@@ -109,5 +113,19 @@ class RenderStage6Tests {
                       .setEmission(new Color(BLUE))
          );
       createImage(scene, "ambient render test");
+   }
+   /**
+    * Produce a scene with basic 3D model - including ambient light attenuation
+    * factors and emission colors loaded entirely from an XML file.
+    */
+   @Test
+   void testRenderAmbientColorXml() {
+      Scene scene = new Scene("XML Emission colors");
+      String fullPath = "structured scenes/xmlFiles/RenderTestEmission.xml";
+
+      Parser myParser = ParserFactory.getParser(ParserType.XML);
+      myParser.parse(fullPath, scene);
+
+      createImage(scene, "emission render test xml");
    }
 }

@@ -61,7 +61,7 @@ public final class Color {
      * @param  rgb                      the RGB components
      * @throws IllegalArgumentException if any component is negative
      */
-    private Color(Double3 rgb) {
+    public Color(Double3 rgb) {
         if (rgb._d1() < 0 || rgb._d2() < 0 || rgb._d3() < 0)
             throw new IllegalArgumentException("Negative color component is illegal");
         this._rgb = rgb;
