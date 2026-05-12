@@ -43,7 +43,7 @@ class RenderStage6Tests {
    private static final Point  O          = new Point(0, 0, Z);
    /** Sphere radius */
    private static final double RADIUS     = 50D;
-
+   /** The resolution */
    private static int          RESOLUTION = 1000;
 
    /**

@@ -55,6 +55,11 @@ public abstract class Geometry extends Intersectable {
         _material = material;
         return this;
     }
+
+    /**
+     * getter for the material
+     * @return the material
+     */
     public Material getMaterial(){
         return _material;
     }

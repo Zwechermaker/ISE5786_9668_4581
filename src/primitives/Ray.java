@@ -4,6 +4,7 @@ import geometries.api.Intersectable;
 
 import java.util.List;
 import java.util.Objects;
+import static geometries.api.Intersectable.Intersection;
 
 /**
  * A class that describes a Ray, an infinite line in space that starts at a point.
@@ -83,13 +84,13 @@ public final class Ray {
      * @param intersections a list of intersections
      * @return the closest intersection
      */
-    public Intersectable.Intersection findClosestIntersection(List<Intersectable.Intersection> intersections){
+    public Intersection findClosestIntersection(List<Intersection> intersections){
         if(intersections == null){
             return null;
         }
-        Intersectable.Intersection currentClosestIntersection = null;
+        Intersection currentClosestIntersection = null;
         double closestCurentDistance = Double.POSITIVE_INFINITY;
-        for(Intersectable.Intersection currentIntersection : intersections){
+        for(Intersection currentIntersection : intersections){
             if(currentIntersection.point.distanceSquared(_origin) < closestCurentDistance){
                 closestCurentDistance = currentIntersection.point.distanceSquared(_origin);
                 currentClosestIntersection = currentIntersection;
@@ -106,7 +107,7 @@ public final class Ray {
         return points == null ? null
                 : findClosestIntersection(
                 points.stream()
-                        .map(point -> new Intersectable.Intersection(null, point)).toList()
+                        .map(point -> new Intersection(null, point)).toList()
         ).point;
     }
 }

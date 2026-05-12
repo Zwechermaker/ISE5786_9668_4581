@@ -15,7 +15,7 @@ public abstract class Intersectable {
      * @param ray the ray that intersects the object
      * @return a list of intersection points (without the geometry)
      */
-    public List<Point> findIntersections(Ray ray){
+    public final List<Point> findIntersections(Ray ray){
         var intersections = calcIntersections(ray);
 
         //use lambda expression in order convert
@@ -45,7 +45,7 @@ public abstract class Intersectable {
     /**
      * a class that describes an intersection with geometry intersected and point.
      */
-    public static class Intersection {
+    final public static class Intersection {
         /**
          * geometry intersected
          */
@@ -61,8 +61,8 @@ public abstract class Intersectable {
         public final Material material;
         /**
          * a constructor for an intersection
-         * @param geometry
-         * @param point
+         * @param geometry the geometry that the ray intersected with
+         * @param point the point the ray intersected at
          */
         public Intersection(Geometry geometry, Point point) {
             this.geometry = geometry;
@@ -87,5 +87,5 @@ public abstract class Intersectable {
         }
     }
     /** Default constructor to satisfy JavaDoc generator */
-   public Intersectable() { /* to satisfy JavaDoc generator */ }
+    public Intersectable() { /* to satisfy JavaDoc generator */ }
 }
