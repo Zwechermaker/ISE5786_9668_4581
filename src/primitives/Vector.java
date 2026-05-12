@@ -128,6 +128,17 @@ public final class Vector extends Point{
 
         return this.subtract(projection);
     }
+    /**
+     * checks if this vector is parallel to another vector using Lagrange's identity.
+     *
+     * @param other The other vector to compare against.
+     * @return true if the vectors are parallel, false otherwise.
+     */
+    public boolean areParallel(Vector other) {
+        double dot = this.dotProduct(other);
+        double lengthsSquaredProduct = this.lengthSquared() * other.lengthSquared();
+        return Util.alignZero(dot * dot - lengthsSquaredProduct) == 0;
+    }
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

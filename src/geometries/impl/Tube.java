@@ -49,38 +49,35 @@ public class Tube extends RadialGeometry{
         return point.subtract(projectionPoint).normalize();
     }
     @Override
-    public List<Intersection> calcIntersectionsHelper(Ray ray){
-        Vector vOrthogonal;
-        try {
-            vOrthogonal = ray.direction().orthogonalComponent(_axis.direction());
-        } catch (IllegalArgumentException e){
-            //a zero vector is created only if the ray is parallel to the axis
+    public List<Intersection> calcIntersectionsHelper(Ray ray) {
+        // 1. First exception prevention: Ray is parallel to the axis
+        if (ray.direction().areParallel(_axis.direction())) {
             return null;
         }
 
-        //calculate the coefficients of the quadratic equation:
+        Vector vOrthogonal = ray.direction().orthogonalComponent(_axis.direction());
+
+        // Calculate the coefficients of the quadratic equation:
         double a = vOrthogonal.lengthSquared();
         double b = 0;
         double c = -_radiusSquared;
 
+        // 2. Second exception prevention: Check if origins are exactly the same
+        if (!ray.origin().equals(_axis.origin())) {
+            Vector deltaOrigin = ray.origin().subtract(_axis.origin());
 
-
-            try {
-                // if ray origin is axis origin it will throw an error.
-                Vector deltaOrigin = ray.origin().subtract(_axis.origin());
-
+            // 3. Third exception prevention: Check if deltaOrigin is parallel to the axis
+            if (!deltaOrigin.areParallel(_axis.direction())) {
                 Vector deltaOriginOrthogonal = deltaOrigin.orthogonalComponent(_axis.direction());
 
                 b = 2 * vOrthogonal.dotProduct(deltaOriginOrthogonal);
                 c = deltaOriginOrthogonal.lengthSquared() - _radiusSquared;
-
-            } catch (IllegalArgumentException e) {
-                // if delta origin is parallel to the axis or starts at the center base
-                // we claim that b = 0 and c is -radiusSquared.
             }
+        }
+
         double discriminant = b * b - 4 * a * c;
 
-        if (Util.alignZero(discriminant) <= 0){
+        if (Util.alignZero(discriminant) <= 0) {
             return null;
         }
 
@@ -89,7 +86,7 @@ public class Tube extends RadialGeometry{
         double t1 = (-b - discriminantSquareRoot) / (2 * a);
         double t2 = (-b + discriminantSquareRoot) / (2 * a);
 
-        return this.getPoints(ray,t1, t2);
+        return this.getPoints(ray, t1, t2);
     }
     @Override
     public String toString() {

@@ -58,33 +58,6 @@ public final class Ray {
         }
     }
 
-    /**
-     * a function that receives 2 parameters and gets the points using the parameters by order.
-     * only refers to positive parameters (ray intersects).
-     * @param t1 a parameter to getPoint
-     * @param t2 a parameter to getPoint
-     * @return a list of points created by getPoint according to the order
-     */
-    public List<Point> getPoints(double t1, double t2){
-        t1 = Util.alignZero(t1);
-        t2 = Util.alignZero(t2);
-        if (t2 < t1){
-            double temp = t1;
-            t1 = t2;
-            t2 = temp;
-        }
-        if (t2 <= 0) {
-            return null;
-        }
-
-        if (t1 <= 0) {
-            return List.of(getPoint(t2));
-        }
-
-        //return the points, closest first.
-        return List.of(getPoint(t1), getPoint(t2));
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

@@ -24,6 +24,8 @@ class VectorTest {
     private static final Vector V_NEGATIVE = new Vector(-1, -1, -1);
     /** An orthogonal vector for tests. */
     private static final Vector V_ORTHOGONAL = new Vector(1, -2, 1);
+    /** A standard X-axis unit vector. */
+    private static final Vector AXIS_X = new Vector(1, 0, 0);
 
     /**
      * Test method for {@link primitives.Vector#Vector(double, double, double)} and {@link primitives.Vector#Vector(Double3)}.
@@ -149,7 +151,7 @@ class VectorTest {
 
         // ================== Boundary Values Tests ==================
         // TC23: Unit vector
-        assertEquals(1, Vector.AXIS_X.lengthSquared(), DELTA, "ERROR: lengthSquared() for a unit vector should be 1");
+        assertEquals(1, AXIS_X.lengthSquared(), DELTA, "ERROR: lengthSquared() for a unit vector should be 1");
     }
 
     /**
@@ -163,7 +165,7 @@ class VectorTest {
 
         // ================== Boundary Values Tests ==================
         // TC25: Unit vector
-        assertEquals(1, Vector.AXIS_X.length(), DELTA, "ERROR: length() for a unit vector should be 1");
+        assertEquals(1, AXIS_X.length(), DELTA, "ERROR: length() for a unit vector should be 1");
 
         // TC26: Consistency with lengthSquared
         assertEquals(V1.length(), Math.sqrt(V1.lengthSquared()), DELTA, "ERROR: length() and lengthSquared() are not consistent");
@@ -187,7 +189,7 @@ class VectorTest {
 
         // ================== Boundary Values Tests ==================
         // TC30: Normalizing a unit vector
-        assertEquals(Vector.AXIS_X, Vector.AXIS_X.normalize(), "ERROR: normalize() on a unit vector does not return an equal vector");
+        assertEquals(AXIS_X, AXIS_X.normalize(), "ERROR: normalize() on a unit vector does not return an equal vector");
     }
 
     /**
@@ -210,5 +212,25 @@ class VectorTest {
         // TC33: Vector is completely parallel to the axis (should yield zero vector, thus throwing exception)
         Vector vParallel = new Vector(5, 0, 0);
         assertThrows(IllegalArgumentException.class, () -> vParallel.orthogonalComponent(axis), "ERROR: orthogonalComponent() for a parallel vector should throw an exception due to zero vector creation");
+    }
+
+    /**
+     * Test method for {@link primitives.Vector#areParallel(primitives.Vector)}.
+     */
+    @Test
+    void testAreParallel() {
+        // ================== Equivalence Partitions Tests ==================
+        // TC34: Non-parallel vectors
+        assertFalse(V1.areParallel(V2), "ERROR: areParallel() returned true for non-parallel vectors");
+
+        // TC35: Parallel vectors pointing in the same direction
+        assertTrue(V1.areParallel(new Vector(3, 3, 3)), "ERROR: areParallel() returned false for parallel vectors in the same direction");
+
+        // TC36: Parallel vectors pointing in opposite directions
+        assertTrue(V1.areParallel(V_NEGATIVE), "ERROR: areParallel() returned false for parallel vectors in opposite directions");
+
+        // ================== Boundary Values Tests ==================
+        // TC37: A vector compared to itself
+        assertTrue(V1.areParallel(V1), "ERROR: areParallel() returned false when a vector is compared to itself");
     }
 }

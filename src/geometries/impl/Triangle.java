@@ -27,11 +27,21 @@ public final class Triangle extends Polygon{
         Vector edge1 = _vertices.get(1).subtract(_vertices.get(0));
         Vector edge2 = _vertices.get(2).subtract(_vertices.get(0));
 
+        if (ray.origin().equals(_vertices.get(0))) {
+            return null;
+        }
         //calculate "result" vector.
         Vector result = ray.origin().subtract(_vertices.get(0));
 
+        if (ray.direction().areParallel(edge2)) {
+            return null;
+        }
         //precalculate vectors used in cramer's rule
         Vector P = ray.direction().crossProduct(edge2);
+
+        if (result.areParallel(edge1)) {
+            return null;
+        }
         Vector Q = result.crossProduct(edge1);
 
         //calculate determinant of the matrix
