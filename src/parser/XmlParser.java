@@ -25,13 +25,13 @@ public class XmlParser implements Parser{
 
 
     @Override
-    public Scene parse(String fileName, Scene scene) {
+    public Scene parse(String filePath, Scene scene) {
         Deque<Geometries> compositeStack = new ArrayDeque<>();
         Geometries rootGeometries = null;
 
         try{
             XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(fileName));
+            XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filePath));
 
             while(reader.hasNext()){
                 //check whether the next text is a beginning tag.
@@ -140,7 +140,7 @@ public class XmlParser implements Parser{
                 scene.setGeometries(rootGeometries);
             return scene;
         } catch (Exception e){
-            throw new RuntimeException("Failed to parse XML file: " + fileName, e);
+            throw new RuntimeException("Failed to parse XML file: " + filePath, e);
         }
     }
 
@@ -177,7 +177,6 @@ public class XmlParser implements Parser{
      * @return the updated geometry
      */
     private Geometry applyGeometryAttributes(Geometry geom, XMLStreamReader reader) {
-        // 1. Parse Emission Color
         String emissionStr = reader.getAttributeValue(null, "emission");
         if (emissionStr != null) {
             geom.setEmission(parseColor(emissionStr));
