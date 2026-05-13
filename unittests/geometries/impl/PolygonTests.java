@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import geometries.api.Intersectable.Intersection;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -154,4 +156,22 @@ class PolygonTests {
       Ray ray6 = new Ray(RAY_ORIGIN, new Vector(-2, 1, 2));
       assertNull(poly.findIntersections(ray6), ERROR_POLYGON);
    }
+
+    /**
+     * Test method for {@link geometries.impl.Polygon#calcIntersections(primitives.Ray)}.
+     */
+    @Test
+    void testCalcIntersections() {
+        Polygon poly = new Polygon(POINT_Z, POINT_X, POINT_Y, POINT1);
+
+        // ============ Equivalence Partitions Tests ==============
+        // TC15: Ray intersects the polygon
+        List<Intersection> result = poly.calcIntersections(new Ray(RAY_ORIGIN, new Vector(0, 1.5, 0.5)));
+        assertEquals(1, result.size(), "Wrong number of intersections");
+        assertSame(poly, result.get(0).geometry, "Intersection does not belong to the correct geometry");
+
+        // TC16: Ray does not intersect the polygon
+        assertNull(poly.calcIntersections(new Ray(RAY_ORIGIN, new Vector(0, 1, 2))),
+                "Ray hitting outside polygon should return null");
+    }
 }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Vector;
 import primitives.Ray;
+import geometries.api.Intersectable.Intersection;
 
 import java.util.List;
 
@@ -149,5 +150,27 @@ class SphereTest {
         result = SPHERE.findIntersections(new Ray(new Point(-3, 0, 0), new Vector(0, 1, 0)));
         assertEquals(1, result.size(), "Wrong number of points");
         assertEquals(List.of(new Point(-3, 4, 0)), result, "Ray orthogonal to P0-O vector, starts inside");
+    }
+
+    /**
+     * Test method for {@link geometries.impl.Sphere#calcIntersections(primitives.Ray)}.
+     */
+    @Test
+    void testCalcIntersections() {
+        // ============ Equivalence Partitions Tests ==============
+        // TC24: Ray crosses the sphere (2 points)
+        List<Intersection> result = SPHERE.calcIntersections(new Ray(new Point(-8, -3, 0), new Vector(1, 0, 0)));
+        assertEquals(2, result.size(), "Wrong number of intersections");
+        assertSame(SPHERE, result.get(0).geometry, "Intersection does not belong to the correct geometry");
+        assertSame(SPHERE, result.get(1).geometry, "Intersection does not belong to the correct geometry");
+
+        // TC25: Ray starts inside the sphere (1 point)
+        result = SPHERE.calcIntersections(new Ray(new Point(-1, -3, 0), new Vector(1, 0, 0)));
+        assertEquals(1, result.size(), "Wrong number of intersections");
+        assertSame(SPHERE, result.get(0).geometry, "Intersection does not belong to the correct geometry");
+
+        // TC26: Ray's line is outside the sphere (0 points)
+        assertNull(SPHERE.calcIntersections(new Ray(new Point(-10, 10, 0), new Vector(1, 0, 0))),
+                "Ray's line out of sphere should return null");
     }
 }

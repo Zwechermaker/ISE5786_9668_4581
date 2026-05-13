@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+import geometries.api.Intersectable.Intersection;
 
 import java.util.List;
 
@@ -259,5 +260,27 @@ class TubeTest {
 
         // TC46: Ray closest approach behind (0 points)
         assertNull(TUBE.findIntersections(new Ray(new Point(-2, 19, 15), vSlanted)), WRONG_PTS);
+    }
+
+    /**
+     * Test method for {@link geometries.impl.Tube#calcIntersections(primitives.Ray)}.
+     */
+    @Test
+    void testCalcIntersections() {
+        // ============ Equivalence Partitions Tests ==============
+        // TC47: Ray crosses the tube (2 points)
+        List<Intersection> result = TUBE.calcIntersections(new Ray(new Point(10, 10, -5), new Vector(0, 0, 1)));
+        assertEquals(2, result.size(), "Wrong number of intersections");
+        assertSame(TUBE, result.get(0).geometry, "Intersection does not belong to the correct geometry");
+        assertSame(TUBE, result.get(1).geometry, "Intersection does not belong to the correct geometry");
+
+        // TC48: Ray starts inside the tube (1 point)
+        result = TUBE.calcIntersections(new Ray(new Point(10, 10, 5), new Vector(0, 0, 1)));
+        assertEquals(1, result.size(), "Wrong number of intersections");
+        assertSame(TUBE, result.get(0).geometry, "Intersection does not belong to the correct geometry");
+
+        // TC49: Ray is parallel to the tube (0 points)
+        assertNull(TUBE.calcIntersections(new Ray(new Point(10, 10, 15), new Vector(3, 4, 0))),
+                "Ray parallel to tube should return null");
     }
 }

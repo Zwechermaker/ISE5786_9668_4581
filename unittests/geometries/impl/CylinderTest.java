@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+import geometries.api.Intersectable.Intersection;
 
 import java.util.List;
 
@@ -312,5 +313,33 @@ class CylinderTest {
 
         // TC59: Ray starts exactly ON the top corner, goes OUT of cylinder (0 points)
         assertNull(cylInt.findIntersections(new Ray(new Point(5, 0, 20), new Vector(1, 0, 2))), WRONG_PTS);
+    }
+
+    /**
+     * Test method for {@link geometries.impl.Cylinder#calcIntersections(primitives.Ray)}.
+     */
+    @Test
+    void testCalcIntersections() {
+        Cylinder cylInt = new Cylinder(5.0, new Ray(new Point(0, 0, 0), V_UP), 20.0);
+
+        // TC60: Ray intersects the bottom base
+        List<Intersection> result = cylInt.calcIntersections(new Ray(new Point(0, 0, -5), V_UP));
+        assertEquals(2, result.size(), "Wrong number of intersections for bottom base");
+        assertSame(cylInt, result.get(0).geometry, "Intersection does not belong to the correct geometry");
+
+        // TC61: Ray intersects the top base
+        result = cylInt.calcIntersections(new Ray(new Point(0, 0, 25), V_DOWN));
+        assertEquals(2, result.size(), "Wrong number of intersections for top base");
+        assertSame(cylInt, result.get(0).geometry, "Intersection does not belong to the correct geometry");
+
+        // TC62: Ray intersects the side
+        result = cylInt.calcIntersections(new Ray(new Point(-10, 0, 10), new Vector(1, 0, 0)));
+        assertEquals(2, result.size(), "Wrong number of intersections for side");
+        assertSame(cylInt, result.get(0).geometry, "Intersection does not belong to the correct geometry");
+        assertSame(cylInt, result.get(1).geometry, "Intersection does not belong to the correct geometry");
+
+        // TC63: Ray does not intersect the cylinder
+        assertNull(cylInt.calcIntersections(new Ray(new Point(10, 10, 10), new Vector(1, 0, 0))),
+                "Ray parallel to and outside cylinder should return null");
     }
 }

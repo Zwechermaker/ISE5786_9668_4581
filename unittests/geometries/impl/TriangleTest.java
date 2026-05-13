@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import primitives.Point;
 import primitives.Vector;
 import primitives.Ray;
+import geometries.api.Intersectable.Intersection;
 
 import java.util.List;
 
@@ -157,5 +158,23 @@ class TriangleTest {
         // Ray shoots straight up, hitting plane at (2, -1, 1). This is on the infinite line of edge P2-P3, but outside the triangle.
         assertNull(triangle.findIntersections(new Ray(new Point(2, -1, -1), new Vector(0, 0, 1))),
                 "Ray intersecting on edge continuation should return null");
+    }
+
+    /**
+     * Test method for {@link geometries.impl.Triangle#calcIntersections(primitives.Ray)}.
+     */
+    @Test
+    void testCalcIntersections() {
+        Triangle triangle = new Triangle(P1, P2, P3);
+
+        // ============ Equivalence Partitions Tests ==============
+        // TC20: Ray intersects the triangle
+        List<Intersection> result = triangle.calcIntersections(new Ray(new Point(0, -1, 0), new Vector(0, 1, 1)));
+        assertEquals(1, result.size(), "Wrong number of intersections");
+        assertSame(triangle, result.get(0).geometry, "Intersection does not belong to the correct geometry");
+
+        // TC21: Ray does not intersect the triangle
+        assertNull(triangle.calcIntersections(new Ray(new Point(0, 2, -1), new Vector(0, 0, 1))),
+                "Ray hitting outside against a vertex should return null");
     }
 }

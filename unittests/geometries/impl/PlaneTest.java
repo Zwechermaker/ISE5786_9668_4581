@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import primitives.Point;
 import primitives.Vector;
 import primitives.Ray;
+import geometries.api.Intersectable.Intersection;
 
 import java.util.List;
 
@@ -162,5 +163,23 @@ class PlaneTest {
         // Goes diagonally up (0, 1, 1).
         assertNull(plane.findIntersections(new Ray(new Point(0, 0, 1), new Vector(0, 1, 1))),
                 "Ray starting at Q0 should return null");
+    }
+
+    /**
+     * Test method for {@link geometries.impl.Plane#calcIntersections(primitives.Ray)}.
+     */
+    @Test
+    void testCalcIntersections() {
+        Plane plane = new Plane(new Point(0, 0, 1), new Vector(0, 0, 1));
+
+        // ============ Equivalence Partitions Tests ==============
+        // TC19: Ray intersects the plane
+        List<Intersection> result = plane.calcIntersections(new Ray(new Point(1, 1, -1), new Vector(0, 1, 1)));
+        assertEquals(1, result.size(), "Wrong number of intersections");
+        assertSame(plane, result.get(0).geometry, "Intersection does not belong to the correct geometry");
+
+        // TC20: Ray does not intersect the plane
+        assertNull(plane.calcIntersections(new Ray(new Point(1, 1, 2), new Vector(0, 1, 1))),
+                "Ray pointing away from plane should return null");
     }
 }

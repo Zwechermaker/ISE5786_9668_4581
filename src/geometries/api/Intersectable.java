@@ -82,7 +82,7 @@ public abstract class Intersectable {
 
             Intersection intersection = (Intersection) obj;
 
-            return Objects.equals(geometry, intersection.geometry) &&
+            return geometry == intersection.geometry &&
                     Objects.equals(point, intersection.point);
         }
     }
