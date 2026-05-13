@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import geometries.impl.Sphere;
 import geometries.impl.Triangle;
-import lighting.AmbientLight;
+import lighting.impl.AmbientLight;
 import parser.Parser;
 import parser.ParserFactory;
 import parser.ParserType;

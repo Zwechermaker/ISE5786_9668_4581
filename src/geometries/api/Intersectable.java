@@ -1,7 +1,10 @@
 package geometries.api;
+import lighting.api.LightSource;
 import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
+import primitives.Vector;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -59,6 +62,32 @@ public abstract class Intersectable {
          *  the material the intersected body has.
          */
         public final Material material;
+
+        /**
+         * normal vector at the point of intersection.
+         */
+        public Vector normal;
+        /**
+         * direction of the ray.
+         */
+        public Vector v;
+        /**
+         * dot product between normal and ray direction.
+         */
+        public double vNormal;
+        /**
+         * light source at the point of intersection.
+         */
+        public LightSource light;
+        /**
+         * the direction of light.
+         */
+        public Vector l;
+        /**
+         * dot product between normal and light direction.
+         */
+        public double lNormal;
+
         /**
          * a constructor for an intersection
          * @param geometry the geometry that the ray intersected with
