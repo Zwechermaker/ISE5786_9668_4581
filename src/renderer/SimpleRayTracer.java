@@ -49,11 +49,10 @@ public class SimpleRayTracer extends RayTracerBase {
     private Color calcLocalEffects(Intersection intersection) {
         Color color = intersection.geometry.getEmission();
 
-        for (LightSource lightSource : scene.lights) {
+        for (LightSource lightSource : _scene.lights) {
             if (preprocessLightSource(intersection, lightSource)) {
                 color = color.add(
                     lightSource.getIntensity(intersection.point)
-                        // to be completed
                         .scale(
                             calcDiffuse(intersection)
                                 .add(calcSpecular(intersection))
@@ -72,7 +71,7 @@ public class SimpleRayTracer extends RayTracerBase {
     private boolean preprocessIntersection(Intersection intersection, Vector v) {
         intersection.v = v;
         intersection.normal = intersection.geometry.getNormal(intersection.point);
-        intersection.vNormal = alignZero(intersection.v.dotProduct(intersection.n));
+        intersection.vNormal = alignZero(intersection.v.dotProduct(intersection.normal));
         return intersection.vNormal != 0;
     }
 
@@ -94,8 +93,8 @@ public class SimpleRayTracer extends RayTracerBase {
      * @return the color
      */
     private Color calcDiffuse(Intersection intersection){
-        return intersection.material._kD.
-                scale(Math.abs(intersection.lNormal));
+        return new Color(intersection.material._kD.
+                scale(Math.abs(intersection.lNormal)));
     }
 
     /**
@@ -107,6 +106,6 @@ public class SimpleRayTracer extends RayTracerBase {
         Vector r = intersection.l.subtract(intersection.normal.scale(2 * intersection.lNormal));
         double vr = -intersection.v.dotProduct(r);
 
-        return intersection.material._kS.scale(Math.pow(Math.max(0, vr), intersection.material._nShininess));
+        return new Color(intersection.material._kS.scale(Math.pow(Math.max(0, vr), intersection.material._nShininess)));
     }
 }

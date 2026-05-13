@@ -13,7 +13,7 @@ public interface LightSource {
      * @param point of the intensity
      * @return the color of the light
      */
-     public abstract Color getIntesity(Point point);
+     public abstract Color getIntensity(Point point);
 
     /**
      * calculatea the direction vector

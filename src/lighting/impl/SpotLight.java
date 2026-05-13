@@ -8,7 +8,7 @@ import primitives.Vector;
 /**
  * class of the spot light
  */
-public class SpotLight extends AmbientLight.PointLight {
+public class SpotLight extends PointLight {
     private final Vector _direction;
 
     /**
@@ -23,12 +23,12 @@ public class SpotLight extends AmbientLight.PointLight {
     }
 
     @Override
-    public Color getIntesity(Point p) {
+    public Color getIntensity(Point p) {
         double projection = _direction.dotProduct(getL(p));
         if (Util.isZero(projection) || projection < 0) {
             return Color.BLACK;
         }
-        return super.getIntesity(p).scale(projection);
+        return super.getIntensity(p).scale(projection);
     }
 
 }

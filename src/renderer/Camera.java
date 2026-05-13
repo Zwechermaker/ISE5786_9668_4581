@@ -267,7 +267,7 @@ public class Camera implements Cloneable {
          * @param type the type of the ray-tracer
          * @return a Builder for the camera with the ray tracer
          */
-        Builder setRayTracer(Scene scene, RayTracerType type){
+        public Builder setRayTracer(Scene scene, RayTracerType type){
             switch (type){
                 case SIMPLE:
                     _camera._rayTracer = new SimpleRayTracer(scene);

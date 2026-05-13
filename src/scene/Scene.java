@@ -5,6 +5,7 @@ import lighting.api.LightSource;
 import lighting.impl.AmbientLight;
 import primitives.Color;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,13 +34,14 @@ public final class Scene {
     /**
      * a list of all light sources in the scene.
      */
-    public List<LightSource> _lights;
+    public List<LightSource> lights;
     /**
      * constructor
      * @param string the name of the scene
      */
     public Scene(String string) {
         name = string;
+        lights = new ArrayList<>();
     }
 
     /**
