@@ -47,6 +47,11 @@ public class SimpleRayTracer extends RayTracerBase {
                 .add(calcLocalEffects(intersection));
     }
 
+    /**
+     * calculates the color at a point
+     * @param intersection that we need to check its color
+     * @return the color
+     */
     private Color calcLocalEffects(Intersection intersection) {
         Color color = intersection.geometry.getEmission();
 
