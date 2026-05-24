@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
-import lighting.PointLight;
+import lighting.impl.PointLight;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,30 +13,38 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class PointLightTest {
 
-    private final Color originalIntensity = new Color(1000, 1000, 1000);
-    private final Point lightPosition = new Point(0, 0, 0);
-    private final PointLight light = new PointLight(originalIntensity, lightPosition)
-            .setKl(0.1).setKq(0.01);
-
+    /**
+     * Default constructor for Javadoc purposes.
+     */
     public PointLightTest() {}
+
+    // ================== Test Constants ==================
+    /** Original intensity of the point light. */
+    private static final Color I0 = new Color(1000, 1000, 1000);
+    /** Position of the point light. */
+    private static final Point POSITION = new Point(0, 0, 0);
+    /** A point light instance for tests, configured with attenuation factors. */
+    private static final PointLight LIGHT = new PointLight(I0, POSITION)
+            .setKl(0.1).setKq(0.01);
+    /** A point at a standard distance. */
+    private static final Point P1 = new Point(0, 10, 0);
 
     /**
      * Test method for {@link PointLight#getIntensity(primitives.Point)}.
      */
     @Test
     void testGetIntensity() {
-        // TC01: EP 1 - Point at a normal distance
-        Point p1 = new Point(0, 10, 0);
-        // Distance is 10. Attenuation denominator: 1 + 0.1*10 + 0.01*100 = 1 + 1 + 1 = 3
-        // Expected intensity: 1000 / 3
-        Color expectedIntensity = originalIntensity.scale(1.0 / 3.0);
-        assertEquals(expectedIntensity, light.getIntensity(p1),
-                "Wrong intensity at standard distance");
+        // ================== Equivalence Partitions Tests ==================
+        // TC01: Point at a normal distance
+        // Distance is 10. Attenuation denominator: 1 + 0.1*10 + 0.01*100 = 3
+        Color expectedIntensity = I0.scale(1.0 / 3.0);
+        assertEquals(expectedIntensity, LIGHT.getIntensity(P1),
+                "ERROR: getIntensity() calculates wrong intensity at standard distance");
 
-        // TC11: BV 1 - Point coincides with light position
-        // According to requirements: should return original intensity I0
-        assertEquals(originalIntensity, light.getIntensity(lightPosition),
-                "Intensity should be original I0 when point is exactly on the light");
+        // ================== Boundary Values Tests ==================
+        // TC02: Point coincides with light position
+        assertEquals(I0, LIGHT.getIntensity(POSITION),
+                "ERROR: getIntensity() should return original I0 when point is exactly on the light");
     }
 
     /**
@@ -44,14 +52,14 @@ class PointLightTest {
      */
     @Test
     void testGetL() {
-        // TC02: EP 1 - Normal point
-        Point p1 = new Point(0, 10, 0);
-        assertEquals(new Vector(0, 1, 0), light.getL(p1),
-                "Wrong direction vector from point light");
+        // ================== Equivalence Partitions Tests ==================
+        // TC03: Normal point
+        assertEquals(new Vector(0, 1, 0), LIGHT.getL(P1),
+                "ERROR: getL() returns wrong direction vector from point light");
 
-        // TC12: BV 1 - Point coincides with light position
-        // According to requirements: Expected to fail due to attempt to create zero vector
-        assertThrows(IllegalArgumentException.class, () -> light.getL(lightPosition),
-                "Expected exception when point coincides with light source");
+        // ================== Boundary Values Tests ==================
+        // TC04: Point coincides with light position
+        assertThrows(IllegalArgumentException.class, () -> LIGHT.getL(POSITION),
+                "ERROR: getL() should throw an exception when point coincides with light source (zero vector)");
     }
 }

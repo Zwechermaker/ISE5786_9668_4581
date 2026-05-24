@@ -116,16 +116,6 @@ public final class Color {
     }
 
     /**
-     * Scales this color component-wise by the given factors.
-     * @param  color                        the scale factors for the RGB components
-     * @return                          a new scaled color
-     */
-    public Color scale(Color color) {
-        return new Color(_rgb.product(color._rgb));
-    }
-
-
-    /**
      * Scales this color by the given factor.
      * @param  k                        the scale factor
      * @return                          a new scaled color

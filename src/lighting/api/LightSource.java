@@ -16,9 +16,9 @@ public interface LightSource {
      public abstract Color getIntensity(Point point);
 
     /**
-     * calculatea the direction vector
+     * calculates the direction vector
      * @param point the point of the light source
-     * @return the vector distance
+     * @return the normalized direction vector
      */
      public abstract Vector getL(Point point);
 }

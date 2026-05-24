@@ -3,6 +3,7 @@ package renderer;
 import geometries.api.Intersectable;
 import lighting.api.LightSource;
 import primitives.Color;
+import primitives.Double3;
 import primitives.Ray;
 import geometries.api.Intersectable.Intersection;
 import primitives.Vector;
@@ -90,11 +91,11 @@ public class SimpleRayTracer extends RayTracerBase {
     /**
      * calculates the diffusive component of the color
      * @param intersection of the light with the object
-     * @return the color
+     * @return the diffuse factor
      */
-    private Color calcDiffuse(Intersection intersection){
-        return new Color(intersection.material._kD.
-                scale(Math.abs(intersection.lNormal)));
+    private Double3 calcDiffuse(Intersection intersection){
+        return intersection.material._kD.
+                scale(Math.abs(intersection.lNormal));
     }
 
     /**
@@ -102,10 +103,10 @@ public class SimpleRayTracer extends RayTracerBase {
      * @param intersection of the light with the object
      * @return the color
      */
-    private Color calcSpecular(Intersection intersection){
+    private Double3 calcSpecular(Intersection intersection){
         Vector r = intersection.l.subtract(intersection.normal.scale(2 * intersection.lNormal));
         double vr = -intersection.v.dotProduct(r);
 
-        return new Color(intersection.material._kS.scale(Math.pow(Math.max(0, vr), intersection.material._nShininess)));
+        return intersection.material._kS.scale(Math.pow(Math.max(0, vr), intersection.material._nShininess));
     }
 }

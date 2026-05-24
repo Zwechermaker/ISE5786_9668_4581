@@ -1,4 +1,4 @@
-package lighting;
+package renderer;
 
 import static java.awt.Color.BLUE;
 
@@ -13,8 +13,6 @@ import lighting.impl.DirectionalLight;
 import lighting.impl.PointLight;
 import lighting.impl.SpotLight;
 import primitives.*;
-import renderer.Camera;
-import renderer.RayTracerType;
 import scene.Scene;
 
 /**
@@ -219,5 +217,69 @@ class LightsTests {
          .renderImage() //
          .writeToImage("lightTrianglesSpotSharp");
    }
+   /** * Produce a picture of a sphere lighted by multiple light sources
+    * (Directional, Point, and Spot)
+    */
+   @Test
+   @SuppressWarnings("java:S109")
+   void testSphereMultiLights() {
+      _scene1.geometries.add(SPHERE);
 
+      // 1. Directional Light (Reddish tint, coming from top-left)
+      _scene1.lights.add(new DirectionalLight(
+              new Color(300, 100, 100),
+              new Vector(1, -1, -1)));
+
+      // 2. Point Light (Greenish tint, positioned top-left)
+      _scene1.lights.add(new PointLight(
+              new Color(100, 300, 100),
+              new Point(-50, 50, 50))
+              .setKl(0.0005).setKq(0.00005));
+
+      // 3. Spot Light (Blueish tint, positioned bottom-right, pointing at center)
+      _scene1.lights.add(new SpotLight(
+              new Color(100, 100, 300),
+              new Point(50, -50, 50),
+              new Vector(-1, 1, -2))
+              .setKl(0.0001).setKq(0.000005));
+
+      _camera1
+              .setResolution(RESOLUTION, RESOLUTION)
+              .build()
+              .renderImage()
+              .writeToImage("lightSphereMulti");
+   }
+
+   /** * Produce a picture of two triangles lighted by multiple light sources
+    * (Directional, Point, and Spot)
+    */
+   @Test
+   @SuppressWarnings("java:S109")
+   void testTrianglesMultiLights() {
+      _scene2.geometries.add(TRIANGLE1, TRIANGLE2);
+
+      // 1. Directional Light (Yellowish tint, coming from top-right)
+      _scene2.lights.add(new DirectionalLight(
+              new Color(150, 150, 0),
+              new Vector(-1, -1, -1)));
+
+      // 2. Point Light (Cyan tint, positioned near the middle/right)
+      _scene2.lights.add(new PointLight(
+              new Color(0, 150, 150),
+              new Point(30, -10, -100))
+              .setKl(0.0005).setKq(0.00005));
+
+      // 3. Spot Light (Magenta tint, positioned top-left, pointing at triangles)
+      _scene2.lights.add(new SpotLight(
+              new Color(150, 0, 150),
+              new Point(-50, 50, -50),
+              new Vector(1, -1, -2))
+              .setKl(0.0001).setKq(0.000005));
+
+      _camera2
+              .setResolution(RESOLUTION, RESOLUTION)
+              .build()
+              .renderImage()
+              .writeToImage("lightTrianglesMulti");
+   }
 }

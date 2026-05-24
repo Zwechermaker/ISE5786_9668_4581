@@ -25,7 +25,7 @@ public final class Material {
     /**
      * the shininess value
      */
-    public double _nShininess = 0;
+    public int _nShininess = 0;
     /**
      * setter for ka attenuation factor
      * @param kA the attenuation factor parameter
@@ -53,9 +53,6 @@ public final class Material {
      */
     public Material setKd(Double3 kD){
         _kD = kD;
-        if (!checkAttenuationFactors()){
-            throw new IllegalArgumentException("The sum of kS and kD must be lower or equal to 1");
-        }
         return this;
     }
 
@@ -66,9 +63,6 @@ public final class Material {
      */
     public Material setKd(double kD){
         _kD = new Double3(kD);
-        if (!checkAttenuationFactors()){
-            throw new IllegalArgumentException("The sum of kS and kD must be lower or equal to 1");
-        }
         return this;
     }
 
@@ -79,9 +73,6 @@ public final class Material {
      */
     public Material setKs(Double3 kS){
         _kS = kS;
-        if (!checkAttenuationFactors()){
-            throw new IllegalArgumentException("The sum of kS and kD must be lower or equal to 1");
-        }
         return this;
     }
 
@@ -92,9 +83,6 @@ public final class Material {
      */
     public Material setKs(double kS){
         _kS = new Double3(kS);
-        if (!checkAttenuationFactors()){
-            throw new IllegalArgumentException("The sum of kS and kD must be lower or equal to 1");
-        }
         return this;
     }
 
@@ -103,18 +91,10 @@ public final class Material {
      * @param nShininess the shininess value
      * @return this object to allow concantenation
      */
-    public Material setShininess(double nShininess){
+    public Material setShininess(int nShininess){
         _nShininess = nShininess;
         return this;
     }
 
-    /**
-     * a function that verifies the kd and ka values.
-     * @return true if valid, otherwise false.
-     */
-    private boolean checkAttenuationFactors(){
-        Double3 sum = _kD.add(_kS);
-        return (sum.isLowerThan(1) ||
-                sum.equals(new Double3(1)));
-    }
+
 }

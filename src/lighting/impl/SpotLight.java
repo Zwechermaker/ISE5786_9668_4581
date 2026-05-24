@@ -23,12 +23,32 @@ public class SpotLight extends PointLight {
     }
 
     @Override
+    public SpotLight setKc(double kC) {
+        super.setKc(kC);
+        return this;
+    }
+
+    @Override
+    public SpotLight setKl(double kL) {
+        super.setKl(kL);
+        return this;
+    }
+
+    @Override
+    public SpotLight setKq(double kQ) {
+        super.setKq(kQ);
+        return this;
+    }
+
+    @Override
     public Color getIntensity(Point p) {
+        if (p.equals(_position)) {
+            return super.getIntensity(p);
+        }
         double projection = _direction.dotProduct(getL(p));
-        if (Util.isZero(projection) || projection < 0) {
+        if (Util.alignZero(projection) <= 0) {
             return Color.BLACK;
         }
         return super.getIntensity(p).scale(projection);
     }
-
 }

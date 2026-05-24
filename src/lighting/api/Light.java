@@ -6,20 +6,20 @@ public abstract class Light {
     /**
      * the intensity of the light
      */
-    protected Color _intensity = Color.BLACK;
+    protected final Color _intensity;
 
     /**
      * a builder for Light
      * @param color of the light
      */
-    public Light(Color color){
+    protected Light(Color color){
         _intensity = color;
     }
     /**
      * getter for intensity
      * @return the intensity
      */
-    public primitives.Color getIntensity() {
+    public Color getIntensity() {
         return _intensity;
     }
 
