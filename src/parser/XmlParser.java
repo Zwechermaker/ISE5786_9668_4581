@@ -288,9 +288,9 @@ public class XmlParser implements Parser {
 
             // option for 2 constructors, with 1 parameters and 3 parameters.
             if (parts.length == 1) {
-                material.setKa(Double.parseDouble(parts[0]));
+                material.setKA(Double.parseDouble(parts[0]));
             } else if (parts.length == 3) {
-                material.setKa(parseDouble3(kaStr));
+                material.setKA(parseDouble3(kaStr));
             }
             geom.setMaterial(material);
         }

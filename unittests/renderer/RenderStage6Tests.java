@@ -97,18 +97,18 @@ class RenderStage6Tests {
       scene.geometries //
          .add(// center
               new Sphere(O, RADIUS)
-                      .setMaterial(new Material().setKa(new Double3(0.4))),
+                      .setMaterial(new Material().setKA(new Double3(0.4))),
               // up left
               new Triangle(P_LM, P_MT, P_LT)
-                      .setMaterial(new Material().setKa(new Double3(0,0.8,0)))
+                      .setMaterial(new Material().setKA(new Double3(0,0.8,0)))
                       .setEmission(new Color(GREEN)),
               // down left
               new Triangle(P_LM, P_MB, P_LB)
-                      .setMaterial(new Material().setKa(new Double3(0.8,0,0)))
+                      .setMaterial(new Material().setKA(new Double3(0.8,0,0)))
                       .setEmission(new Color(RED)),
                  // down right
               new Triangle(P_RM, P_MB, P_RB)
-                      .setMaterial(new Material().setKa(new Double3(0,0,0.8)))
+                      .setMaterial(new Material().setKA(new Double3(0,0,0.8)))
                       .setEmission(new Color(BLUE))
          );
       createImage(scene, "ambient render test");
