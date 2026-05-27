@@ -345,6 +345,7 @@ public class XmlParser implements Parser {
      * * @param material to set values in
      * @param valStr string to parse that describes the value
      * @param property a string that describes to property to set.
+     * @param material material to apply properties in.
      */
     private void applyMaterialProperty(Material material, String valStr, String property) {
         String[] parts = valStr.trim().split("\\s+");
