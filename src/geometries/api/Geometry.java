@@ -69,13 +69,14 @@ public abstract class Geometry extends Intersectable {
      *  A function that takes parameters found in findIntersections function
      *  and calculates a list of points on the ray based on the parameters.
      * @param ray to find the point in.
+     * @param maxDistance limits the distance we are looking for.
      * @param tValues the distances from the ray's origin to the intersection points
      * @return A list of intersection
      */
-    protected List<Intersection> getPoints(Ray ray, double... tValues) {
+    protected List<Intersection> getPoints(Ray ray,double maxDistance,  double... tValues) {
         List<Intersection> result = null;
         for (double t : tValues) {
-            if (Util.alignZero(t) > 0) {
+            if (Util.alignZero(t) > 0 && Util.alignZero(t - maxDistance) <= 0) {
                 if (result == null) result = new LinkedList<>();
                 result.add(new Intersection(this, ray.getPoint(t)));
             }

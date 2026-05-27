@@ -176,5 +176,20 @@ class TriangleTest {
         // TC21: Ray does not intersect the triangle
         assertNull(triangle.calcIntersections(new Ray(new Point(0, 2, -1), new Vector(0, 0, 1))),
                 "Ray hitting outside against a vertex should return null");
+
+        // =============== Boundary Values Tests (maxDistance) ==================
+        // Using a straight ray: distance to z=1 is exactly 2.
+        Ray ray = new Ray(new Point(0.1, 0.1, -1), new Vector(0, 0, 1));
+
+        // TC22: maxDistance is smaller than the intersection distance
+        assertNull(triangle.calcIntersections(ray, 1), "maxDistance smaller than intersection should return null");
+
+        // TC23: maxDistance is larger than the intersection distance
+        result = triangle.calcIntersections(ray, 3);
+        assertEquals(1, result.size(), "maxDistance larger than intersection should return 1 point");
+
+        // TC24: maxDistance is exactly at the intersection - BVA
+        result = triangle.calcIntersections(ray, 2);
+        assertEquals(1, result.size(), "maxDistance exactly on intersection should return 1 point");
     }
 }

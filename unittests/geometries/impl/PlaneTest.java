@@ -181,5 +181,20 @@ class PlaneTest {
         // TC20: Ray does not intersect the plane
         assertNull(plane.calcIntersections(new Ray(new Point(1, 1, 2), new Vector(0, 1, 1))),
                 "Ray pointing away from plane should return null");
+
+        // =============== Boundary Values Tests (maxDistance) ==================
+        // Using a straight ray: distance to z=1 is exactly 2.
+        Ray ray = new Ray(new Point(0, 0, -1), new Vector(0, 0, 1));
+
+        // TC21: maxDistance is smaller than the intersection distance
+        assertNull(plane.calcIntersections(ray, 1), "maxDistance smaller than intersection should return null");
+
+        // TC22: maxDistance is larger than the intersection distance
+        result = plane.calcIntersections(ray, 3);
+        assertEquals(1, result.size(), "maxDistance larger than intersection should return 1 point");
+
+        // TC23: maxDistance is exactly at the intersection - BVA
+        result = plane.calcIntersections(ray, 2);
+        assertEquals(1, result.size(), "maxDistance exactly on intersection should return 1 point");
     }
 }

@@ -22,7 +22,7 @@ public final class Triangle extends Polygon{
     }
 
     @Override
-    public List<Intersection> calcIntersectionsHelper(Ray ray) {
+    public List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance) {
         //calculating two edge vectors (containing the first vertex)
         Vector edge1 = _vertices.get(1).subtract(_vertices.get(0));
         Vector edge2 = _vertices.get(2).subtract(_vertices.get(0));
@@ -69,7 +69,7 @@ public final class Triangle extends Polygon{
         double t = Q.dotProduct(edge2) / det;
 
         //if the triangle is behind the ray, return null
-        return getPoints(ray, t);
+        return getPoints(ray, maxDistance, t);
     }
 
     @Override

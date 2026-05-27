@@ -3,7 +3,7 @@ package parser;
 import geometries.api.Geometry;
 import geometries.api.Intersectable;
 import geometries.impl.*;
-import lighting.impl.AmbientLight;
+import lighting.impl.*;
 import primitives.*;
 import scene.Scene;
 
@@ -46,6 +46,15 @@ public class XmlParser implements Parser {
                             break;
                         case "ambient-light":
                             parseAmbientLight(reader, scene);
+                            break;
+                        case "directional-light":
+                            parseDirectionalLight(reader, scene);
+                            break;
+                        case "point-light":
+                            parsePointLight(reader, scene);
+                            break;
+                        case "spot-light":
+                            parseSpotLight(reader, scene);
                             break;
                         case "geometries":
                             rootGeometries = handleGeometriesStart(compositeStack, rootGeometries);
@@ -109,6 +118,69 @@ public class XmlParser implements Parser {
         if (amColorStr != null) {
             scene.setAmbientLight(new AmbientLight(parseColor(amColorStr)));
         }
+    }
+
+    /**
+     * Parses a directional light from the XML and adds it to the scene.
+     *
+     * @param reader The XML stream reader containing the light attributes.
+     * @param scene  The scene to which the directional light will be added.
+     */
+    private void parseDirectionalLight(XMLStreamReader reader, Scene scene) {
+        Color intensity = parseColor(reader.getAttributeValue(null, "color"));
+        Vector direction = parseVector(reader.getAttributeValue(null, "direction"));
+        scene.lights.add(new DirectionalLight(intensity, direction));
+    }
+
+    /**
+     * Parses a point light from the XML and adds it to the scene.
+     *
+     * @param reader The XML stream reader containing the light attributes.
+     * @param scene  The scene to which the point light will be added.
+     */
+    private void parsePointLight(XMLStreamReader reader, Scene scene) {
+        Color intensity = parseColor(reader.getAttributeValue(null, "color"));
+        Point position = parsePoint(reader.getAttributeValue(null, "position"));
+        PointLight pl = new PointLight(intensity, position);
+
+        applyAttenuationFactors(pl, reader);
+
+        scene.lights.add(pl);
+    }
+
+    /**
+     * Parses a spot light from the XML and adds it to the scene.
+     *
+     * @param reader The XML stream reader containing the light attributes.
+     * @param scene  The scene to which the spot light will be added.
+     */
+    private void parseSpotLight(XMLStreamReader reader, Scene scene) {
+        Color intensity = parseColor(reader.getAttributeValue(null, "color"));
+        Point position = parsePoint(reader.getAttributeValue(null, "position"));
+        Vector direction = parseVector(reader.getAttributeValue(null, "direction"));
+        SpotLight sl = new SpotLight(intensity, position, direction);
+
+        applyAttenuationFactors(sl, reader);
+
+        scene.lights.add(sl);
+    }
+
+    /**
+     * Helper method to parse and apply attenuation factors (kC, kL, kQ) to a light.
+     * Since SpotLight inherits from PointLight, this method safely handles both.
+     *
+     * @param light  The point light (or spot light) to apply the attenuation factors to.
+     * @param reader The XML stream reader containing the attributes.
+     */
+    private void applyAttenuationFactors(PointLight light, XMLStreamReader reader) {
+        String kcStr = reader.getAttributeValue(null, "kC");
+        if (kcStr != null) light.setKc(Double.parseDouble(kcStr));
+
+        String klStr = reader.getAttributeValue(null, "kL");
+        if (klStr != null) light.setKl(Double.parseDouble(klStr));
+
+        String kqStr = reader.getAttributeValue(null, "kQ");
+        if (kqStr != null) light.setKq(Double.parseDouble(kqStr));
     }
 
     /**
@@ -269,9 +341,44 @@ public class XmlParser implements Parser {
     }
 
     /**
+     * Helper to apply a parsed string (either 1 or 3 doubles) to a material property.
+     * * @param material to set values in
+     * @param valStr string to parse that describes the value
+     * @param property a string that describes to property to set.
+     */
+    private void applyMaterialProperty(Material material, String valStr, String property) {
+        String[] parts = valStr.trim().split("\\s+");
+
+        // Convert both single values and triplets into a Double3 immediately
+        Double3 val = parts.length == 1
+                ? new Double3(Double.parseDouble(parts[0]))
+                : parseDouble3(valStr);
+
+        switch (property) {
+            case "kA":
+                material.setKA(val);
+                break;
+            case "kD":
+                material.setKD(val);
+                break;
+            case "kS":
+                material.setKS(val);
+                break;
+            case "kT":
+                material.setKT(val);
+                break;
+            case "kR":
+                material.setKR(val);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown material property: " + property);
+        }
+    }
+
+    /**
      * Applies geometry attributes (emission, material) to a {@link Geometry}.
      *
-     * @param geom   The geometry to modify.
+     * @param geom The geometry to modify.
      * @param reader The XML stream reader.
      * @return The modified geometry.
      */
@@ -281,17 +388,31 @@ public class XmlParser implements Parser {
             geom.setEmission(parseColor(emissionStr));
         }
 
-        String kaStr = reader.getAttributeValue(null, "kA");
-        if (kaStr != null) {
-            Material material = new Material();
-            String[] parts = kaStr.trim().split("\\s+");
+        Material material = new Material();
+        boolean hasMaterial = false;
 
-            // option for 2 constructors, with 1 parameters and 3 parameters.
-            if (parts.length == 1) {
-                material.setKA(Double.parseDouble(parts[0]));
-            } else if (parts.length == 3) {
-                material.setKA(parseDouble3(kaStr));
-            }
+        String kaStr = reader.getAttributeValue(null, "kA");
+        if (kaStr != null) { hasMaterial = true; applyMaterialProperty(material, kaStr, "kA"); }
+
+        String kdStr = reader.getAttributeValue(null, "kD");
+        if (kdStr != null) { hasMaterial = true; applyMaterialProperty(material, kdStr, "kD"); }
+
+        String ksStr = reader.getAttributeValue(null, "kS");
+        if (ksStr != null) { hasMaterial = true; applyMaterialProperty(material, ksStr, "kS"); }
+
+        String ktStr = reader.getAttributeValue(null, "kT");
+        if (ktStr != null) { hasMaterial = true; applyMaterialProperty(material, ktStr, "kT"); }
+
+        String krStr = reader.getAttributeValue(null, "kR");
+        if (krStr != null) { hasMaterial = true; applyMaterialProperty(material, krStr, "kR"); }
+
+        String shininessStr = reader.getAttributeValue(null, "nShininess");
+        if (shininessStr != null) {
+            hasMaterial = true;
+            material.setShininess(Integer.parseInt(shininessStr));
+        }
+
+        if (hasMaterial) {
             geom.setMaterial(material);
         }
 

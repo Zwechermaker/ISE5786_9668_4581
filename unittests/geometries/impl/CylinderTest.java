@@ -323,7 +323,8 @@ class CylinderTest {
         Cylinder cylInt = new Cylinder(5.0, new Ray(new Point(0, 0, 0), V_UP), 20.0);
 
         // TC60: Ray intersects the bottom base
-        List<Intersection> result = cylInt.calcIntersections(new Ray(new Point(0, 0, -5), V_UP));
+        Ray rayCaps = new Ray(new Point(0, 0, -5), V_UP);
+        List<Intersection> result = cylInt.calcIntersections(rayCaps);
         assertEquals(2, result.size(), "Wrong number of intersections for bottom base");
         assertSame(cylInt, result.get(0).geometry, "Intersection does not belong to the correct geometry");
 
@@ -333,7 +334,8 @@ class CylinderTest {
         assertSame(cylInt, result.get(0).geometry, "Intersection does not belong to the correct geometry");
 
         // TC62: Ray intersects the side
-        result = cylInt.calcIntersections(new Ray(new Point(-10, 0, 10), new Vector(1, 0, 0)));
+        Ray raySide = new Ray(new Point(-10, 0, 10), new Vector(1, 0, 0));
+        result = cylInt.calcIntersections(raySide);
         assertEquals(2, result.size(), "Wrong number of intersections for side");
         assertSame(cylInt, result.get(0).geometry, "Intersection does not belong to the correct geometry");
         assertSame(cylInt, result.get(1).geometry, "Intersection does not belong to the correct geometry");
@@ -341,5 +343,37 @@ class CylinderTest {
         // TC63: Ray does not intersect the cylinder
         assertNull(cylInt.calcIntersections(new Ray(new Point(10, 10, 10), new Vector(1, 0, 0))),
                 "Ray parallel to and outside cylinder should return null");
+
+        // =============== Boundary Values Tests (maxDistance) ==================
+        // Cylinder Cap Ray Test (rayCaps) -> intersects at dist=5 and dist=25
+
+        // TC64: maxDistance is smaller than the first cap intersection (0 points)
+        assertNull(cylInt.calcIntersections(rayCaps, 2), "maxDistance smaller than first intersection should return null (caps)");
+
+        // TC65: maxDistance is between the two cap intersections (1 point)
+        result = cylInt.calcIntersections(rayCaps, 15);
+        assertEquals(1, result.size(), "maxDistance between intersections should return 1 point (caps)");
+
+        // TC66: maxDistance is larger than both cap intersections (2 points)
+        result = cylInt.calcIntersections(rayCaps, 30);
+        assertEquals(2, result.size(), "maxDistance larger than both should return 2 points (caps)");
+
+        // TC67: maxDistance is exactly at the first cap intersection - BVA (1 point)
+        result = cylInt.calcIntersections(rayCaps, 5);
+        assertEquals(1, result.size(), "maxDistance exactly on first intersection should return 1 point (caps)");
+
+
+        // Cylinder Side Ray Test (raySide) -> intersects at dist=5 and dist=15
+
+        // TC68: maxDistance is smaller than the first side intersection (0 points)
+        assertNull(cylInt.calcIntersections(raySide, 2), "maxDistance smaller than first intersection should return null (side)");
+
+        // TC69: maxDistance is between the two side intersections (1 point)
+        result = cylInt.calcIntersections(raySide, 10);
+        assertEquals(1, result.size(), "maxDistance between intersections should return 1 point (side)");
+
+        // TC70: maxDistance is exactly at the second side intersection - BVA (2 points)
+        result = cylInt.calcIntersections(raySide, 15);
+        assertEquals(2, result.size(), "maxDistance exactly on second intersection should return 2 points (side)");
     }
 }

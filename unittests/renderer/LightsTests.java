@@ -95,14 +95,32 @@ class LightsTests {
    private static final Vector   TRIANGLES_LIGHT_DIRECTION = new Vector(-2, -2, -2);
 
    /** The sphere in appropriate tests */
-   private static final Geometry SPHERE                    = new Sphere(SPHERE_CENTER, SPHERE_RADIUS)
-      .setEmission(SPHERE_COLOR).setMaterial(new Material().setKD(KD).setKS(KS).setShininess(SHININESS));
+   private static final Geometry SPHERE = new Sphere(SPHERE_CENTER, SPHERE_RADIUS)
+           .setEmission(SPHERE_COLOR)
+           .setMaterial(new Material().setKD(KD).setKS(KS).setShininess(SHININESS));
+
+   /** The white sphere in appropriate tests */
+   private static final Geometry SPHERE_BLACK = new Sphere(SPHERE_CENTER, SPHERE_RADIUS)
+           .setEmission(Color.BLACK)
+           .setMaterial(new Material().setKD(KD).setKS(KS).setShininess(SHININESS));
+
    /** The first triangle in appropriate tests */
-   private static final Geometry TRIANGLE1                 = new Triangle(VERTICES[0], VERTICES[1], VERTICES[2])
-      .setMaterial(MATERIAL);
-   /** The first triangle in appropriate tests */
-   private static final Geometry TRIANGLE2                 = new Triangle(VERTICES[0], VERTICES[1], VERTICES[3])
-      .setMaterial(MATERIAL);
+   private static final Geometry TRIANGLE1 = new Triangle(VERTICES[0], VERTICES[1], VERTICES[2])
+           .setMaterial(MATERIAL);
+
+   /** The white first triangle in appropriate tests */
+   private static final Geometry TRIANGLE1_BLACK = new Triangle(VERTICES[0], VERTICES[1], VERTICES[2])
+           .setEmission(Color.BLACK)
+           .setMaterial(MATERIAL);
+
+   /** The second triangle in appropriate tests */
+   private static final Geometry TRIANGLE2 = new Triangle(VERTICES[0], VERTICES[1], VERTICES[3])
+           .setMaterial(MATERIAL);
+
+   /** The white second triangle in appropriate tests */
+   private static final Geometry TRIANGLE2_BLACK = new Triangle(VERTICES[0], VERTICES[1], VERTICES[3])
+           .setEmission(Color.BLACK)
+           .setMaterial(MATERIAL);
 
    /** Produce a picture of a sphere lighted by a directional light */
    @Test
@@ -217,31 +235,38 @@ class LightsTests {
          .renderImage() //
          .writeToImage("lightTrianglesSpotSharp");
    }
-   /** * Produce a picture of a sphere lighted by multiple light sources
-    * (Directional, Point, and Spot)
+   /**
+    * Produce a picture of a sphere lit by multiple very distinct light sources
+    * so each contribution is easy to identify visually.
     */
    @Test
    @SuppressWarnings("java:S109")
    void testSphereMultiLights() {
-      _scene1.geometries.add(SPHERE);
+      _scene1.geometries.add(SPHERE_BLACK);
 
-      // 1. Directional Light (Reddish tint, coming from top-left)
+      // Blue directional light coming from the top-right.
+      // This provides a soft, uniform blue wash across the upper right hemisphere.
       _scene1.lights.add(new DirectionalLight(
-              new Color(300, 100, 100),
+              new Color(0, 0, 400),
               new Vector(1, -1, -1)));
 
-      // 2. Point Light (Greenish tint, positioned top-left)
+      // Pure Red point light hovering extremely close to the bottom-left surface.
+      // The high kl and kq values ensure the light dies off rapidly, creating a
+      // stark, isolated red circle of light.
       _scene1.lights.add(new PointLight(
-              new Color(100, 300, 100),
-              new Point(-50, 50, 50))
-              .setKl(0.0005).setKq(0.00005));
+              new Color(600, 0, 0),
+              new Point(-50, -50, 0))
+              .setKl(0)
+              .setKq(0));
 
-      // 3. Spot Light (Blueish tint, positioned bottom-right, pointing at center)
+      // Pure Green spot light stationed in front and angled across the center.
+      // This creates a sharp, distinct green ellipse cutting through the blue fill.
       _scene1.lights.add(new SpotLight(
-              new Color(100, 100, 300),
-              new Point(50, -50, 50),
-              new Vector(-1, 1, -2))
-              .setKl(0.0001).setKq(0.000005));
+              new Color(0, 600, 0),
+              new Point(50, 50, 50),
+              new Vector(-1, -1, -2))
+              .setKl(0)
+              .setKq(0));
 
       _camera1
               .setResolution(RESOLUTION, RESOLUTION)
@@ -250,31 +275,38 @@ class LightsTests {
               .writeToImage("lightSphereMulti");
    }
 
-   /** * Produce a picture of two triangles lighted by multiple light sources
-    * (Directional, Point, and Spot)
+   /**
+    * Produce a picture of two triangles lit by multiple contrasting lights.
+    * The colors are intentionally far apart to verify lighting calculations.
     */
    @Test
    @SuppressWarnings("java:S109")
    void testTrianglesMultiLights() {
-      _scene2.geometries.add(TRIANGLE1, TRIANGLE2);
+      _scene2.geometries.add(TRIANGLE1_BLACK, TRIANGLE2_BLACK);
 
-      // 1. Directional Light (Yellowish tint, coming from top-right)
+      // Deep Blue directional light aiming straight down the Z axis.
+      // Illuminates all outward-facing geometry with a flat blue ambient tone.
       _scene2.lights.add(new DirectionalLight(
-              new Color(150, 150, 0),
-              new Vector(-1, -1, -1)));
+              new Color(0, 0, 300),
+              new Vector(0, 0, -1)));
 
-      // 2. Point Light (Cyan tint, positioned near the middle/right)
+      // Pure Red point light placed very deep inside the "crevice" of the triangles,
+      // hovering just 20 units above the flat bottom-right triangle (Z = -150).
+      // Creates a harsh red radial gradient that fades before hitting the edges.
       _scene2.lights.add(new PointLight(
-              new Color(0, 150, 150),
-              new Point(30, -10, -100))
-              .setKl(0.0005).setKq(0.00005));
+              new Color(800, 0, 0),
+              new Point(40, -40, -130))
+              .setKl(0)
+              .setKq(0));
 
-      // 3. Spot Light (Magenta tint, positioned top-left, pointing at triangles)
+      // Pure Green spot light from the upper-left, aimed directly at the center of
+      // the steep top-left triangle to showcase the harsh directional cutoff of a spot.
       _scene2.lights.add(new SpotLight(
-              new Color(150, 0, 150),
-              new Point(-50, 50, -50),
+              new Color(0, 800, 0),
+              new Point(-50, 50, 50),
               new Vector(1, -1, -2))
-              .setKl(0.0001).setKq(0.000005));
+              .setKl(0)
+              .setKq(0));
 
       _camera2
               .setResolution(RESOLUTION, RESOLUTION)

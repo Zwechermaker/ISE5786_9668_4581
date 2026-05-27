@@ -159,7 +159,8 @@ class SphereTest {
     void testCalcIntersections() {
         // ============ Equivalence Partitions Tests ==============
         // TC24: Ray crosses the sphere (2 points)
-        List<Intersection> result = SPHERE.calcIntersections(new Ray(new Point(-8, -3, 0), new Vector(1, 0, 0)));
+        Ray ray = new Ray(new Point(-8, -3, 0), new Vector(1, 0, 0));
+        List<Intersection> result = SPHERE.calcIntersections(ray);
         assertEquals(2, result.size(), "Wrong number of intersections");
         assertSame(SPHERE, result.get(0).geometry, "Intersection does not belong to the correct geometry");
         assertSame(SPHERE, result.get(1).geometry, "Intersection does not belong to the correct geometry");
@@ -172,5 +173,22 @@ class SphereTest {
         // TC26: Ray's line is outside the sphere (0 points)
         assertNull(SPHERE.calcIntersections(new Ray(new Point(-10, 10, 0), new Vector(1, 0, 0))),
                 "Ray's line out of sphere should return null");
+
+        // =============== Boundary Values Tests (maxDistance) ==================
+        // Based on the ray from TC24 which intersects at dist=4 and dist=12
+        // TC27: maxDistance is smaller than the first intersection (0 points)
+        assertNull(SPHERE.calcIntersections(ray, 2), "maxDistance smaller than first intersection should return null");
+
+        // TC28: maxDistance is between the two intersections (1 point)
+        result = SPHERE.calcIntersections(ray, 8);
+        assertEquals(1, result.size(), "maxDistance between intersections should return 1 point");
+
+        // TC29: maxDistance is larger than both intersections (2 points)
+        result = SPHERE.calcIntersections(ray, 15);
+        assertEquals(2, result.size(), "maxDistance larger than both should return 2 points");
+
+        // TC30: maxDistance is exactly at the first intersection - BVA (1 point)
+        result = SPHERE.calcIntersections(ray, 4);
+        assertEquals(1, result.size(), "maxDistance exactly on first intersection should return 1 point");
     }
 }

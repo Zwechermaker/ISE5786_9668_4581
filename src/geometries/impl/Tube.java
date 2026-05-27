@@ -49,7 +49,7 @@ public class Tube extends RadialGeometry{
         return point.subtract(projectionPoint).normalize();
     }
     @Override
-    public List<Intersection> calcIntersectionsHelper(Ray ray) {
+    public List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance) {
         // 1. First exception prevention: Ray is parallel to the axis
         if (ray.direction().areParallel(_axis.direction())) {
             return null;
@@ -86,7 +86,7 @@ public class Tube extends RadialGeometry{
         double t1 = (-b - discriminantSquareRoot) / (2 * a);
         double t2 = (-b + discriminantSquareRoot) / (2 * a);
 
-        return this.getPoints(ray, t1, t2);
+        return this.getPoints(ray, maxDistance, t1, t2);
     }
     @Override
     public String toString() {

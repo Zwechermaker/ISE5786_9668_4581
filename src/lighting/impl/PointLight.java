@@ -6,10 +6,25 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
 
+/**
+ * a class that describes a point light.
+ */
 public class PointLight extends Light implements LightSource {
+    /**
+     * a point that keeps the location of the light.
+     */
     protected Point _position;
+    /**
+     * constant attenuation factor based on distance.
+     */
     private double _kC = 1;
+    /**
+     * linear attenuation factor based on distance.
+     */
     private double _kL = 0;
+    /**
+     * quadrant attenuation factor based on distance.
+     */
     private double _kQ = 0;
 
     /**
@@ -72,4 +87,8 @@ public class PointLight extends Light implements LightSource {
         return p.subtract(_position).normalize();
     }
 
+    @Override
+    public double getDistance(Point point) {
+        return _position.distance(point);
+    }
 }

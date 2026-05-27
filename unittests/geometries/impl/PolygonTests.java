@@ -157,21 +157,38 @@ class PolygonTests {
       assertNull(poly.findIntersections(ray6), ERROR_POLYGON);
    }
 
-    /**
-     * Test method for {@link geometries.impl.Polygon#calcIntersections(primitives.Ray)}.
-     */
-    @Test
-    void testCalcIntersections() {
-        Polygon poly = new Polygon(POINT_Z, POINT_X, POINT_Y, POINT1);
+   /**
+    * Test method for {@link geometries.impl.Polygon#calcIntersections(primitives.Ray)}.
+    */
+   @Test
+   void testCalcIntersections() {
+      Polygon poly = new Polygon(POINT_Z, POINT_X, POINT_Y, POINT1);
 
-        // ============ Equivalence Partitions Tests ==============
-        // TC15: Ray intersects the polygon
-        List<Intersection> result = poly.calcIntersections(new Ray(RAY_ORIGIN, new Vector(0, 1.5, 0.5)));
-        assertEquals(1, result.size(), "Wrong number of intersections");
-        assertSame(poly, result.get(0).geometry, "Intersection does not belong to the correct geometry");
+      // ============ Equivalence Partitions Tests ==============
+      // TC15: Ray intersects the polygon
+      Ray ray = new Ray(RAY_ORIGIN, new Vector(0, 1.5, 0.5));
+      List<Intersection> result = poly.calcIntersections(ray);
+      assertEquals(1, result.size(), "Wrong number of intersections");
+      assertSame(poly, result.get(0).geometry, "Intersection does not belong to the correct geometry");
 
-        // TC16: Ray does not intersect the polygon
-        assertNull(poly.calcIntersections(new Ray(RAY_ORIGIN, new Vector(0, 1, 2))),
-                "Ray hitting outside polygon should return null");
-    }
+      // TC16: Ray does not intersect the polygon
+      assertNull(poly.calcIntersections(new Ray(RAY_ORIGIN, new Vector(0, 1, 2))),
+              "Ray hitting outside polygon should return null");
+
+      // =============== Boundary Values Tests (maxDistance) ==================
+      // Using ray from TC15: hits at (0, 0.5, 0.5).
+      // Origin is (0, -1, 0). Vector is (0, 1.5, 0.5) length sqrt(1.5^2 + 0.5^2) = sqrt(2.5).
+      double dist = Math.sqrt(2.5);
+
+      // TC17: maxDistance is smaller than the intersection distance
+      assertNull(poly.calcIntersections(ray, 1), "maxDistance smaller than intersection should return null");
+
+      // TC18: maxDistance is larger than the intersection distance
+      result = poly.calcIntersections(ray, 2);
+      assertEquals(1, result.size(), "maxDistance larger than intersection should return 1 point");
+
+      // TC19: maxDistance is exactly at the intersection - BVA
+      result = poly.calcIntersections(ray, dist);
+      assertEquals(1, result.size(), "maxDistance exactly on intersection should return 1 point");
+   }
 }

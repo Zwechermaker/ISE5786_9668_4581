@@ -19,7 +19,19 @@ public abstract class Intersectable {
      * @return a list of intersection points (without the geometry)
      */
     public final List<Point> findIntersections(Ray ray){
-        var intersections = calcIntersections(ray);
+        return findIntersections(ray, Double.POSITIVE_INFINITY);
+    }
+
+    /**
+     * a function that converts intersection lists back to the old API
+     * (backward compatibility). limits the points to maxDistance.
+     *
+     * @param maxDistance limits the distance of intersections.
+     * @param ray the ray that intersects the object
+     * @return a list of intersection points (without the geometry)
+     */
+    public final List<Point> findIntersections(Ray ray, double maxDistance){
+        var intersections = calcIntersections(ray, maxDistance);
 
         //use lambda expression in order convert
         //each intersection into a point element.
@@ -28,21 +40,32 @@ public abstract class Intersectable {
                 : intersections.stream()
                 .map(intersection -> intersection.point).toList();
     }
-
     /**
      * a function that calculates ray and object intersections
      * @param ray the ray that intersects the object
      * @return a list of intersections (point and geometry)
      */
     public final List<Intersection> calcIntersections(Ray ray) {
-        return calcIntersectionsHelper(ray);
+        return calcIntersections(ray, Double.POSITIVE_INFINITY);
     }
+
+    /**
+     * a function that calculates ray and object intersections bounded by max distance
+     * @param ray the ray that intersects the object
+     * @param maxDistance the maximum distance to check for intersections
+     * @return a list of intersections (point and geometry)
+     */
+    public final List<Intersection> calcIntersections(Ray ray, double maxDistance) {
+        return calcIntersectionsHelper(ray, maxDistance);
+    }
+
     /**
      * a function that calculates ray and object intersections
      * @param ray the ray that intersects the object
+     * @param maxDistance the maximum distance to check for intersections
      * @return a list of intersections (point and geometry)
      */
-    protected abstract List<Intersection> calcIntersectionsHelper(Ray ray);
+    protected abstract List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance);
 
 
     /**
@@ -59,7 +82,7 @@ public abstract class Intersectable {
         public final Point point;
 
         /**
-         *  the material the intersected body has.
+         * the material the intersected body has.
          */
         public final Material material;
 

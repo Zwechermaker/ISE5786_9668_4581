@@ -78,9 +78,9 @@ public class Polygon extends Geometry {
    @Override
    public Vector getNormal(Point point) { return _plane.getNormal(point); }
    @Override
-  public List<Intersection> calcIntersectionsHelper(Ray ray){
+  public List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance){
 
-      List<Point> lst = _plane.findIntersections(ray);
+      List<Point> lst = _plane.findIntersections(ray, maxDistance);
 
       //If there were no intersections with the plane to begin with.
       if (lst == null){

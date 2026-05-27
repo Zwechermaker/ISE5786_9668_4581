@@ -269,7 +269,8 @@ class TubeTest {
     void testCalcIntersections() {
         // ============ Equivalence Partitions Tests ==============
         // TC47: Ray crosses the tube (2 points)
-        List<Intersection> result = TUBE.calcIntersections(new Ray(new Point(10, 10, -5), new Vector(0, 0, 1)));
+        Ray ray = new Ray(new Point(10, 10, -5), new Vector(0, 0, 1));
+        List<Intersection> result = TUBE.calcIntersections(ray);
         assertEquals(2, result.size(), "Wrong number of intersections");
         assertSame(TUBE, result.get(0).geometry, "Intersection does not belong to the correct geometry");
         assertSame(TUBE, result.get(1).geometry, "Intersection does not belong to the correct geometry");
@@ -282,5 +283,23 @@ class TubeTest {
         // TC49: Ray is parallel to the tube (0 points)
         assertNull(TUBE.calcIntersections(new Ray(new Point(10, 10, 15), new Vector(3, 4, 0))),
                 "Ray parallel to tube should return null");
+
+        // =============== Boundary Values Tests (maxDistance) ==================
+        // Based on the ray from TC47 which intersects at dist=5 and dist=25
+
+        // TC50: maxDistance is smaller than the first intersection (0 points)
+        assertNull(TUBE.calcIntersections(ray, 2), "maxDistance smaller than first intersection should return null");
+
+        // TC51: maxDistance is between the two intersections (1 point)
+        result = TUBE.calcIntersections(ray, 15);
+        assertEquals(1, result.size(), "maxDistance between intersections should return 1 point");
+
+        // TC52: maxDistance is larger than both intersections (2 points)
+        result = TUBE.calcIntersections(ray, 30);
+        assertEquals(2, result.size(), "maxDistance larger than both should return 2 points");
+
+        // TC53: maxDistance is exactly at the first intersection - BVA (1 point)
+        result = TUBE.calcIntersections(ray, 5);
+        assertEquals(1, result.size(), "maxDistance exactly on first intersection should return 1 point");
     }
 }

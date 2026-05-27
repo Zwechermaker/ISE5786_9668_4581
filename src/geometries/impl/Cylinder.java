@@ -54,9 +54,10 @@ public final class Cylinder extends Tube{
      * @param capPlane the plane of the cap
      * @param capCenter the center point of the cap
      * @param ray the ray to check
+     * @param maxDistance limits the distance we are looking for intersections in.
      * @return the intersection point if valid. if it isn't: null.
      */
-    private Point getDiscIntersection(Plane capPlane, Point capCenter, Ray ray) {
+    private Point getDiscIntersection(Plane capPlane, Point capCenter, Ray ray, double maxDistance) {
         // The new API returns List<Intersection>. A ray intersects a plane at most once.
         List<Point> hits = capPlane.findIntersections(ray);
         if (hits == null || hits.isEmpty()) {
@@ -64,6 +65,10 @@ public final class Cylinder extends Tube{
         }
 
         Point p = hits.get(0);
+
+        if (Util.alignZero(p.distance(ray.origin()) - maxDistance) > 0) {
+            return null;
+        }
         // check if the intersection isn't too far from the axis.
         if (Util.alignZero(p.distanceSquared(capCenter) - _radiusSquared) < 0) {
             return p;
@@ -71,9 +76,9 @@ public final class Cylinder extends Tube{
         return null;
     }
     @Override
-    public List<Intersection> calcIntersectionsHelper(Ray ray) {
+    public List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance) {
         // Get intersections from the infinite tube body
-        List<Intersection> lst = super.calcIntersectionsHelper(ray);
+        List<Intersection> lst = super.calcIntersectionsHelper(ray, maxDistance);
 
         Point[] foundIntersections = new Point[2];
         int count = 0;
@@ -90,14 +95,14 @@ public final class Cylinder extends Tube{
         }
 
         if (count < 2) {
-            Point pBottom = getDiscIntersection(_bottomPlane, _axis.origin(), ray);
+            Point pBottom = getDiscIntersection(_bottomPlane, _axis.origin(), ray, maxDistance);
             if (pBottom != null) {
                 foundIntersections[count++] = pBottom;
             }
         }
 
         if (count < 2) {
-            Point pTop = getDiscIntersection(_topPlane, _topCenter, ray);
+            Point pTop = getDiscIntersection(_topPlane, _topCenter, ray, maxDistance);
             if (pTop != null) {
                 foundIntersections[count++] = pTop;
             }
