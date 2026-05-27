@@ -197,9 +197,13 @@ public class Camera implements Cloneable {
          * @return a Builder for camera with the set direction
          */
         public Builder setDirection(Vector to,Vector up) {
+            //clear previous state.
+            _camera._vUp = null;
+            _camera._vRight = null;
+            _target = null;
+
             _camera._vTo = to;
             _vUpTemp = up;
-            _target = null;
             return this;
         }
 
@@ -221,8 +225,14 @@ public class Camera implements Cloneable {
          * @return a Builder for camera with the set direction
          */
         public Builder setDirection(Point target, Vector up) {
+            //clear previous state
+            _camera._vTo = null;
+            _camera._vUp = null;
+            _camera._vRight = null;
+
             _target = target;
             _vUpTemp = up;
+
             return this;
 
         }
@@ -287,27 +297,67 @@ public class Camera implements Cloneable {
             }
             _camera._imageWriter = new ImageWriter(_camera._nX, _camera._nY);
         }
+        /**
+         * Rotates the camera around its vertical axis (Yaw / Pan).
+         * @param angleDegrees the angle to rotate clockwise in degrees
+         * @return the Builder object
+         */
+        public Builder rotate(double angleDegrees) {
+            checkLocationAndDirection();
 
+            double angleRad = Math.toRadians(angleDegrees);
+
+            double cosTheta = Util.alignZero(Math.cos(angleRad));
+            double sinTheta = Util.alignZero(Math.sin(angleRad));
+
+            Vector oldVTo = _camera._vTo;
+            Vector oldVRight = _camera._vRight;
+            Vector newVTo = null;
+
+            // rotate _vTo around _vUp using the orthogonal basis vectors
+            if (!Util.isZero(cosTheta) && !Util.isZero(sinTheta)) {
+                newVTo = oldVTo.scale(cosTheta).add(oldVRight.scale(sinTheta));
+            } else if (!Util.isZero(cosTheta)) {
+                newVTo = oldVTo.scale(cosTheta);
+            } else if (!Util.isZero(sinTheta)) {
+                newVTo = oldVRight.scale(sinTheta);
+            }
+
+            if (newVTo != null) {
+                _camera._vTo = newVTo.normalize();
+            }
+
+            // recalculate _vRight based on the updated forward direction
+            _camera._vRight = _camera._vTo.crossProduct(_camera._vUp).normalize();
+
+            return this;
+        }
         /**
          * checks the location and direction of the camera and sets all relevant values.
          */
-        void checkLocationAndDirection(){
-            if (_camera._p0 == null){
+        void checkLocationAndDirection() {
+            if (_camera._p0 == null) {
                 throw new MissingResourceException("Location must be set", "Camera", "_p0");
             }
             if (_camera._vTo == null && _target == null) {
                 throw new MissingResourceException("Direction must be set", "Camera", "_vTo");
             }
-            if (_camera._vTo == null){
+
+            if (_camera._vTo != null && _camera._vUp != null && _camera._vRight != null) {
+                return;
+            }
+
+            if (_camera._vTo == null) {
                 _camera._vTo = _target.subtract(_camera._p0);
             }
             _camera._vTo = _camera._vTo.normalize();
+
             if (_vUpTemp == null) {
                 _vUpTemp = Vector.AXIS_Y;
             }
             _camera._vRight = _camera._vTo.crossProduct(_vUpTemp).normalize();
 
-            // no need for normilization (as the cross product of 2 orthogonal normalized vectors(
+            //no need for normalization as the cross products of 2 normalized and orthogonal vectors.
             _camera._vUp = _camera._vRight.crossProduct(_camera._vTo);
         }
 

@@ -206,7 +206,6 @@ class LightsTests {
    }
 
    /** Produce a picture of a sphere lighted by a narrow spotlight */
-   @Disabled
    @Test
    @SuppressWarnings("java:S109")
    void testSphereSpotSharp() {
@@ -222,7 +221,6 @@ class LightsTests {
    }
 
    /** Produce a picture of two triangles lighted by a narrow spotlight */
-   @Disabled
    @Test
    @SuppressWarnings("java:S109")
    void testTrianglesSpotSharp() {

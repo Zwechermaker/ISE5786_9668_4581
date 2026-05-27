@@ -162,6 +162,12 @@ public class XmlParser implements Parser {
 
         applyAttenuationFactors(sl, reader);
 
+        // Parse optional narrow beam factor
+        String narrowBeamStr = reader.getAttributeValue(null, "narrowBeam");
+        if (narrowBeamStr != null) {
+            sl.setNarrowBeam(Double.parseDouble(narrowBeamStr));
+        }
+
         scene.lights.add(sl);
     }
 
@@ -331,7 +337,6 @@ public class XmlParser implements Parser {
     private Double3 parseDouble3(String str) {
         if (str == null)
             throw new IllegalArgumentException("Missing coordinate attribute in XML");
-        //split according to the spaces
         String[] parts = str.trim().split("\\s+");
         return new Double3(
                 Double.parseDouble(parts[0]),
@@ -342,15 +347,14 @@ public class XmlParser implements Parser {
 
     /**
      * Helper to apply a parsed string (either 1 or 3 doubles) to a material property.
-     * * @param material to set values in
-     * @param valStr string to parse that describes the value
-     * @param property a string that describes to property to set.
+     *
      * @param material material to apply properties in.
+     * @param valStr   string to parse that describes the value
+     * @param property a string that describes to property to set.
      */
     private void applyMaterialProperty(Material material, String valStr, String property) {
         String[] parts = valStr.trim().split("\\s+");
 
-        // Convert both single values and triplets into a Double3 immediately
         Double3 val = parts.length == 1
                 ? new Double3(Double.parseDouble(parts[0]))
                 : parseDouble3(valStr);
@@ -379,7 +383,7 @@ public class XmlParser implements Parser {
     /**
      * Applies geometry attributes (emission, material) to a {@link Geometry}.
      *
-     * @param geom The geometry to modify.
+     * @param geom   The geometry to modify.
      * @param reader The XML stream reader.
      * @return The modified geometry.
      */

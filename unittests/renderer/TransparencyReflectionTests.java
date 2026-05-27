@@ -74,13 +74,17 @@ class TransparencyReflectionTests {
          .setKl(0.00001).setKq(0.000005));
 
       _cameraBuilder
-         .setLocation(new Point(0, 0, 10000)) //
-         .setDirection(Point.ZERO, Vector.AXIS_Y) //
-         .setVpDistance(10000).setVpSize(2500, 2500) //
-         .setResolution(500, 500) //
-         .build() //
-         .renderImage() //
-         .writeToImage("reflectionTwoSpheresMirrored");
+              .setLocation(new Point(0, 0, 10000))
+              .setDirection(Point.ZERO, Vector.AXIS_Y)
+              .setVpDistance(10000)
+              .setVpSize(2500, 2500)
+              .setResolution(500, 500);
+
+      Camera cameraOriginal = _cameraBuilder.build();
+      cameraOriginal.renderImage().writeToImage("reflectionTwoSpheresMirrored");
+
+      Camera cameraRotated = _cameraBuilder.rotate(10).build();
+      cameraRotated.renderImage().writeToImage("reflectionTwoSpheresMirroredRotated");
    }
 
    /**

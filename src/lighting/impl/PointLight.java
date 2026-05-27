@@ -67,15 +67,6 @@ public class PointLight extends Light implements LightSource {
         return this;
     }
 
-    /**
-     * setter for the narrow beam
-     * @param beamWidth the width of the beam
-     * @return the point light object
-     */
-    public DirectionalLight setNarrowBeam(double beamWidth){
-        return null;
-    }
-
     @Override
     public Color getIntensity(Point point){
         double d = _position.distance(point);

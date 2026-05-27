@@ -85,7 +85,7 @@ public final class Material {
     }
 
     /**
-     * setter for ka the attenuation facctor
+     * setter for ka the attenuation factor
      * @param kA the attenuation factor for all colors
      * @return this object to allow concantenation
      */

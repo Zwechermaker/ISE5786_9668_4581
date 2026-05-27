@@ -21,6 +21,7 @@ import renderer.Camera.Builder;
  * <ul>
  * <li>Camera construction validity using {@link renderer.Camera.Builder}</li>
  * <li>{@link Camera#constructRay(int, int)}</li>
+ * <li>{@link Camera.Builder#rotate(double)}</li>
  * </ul>
  */
 class CameraTests {
@@ -270,5 +271,63 @@ class CameraTests {
         // BV06: Construct ray through a corner pixel in a 3x3 view plane
         Ray rayBV06 = camera3x3.constructRay(0, 0);
         assertEquals(new Ray(LOCATION, new Vector(-2, 2, -10)), rayBV06, ERROR_CONSTRUCT_RAY);
+    }
+
+    /**
+     * Test method for {@link renderer.Camera.Builder#rotate(double)}.
+     * <p>
+     * Verifies that rotation properly updates the camera's orthogonal basis,
+     * and handles pre-condition validations (BVA).
+     * </p>
+     */
+    @Test
+    void testRotate() {
+        Camera.Builder builder = baseBuilder()
+                .setVpSize(6, 6)
+                .setResolution(3, 3);
+
+        // ============ Equivalence Partitions Tests ==============
+
+        // EP01: Positive rotation (90 degrees right)
+        Camera cam90 = builder.setDirection(V_TO, V_UP).rotate(90).build();
+        Ray ray90 = cam90.constructRay(1, 1);
+        assertEquals(new Ray(LOCATION, new Vector(10, 0, 0)), ray90,
+                "Camera failed to rotate 90 degrees correctly");
+
+        // EP02: Negative rotation (-90 degrees left)
+        Camera camMinus90 = builder.setDirection(V_TO, V_UP).rotate(-90).build();
+        Ray rayMinus90 = camMinus90.constructRay(1, 1);
+        assertEquals(new Ray(LOCATION, new Vector(-10, 0, 0)), rayMinus90,
+                "Camera failed to rotate -90 degrees correctly");
+
+        // EP03: 180 degrees rotation (looking completely backwards)
+        Camera cam180 = builder.setDirection(V_TO, V_UP).rotate(180).build();
+        Ray ray180 = cam180.constructRay(1, 1);
+        assertEquals(new Ray(LOCATION, new Vector(0, 0, 10)), ray180,
+                "Camera failed to rotate 180 degrees correctly");
+
+        // =============== Boundary Values Tests ==================
+
+        // BV01: 0 degrees rotation (no change)
+        Camera cam0 = builder.setDirection(V_TO, V_UP).rotate(0).build();
+        Ray ray0 = cam0.constructRay(1, 1);
+        assertEquals(new Ray(LOCATION, new Vector(0, 0, -10)), ray0,
+                "Camera failed to remain static on 0 degree rotation");
+
+        // BV02: 360 degrees rotation (full circle, no change)
+        Camera cam360 = builder.setDirection(V_TO, V_UP).rotate(360).build();
+        Ray ray360 = cam360.constructRay(1, 1);
+        assertEquals(new Ray(LOCATION, new Vector(0, 0, -10)), ray360,
+                "Camera failed to remain static on 360 degree rotation");
+
+        // BV03: Call rotate before setting location
+        assertThrows(MissingResourceException.class,
+                () -> Camera.getBuilder().rotate(45),
+                "Should throw MissingResourceException when rotating before location is set");
+
+        // BV04: Call rotate before setting direction
+        assertThrows(MissingResourceException.class,
+                () -> Camera.getBuilder().setLocation(LOCATION).rotate(45),
+                "Should throw MissingResourceException when rotating before direction is set");
     }
 }

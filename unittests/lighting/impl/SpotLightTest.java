@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
-import lighting.impl.SpotLight;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,6 +34,8 @@ class SpotLightTest {
     private static final Point P_BEHIND = new Point(0, -10, 0);
     /** A point at exactly 90 degrees to the spotlight's direction. */
     private static final Point P_90 = new Point(10, 0, 0);
+    /** A point at a 45-degree angle to test the narrow beam drop-off. */
+    private static final Point P_ANGLE = new Point(10, 10, 0);
 
     /**
      * Test method for {@link SpotLight#getIntensity(primitives.Point)}.
@@ -76,5 +77,41 @@ class SpotLightTest {
         // TC06: Point coincides with light position
         assertThrows(IllegalArgumentException.class, () -> LIGHT.getL(POSITION),
                 "ERROR: getL() should throw an exception when point coincides with light source (zero vector)");
+    }
+
+    /**
+     * Test method for the Narrow-beam Spotlight bonus.
+     */
+    @Test
+    void testNarrowBeam() {
+        SpotLight narrowLight = new SpotLight(I0, POSITION, DIRECTION)
+                .setKl(0.1).setKq(0.01).setNarrowBeam(10);
+
+        // ================== Equivalence Partitions Tests ==================
+
+        // TC07: Point off-center (45 degrees)
+        // L vector to P_ANGLE is (10, 10, 0), normalized is (1/sqrt(2), 1/sqrt(2), 0).
+        // Dot product with direction (0,1,0) is exactly 1/sqrt(2).
+        // Distance is sqrt(200). Attenuation denominator = 1 + 0.1*sqrt(200) + 0.01*200 = 3 + sqrt(2).
+        // Because narrowBeam is 10, the projection factor is (1/sqrt(2))^10 = 1/32.
+        Color expectedNarrowIntensity = I0.scale(1d / (3d + Math.sqrt(2d))).scale(1d / 32d);
+
+        assertEquals(expectedNarrowIntensity, narrowLight.getIntensity(P_ANGLE),
+                "ERROR: Narrow beam intensity calculated incorrectly for off-center angle");
+
+        // TC08: Point behind the narrow beam spotlight
+        assertEquals(Color.BLACK, narrowLight.getIntensity(P_BEHIND),
+                "ERROR: Narrow beam should still be Color.BLACK when point is behind");
+
+        // ================== Boundary Values Tests ==================
+
+        // TC09: Point exactly in the center of the beam (angle = 0)
+        // cos(0) = 1.  1^10 = 1. The intensity should be identical to the standard spotlight.
+        assertEquals(LIGHT.getIntensity(P_FRONT), narrowLight.getIntensity(P_FRONT),
+                "ERROR: Narrow beam intensity should match standard spotlight perfectly in the dead-center of the beam");
+
+        // TC10: Point at exactly 90 degrees
+        assertEquals(Color.BLACK, narrowLight.getIntensity(P_90),
+                "ERROR: Narrow beam should be Color.BLACK at exactly 90 degrees");
     }
 }

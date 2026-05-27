@@ -12,6 +12,7 @@ public class SpotLight extends PointLight {
     /** a vector that defines the direction of light */
     private final Vector _direction;
 
+    private double _narrowBeam = 1;
     /**
      * a constructor for spot light.
      * @param intensity the intensity of the light
@@ -23,6 +24,15 @@ public class SpotLight extends PointLight {
         this._direction = direction.normalize();
     }
 
+    /**
+     * Narrows the beam of the spotlight.
+     * @param narrowBeam the power to raise the dot product to.
+     * @return the SpotLight object for concatenation
+     */
+    public SpotLight setNarrowBeam(double narrowBeam) {
+        this._narrowBeam = narrowBeam;
+        return this;
+    }
     @Override
     public SpotLight setKc(double kC) {
         super.setKc(kC);
@@ -50,6 +60,10 @@ public class SpotLight extends PointLight {
         if (Util.alignZero(projection) <= 0) {
             return Color.BLACK;
         }
-        return super.getIntensity(p).scale(projection);
-    }
+        //Optimize slow power usage.
+        if (_narrowBeam != 1) {
+            projection = Math.pow(projection, _narrowBeam);
+        }
+
+        return super.getIntensity(p).scale(projection);    }
 }
