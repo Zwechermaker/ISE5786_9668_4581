@@ -87,7 +87,7 @@ public class Camera implements Cloneable {
 
     }
     /** Amount of threads to use fore rendering image by the camera */
-    private int threadsCount = 0;
+    private int threadsCount = 3;
     /**
      * Amount of threads to spare for Java VM threads:<br>
      * Spare threads if trying to use all the cores
