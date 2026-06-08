@@ -3,58 +3,74 @@ package renderer;
 import primitives.*;
 import scene.Scene;
 
-import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.MissingResourceException;
 import java.util.stream.IntStream;
 
 /**
- * <b>Camera</b>
+ * A class representing a camera in a 3D scene, which defines the viewpoint and projection for rendering.
  * <p>
- * A lightweight entity representing a viewpoint in a 3D scene. The camera is responsible for
- * shooting rays through a view plane and managing the multi-threaded rendering pipeline.
- * </p>
- * <p>
- * Instead of calculating complex 3D geometry internally, the camera delegates view plane mapping
- * to a {@link BlackBoard} and pixel distribution to a {@link Sampler}.
- * </p>
+ * The camera is defined by its position, orientation (forward, up, and right vectors),
+ * and a view plane through which the scene is projected. It is responsible for constructing
+ * rays from the viewpoint through each pixel of the view plane.
  *
- * @author Elad Zwecher
- * @author Benjamin Godfrey
+ * @author Elad Zwecher and Benjamin Godfrey
  */
 public class Camera implements Cloneable {
-    /** The default number of pixels for the resolution if not otherwise specified. */
+    /**
+     * The default number of pixels for the resolution if not otherwise specified.
+     */
     private static final int DEFAULT_PIXEL_NUM = 1;
-    /** The number of threads to spare when using all available cores for rendering. */
+    /**
+     * The number of threads to spare when using all available cores for rendering.
+     */
     private static final int SPARE_THREADS = 2;
 
     // ================= Fields =================
 
-    /** The origin point of the camera (the "eye"). */
+    /**
+     * The origin point of the camera (the "eye").
+     */
     private Point _p0 = null;
-    /** The number of pixels along the x-axis (width) of the image. */
+    /**
+     * The number of pixels along the x-axis (width) of the image.
+     */
     private int _nX = DEFAULT_PIXEL_NUM;
-    /** The number of pixels along the y-axis (height) of the image. */
+    /**
+     * The number of pixels along the y-axis (height) of the image.
+     */
     private int _nY = DEFAULT_PIXEL_NUM;
 
-    /** * The 3D target area representing the physical view plane.
+    /**
+     * The 3D target area representing the physical view plane.
      * <i>(Replaces width, height, distance, and center variables)</i>
      */
     private BlackBoard _viewPlane;
-    /** * The sampling strategy used to distribute pixels across the view plane.
+    /**
+     * The sampling strategy used to distribute pixels across the view plane.
      */
     private Sampler _viewPlaneSampler;
 
-    /** The image writer used to create the final image file. */
+    /**
+     * The image writer used to create the final image file.
+     */
     private ImageWriter _imageWriter;
-    /** The ray tracer used to calculate the color of each pixel. */
+    /**
+     * The ray tracer used to calculate the color of each pixel.
+     */
     private RayTracerBase _rayTracer;
 
-    /** The number of threads to use for rendering. */
+    /**
+     * The number of threads to use for rendering.
+     */
     private int threadsCount = 3;
-    /** The interval (in seconds) for printing debug progress messages. */
+    /**
+     * The interval (in seconds) for printing debug progress messages.
+     */
     private double printInterval = 0;
-    /** The pixel manager for handling multi-threaded rendering and progress reporting. */
+    /**
+     * The pixel manager for handling multi-threaded rendering and progress reporting.
+     */
     private PixelManager pixelManager;
 
     /**
@@ -235,8 +251,11 @@ public class Camera implements Cloneable {
         private int _threadsCount = 3;
         private double _printInterval = 0;
 
-        /** Default constructor. */
-        Builder() {}
+        /**
+         * Default constructor.
+         */
+        Builder() {
+        }
 
         /**
          * Sets the spatial origin position of the camera.
@@ -417,7 +436,9 @@ public class Camera implements Cloneable {
             return this;
         }
 
-        /** Safely initializes the image writer. */
+        /**
+         * Safely initializes the image writer.
+         */
         private void checkResolution() {
             if (this._nX <= 0 || this._nY <= 0) {
                 throw new IllegalArgumentException("Resolution must be positive.");
@@ -425,7 +446,9 @@ public class Camera implements Cloneable {
             this._imageWriter = new ImageWriter(this._nX, this._nY);
         }
 
-        /** Mathematically establishes the orthonormal basis vectors. */
+        /**
+         * Mathematically establishes the orthonormal basis vectors.
+         */
         private void checkLocationAndDirection() {
             if (this._p0 == null) {
                 throw new MissingResourceException("Location must be set.", "Camera", "_p0");
@@ -449,7 +472,9 @@ public class Camera implements Cloneable {
             this._vUp = this._vRight.crossProduct(this._vTo);
         }
 
-        /** Validates constraints on the projection plane dimensions. */
+        /**
+         * Validates constraints on the projection plane dimensions.
+         */
         private void checkViewPlane() {
             if (Util.alignZero(this._width) <= 0 || Util.alignZero(this._height) <= 0) {
                 throw new IllegalArgumentException("View plane size must be positive.");

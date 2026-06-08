@@ -4,8 +4,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 import primitives.Util;
+import primitives.Point2D;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +42,8 @@ public class BlackBoard {
     public Point mapToBoard(Point2D offset){
         Point target = _center;
 
-        if (!Util(offset.x())) target = target.add(_vRight.scale(offset.x()));
-        if (!Util(offset.y())) target = target.add(_vUp.scale(offset.y()));
+        if (!Util.isZero(offset.x())) target = target.add(_vRight.scale(offset.x() * _width));
+        if (!Util.isZero(offset.y())) target = target.add(_vUp.scale(offset.y() * _height));
 
         return target;
     }

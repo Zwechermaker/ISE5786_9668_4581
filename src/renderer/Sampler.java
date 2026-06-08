@@ -1,25 +1,34 @@
 package renderer;
 
-import java.awt.geom.Point2D;
+import primitives.Point2D;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * an abstract class that defines sampling functionality
+ * An abstract class for sampling strategies used in anti-aliasing.
+ * <p>
+ * This class defines the basic structure for different sampling techniques,
+ * which are used to generate multiple sample points within a single pixel
+ * to reduce aliasing artifacts.
+ *
+ * @author Elad Zwecher and Benjamin Godfrey
  */
 public abstract class Sampler {
     /**
-     * Horizontal resolution
+     * The horizontal resolution of the sampling grid.
      */
     protected final int _resolutionX;
     /**
-     * Vertical resolution.
+     * The vertical resolution of the sampling grid.
      */
     protected final int _resolutionY;
+
     /**
-     * a constructor
-     * @param resolutionX parameter
-     * @param resolutionY parameter
+     * Constructs a {@link Sampler} with a specified resolution.
+     *
+     * @param resolutionX The horizontal resolution.
+     * @param resolutionY The vertical resolution.
      */
     public Sampler(int resolutionX, int resolutionY) {
         this._resolutionX = resolutionX;
@@ -27,26 +36,28 @@ public abstract class Sampler {
     }
 
     /**
-     * a constructor
-     * @param resolution parameter
+     * Constructs a {@link Sampler} with a uniform resolution for both axes.
+     *
+     * @param resolution The resolution for both width and height.
      */
     public Sampler(int resolution) {
         this(resolution, resolution);
     }
 
     /**
-     * returns an offset for a spescific index of a pixel
-     * @param row dfnoe
-     * @param column kernri
-     * @return an offset
+     * Generates a 2D offset for a given pixel.
+     * Subclasses must implement this method to provide a specific sampling strategy.
+     *
+     * @param column The column index of the pixel.
+     * @param row    The row index of the pixel.
+     * @return A {@link Point2D} representing the offset.
      */
-    public Point2D getOffset(int row, int column){
-        return null;
-    }
+    public abstract Point2D getOffset(int column, int row);
 
     /**
-     * a function that generates all offset
-     * @return a list of offset
+     * Generates a list of all sample offsets for the entire grid.
+     *
+     * @return A {@link List} of {@link Point2D} offsets.
      */
     public List<Point2D> generateAll() {
         List<Point2D> list = new ArrayList<>();
@@ -57,7 +68,4 @@ public abstract class Sampler {
         }
         return list;
     }
-
-
-
 }
