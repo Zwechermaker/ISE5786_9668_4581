@@ -3,99 +3,102 @@ package primitives;
 import java.util.Objects;
 
 /**
- * A class that describes a point in space.
+ * A class representing a point in 3D Cartesian space.
+ * <p>
+ * The point is defined by its three coordinates (x, y, z), which are stored in a {@link Double3} object.
+ *
+ * @author Elad Zwecher and Benjamin Godfrey
  */
 public class Point {
     /**
-     * A double3 that represents a point in space
+     * The internal representation of the point's coordinates (x, y, z).
      */
     protected final Double3 _xyz;
 
     /**
-     * A constant value that represents the origin in space.
+     * A constant representing the origin point (0, 0, 0) in 3D space.
      */
     public static final Point ZERO = new Point(Double3.ZERO);
 
     /**
-     * a constructor defined by 3 double values.
+     * Constructs a {@link Point} from three double values.
      *
-     * @param x represents the x value to initialize
-     * @param y represents the y value to initialize
-     * @param z represents the z value to initialize
+     * @param x The x-coordinate of the point.
+     * @param y The y-coordinate of the point.
+     * @param z The z-coordinate of the point.
      */
-    public Point(double x, double y , double z){
-        _xyz = new Double3(x,y,z);
+    public Point(double x, double y, double z) {
+        _xyz = new Double3(x, y, z);
     }
 
     /**
-     * A constructor that takes a Double 3 as an argument.
+     * Constructs a {@link Point} from a {@link Double3} object.
      *
-     * @param xyz A Double3 that turns to a geometric point in space
+     * @param xyz A {@link Double3} object representing the point's coordinates.
      */
-    public Point(Double3 xyz){
+    public Point(Double3 xyz) {
         _xyz = xyz;
     }
 
-
     /**
-     * calculate the vector between 2 points.
+     * Calculates the vector from this point to another point.
      *
-     * @param point the point we are supposed to find the vector to.
-     * @return The vector between 2 points
+     * @param other The point to which the vector is directed.
+     * @return A {@link Vector} representing the displacement from this point to the other point.
      */
-    public Vector subtract(Point point) {
-        return new Vector(_xyz.subtract(point._xyz));
+    public Vector subtract(Point other) {
+        return new Vector(_xyz.subtract(other._xyz));
     }
 
     /**
-     * calculates the point moved by a vector.
+     * Calculates a new point by adding a vector to this point.
      *
-     * @param vector a vector to add to the current point
-     * @return the point that was moved by a vector
+     * @param vector The vector to add to this point.
+     * @return A new {@link Point} representing the translated point.
      */
-    public Point add(Vector vector){
+    public Point add(Vector vector) {
         return new Point(_xyz.add(vector._xyz));
     }
 
     /**
-     * calculates the squared distance between 2 points.
+     * Calculates the squared distance between this point and another point.
+     * <p>
+     * This method is often more efficient than {@link #distance(Point)} as it avoids
+     * the computationally expensive square root operation. It is useful for distance comparisons.
+     * The formula is: {@code (x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2}.
      *
-     * @param point the point we are supposed to find the distance to.
-     * @return the distance between 2 points squared.
+     * @param point The point to which the squared distance is calculated.
+     * @return The squared distance between the two points.
      */
     public double distanceSquared(Point point) {
         // (x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2
-
         return (_xyz._d1() - point._xyz._d1()) * (_xyz._d1() - point._xyz._d1())
                 + (_xyz._d2() - point._xyz._d2()) * (_xyz._d2() - point._xyz._d2())
                 + (_xyz._d3() - point._xyz._d3()) * (_xyz._d3() - point._xyz._d3());
     }
 
     /**
-     * calculates the distance between 2 points.
+     * Calculates the Euclidean distance between this point and another point.
+     * <p>
+     * The formula is: {@code sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2)}.
      *
-     * @param point the point we are supposed to find the distance to.
-     * @return the distance between 2 points.
+     * @param point The point to which the distance is calculated.
+     * @return The distance between the two points.
      */
-    public double distance(Point point){
-        // \sqrt{(x2-x1)^2+(y2-y1)^2+(z2-z1)^2}
+    public double distance(Point point) {
         return Math.sqrt(distanceSquared(point));
     }
-
 
     @Override
     public String toString() {
         return "xyz: " + _xyz;
     }
 
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-
         Point point = (Point) obj;
-
         return Objects.equals(_xyz, point._xyz);
     }
 

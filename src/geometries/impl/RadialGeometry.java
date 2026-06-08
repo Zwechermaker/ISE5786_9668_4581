@@ -2,30 +2,36 @@ package geometries.impl;
 
 import geometries.api.Geometry;
 import primitives.Util;
+
 import java.util.Objects;
 
 /**
- * An abstract class that represents a radial geometry in space.
+ * An abstract class representing a geometry with a radial property, such as a sphere or a tube.
+ * <p>
+ * This class provides a common base for geometries that are defined by a radius.
+ *
+ * @author Elad Zwecher and Benjamin Godfrey
  */
 public abstract class RadialGeometry extends Geometry {
     /**
      * The radius of the radial geometry.
      */
-    protected final double _radius ;
+    protected final double _radius;
 
     /**
-     * The radius squared of the radial geometry.
+     * The squared radius of the radial geometry, pre-calculated for performance optimization in intersection calculations.
      */
     protected final double _radiusSquared;
 
     /**
-     * constructor for radial geometry's
-     * @param radius the radius of a radial geometry
+     * Constructs a {@link RadialGeometry} with a specified radius.
+     *
+     * @param radius The radius of the geometry. Must be a positive value.
+     * @throws IllegalArgumentException if the radius is not a positive number.
      */
-    public RadialGeometry(double radius){
-        if(Util.alignZero(radius)<=0)
-        {
-            throw new IllegalArgumentException("Radius cannot be less or equal to 0.");
+    public RadialGeometry(double radius) {
+        if (Util.alignZero(radius) <= 0) {
+            throw new IllegalArgumentException("Radius must be a positive number.");
         }
         this._radius = radius;
         _radiusSquared = radius * radius;
@@ -41,8 +47,8 @@ public abstract class RadialGeometry extends Geometry {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
 
-        RadialGeometry radialGeometry = (RadialGeometry) obj;
-        return Util.isZero(_radius - radialGeometry._radius);
+        RadialGeometry that = (RadialGeometry) obj;
+        return Util.isZero(_radius - that._radius);
     }
 
     @Override

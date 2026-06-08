@@ -1,29 +1,34 @@
 package primitives;
 
-import geometries.api.Intersectable;
+import geometries.api.Intersectable.Intersection;
 
 import java.util.List;
 import java.util.Objects;
-import static geometries.api.Intersectable.Intersection;
 
 /**
- * A class that describes a Ray, an infinite line in space that starts at a point.
+ * A class representing a ray in 3D space, defined by an origin point and a direction vector.
+ * <p>
+ * A ray is a fundamental concept in ray tracing, representing the path of light.
+ * The direction vector is always normalized.
+ *
+ * @author Elad Zwecher and Benjamin Godfrey
  */
 public final class Ray {
     /**
-     * the origin point of the ray
+     * The origin point of the ray.
      */
-    private final Point _origin ;
+    private final Point _origin;
 
     /**
-     * the direction vector of the ray
+     * The direction vector of the ray. This vector is always normalized.
      */
     private final Vector _direction;
 
     /**
-     * a constructor for Ray
-     * @param point the origin point of the ray
-     * @param vector the direction vector of the ray
+     * Constructs a {@link Ray} with a specified origin point and direction vector.
+     *
+     * @param point  The origin point of the ray.
+     * @param vector The direction vector of the ray. It will be normalized.
      */
     public Ray(Point point, Vector vector) {
         _origin = point;
@@ -31,42 +36,81 @@ public final class Ray {
     }
 
     /**
-     * a getter for the direction of the ray
-     * @return the direction of the ray
+     * Retrieves the direction vector of the ray.
+     *
+     * @return The normalized direction vector.
      */
     public Vector direction() {
         return _direction;
     }
 
     /**
-     * a getter for the origin of the ray
-     * @return the origin of the ray
+     * Retrieves the origin point of the ray.
+     *
+     * @return The origin point.
      */
     public Point origin() {
         return _origin;
     }
 
     /**
-     * getting the point p_0+t*v
-     * @param parameter for p_0+parameter*v
-     * @return the point p_0+parameter*v
+     * Calculates a point along the ray at a specified distance from the origin.
+     * <p>
+     * The point is calculated using the formula: {@code P(t) = P0 + t * V}, where {@code P0} is the origin,
+     * {@code V} is the direction vector, and {@code t} is the distance (parameter).
+     *
+     * @param parameter The distance along the ray from the origin.
+     * @return The calculated {@link Point}. If scaling results in an invalid vector, returns the origin.
      */
-    public Point getPoint(double parameter){
+    public Point getPoint(double parameter) {
         try {
             return _origin.add(_direction.scale(parameter));
-        } catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return _origin;
         }
+    }
+
+    /**
+     * Finds the closest intersection point from a list of intersections to the ray's origin.
+     *
+     * @param intersections A list of {@link Intersection} objects.
+     * @return The closest {@link Intersection} object, or {@code null} if the list is empty.
+     */
+    public Intersection findClosestIntersection(List<Intersection> intersections) {
+        if (intersections == null) {
+            return null;
+        }
+        Intersection currentClosestIntersection = null;
+        double closestCurentDistance = Double.POSITIVE_INFINITY;
+        for (Intersection currentIntersection : intersections) {
+            if (currentIntersection.point.distanceSquared(_origin) < closestCurentDistance) {
+                closestCurentDistance = currentIntersection.point.distanceSquared(_origin);
+                currentClosestIntersection = currentIntersection;
+            }
+        }
+        return currentClosestIntersection;
+    }
+
+    /**
+     * Finds the closest point from a list of points to the ray's origin.
+     *
+     * @param points A list of {@link Point} objects.
+     * @return The closest {@link Point}, or {@code null} if the list is empty.
+     */
+    public Point findClosestPoint(List<Point> points) {
+        return points == null ? null
+                : findClosestIntersection(
+                points.stream()
+                        .map(point -> new Intersection(null, point)).toList()
+        ).point;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-
         Ray ray = (Ray) obj;
-        return Objects.equals(_origin, ray._origin)
-                && Objects.equals(_direction, ray._direction);
+        return Objects.equals(_origin, ray._origin) && Objects.equals(_direction, ray._direction);
     }
 
     @Override
@@ -77,37 +121,5 @@ public final class Ray {
     @Override
     public String toString() {
         return "Ray(origin=" + _origin + ", direction=" + _direction + ")";
-    }
-
-    /**
-     * find the closest intersection.
-     * @param intersections a list of intersections
-     * @return the closest intersection
-     */
-    public Intersection findClosestIntersection(List<Intersection> intersections){
-        if(intersections == null){
-            return null;
-        }
-        Intersection currentClosestIntersection = null;
-        double closestCurentDistance = Double.POSITIVE_INFINITY;
-        for(Intersection currentIntersection : intersections){
-            if(currentIntersection.point.distanceSquared(_origin) < closestCurentDistance){
-                closestCurentDistance = currentIntersection.point.distanceSquared(_origin);
-                currentClosestIntersection = currentIntersection;
-            }
-        }
-        return currentClosestIntersection;
-    }
-    /**
-     * finds the closest point in the list
-     * @param points the list of points
-     * @return the closest point
-     */
-    public Point findClosestPoint(List<Point> points) {
-        return points == null ? null
-                : findClosestIntersection(
-                points.stream()
-                        .map(point -> new Intersection(null, point)).toList()
-        ).point;
     }
 }

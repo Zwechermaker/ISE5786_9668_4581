@@ -8,46 +8,55 @@ import primitives.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * passive data structure of the scene
+ * A class representing a 3D scene, which contains all the elements to be rendered.
+ * <p>
+ * This class is a passive data structure that holds the scene's name, background color,
+ * ambient light, geometries, and light sources. It uses a fluent API for configuration.
+ *
+ * @author Elad Zwecher and Benjamin Godfrey
  */
 public final class Scene {
-    /** the name of the scene. */
-    public String name;
+    /**
+     * The name of the scene.
+     */
+    public final String name;
 
     /**
-     * the ambient light of the scene, default is no ambient light.
+     * The ambient light of the scene. Defaults to no ambient light (black).
      */
     public AmbientLight ambientLight = AmbientLight.NONE;
 
     /**
-     * the background color of the scene, default is black.
+     * The background color of the scene. Defaults to black.
      */
     public Color background = Color.BLACK;
 
     /**
-     * the collection of 3D geometries present in the scene.
-    */
+     * A collection of all the 3D geometries present in the scene.
+     */
     public Geometries geometries = new Geometries();
 
     /**
-     * a list of all light sources in the scene.
+     * A list of all the light sources in the scene.
      */
     public List<LightSource> lights;
+
     /**
-     * constructor
-     * @param string the name of the scene
+     * Constructs a {@link Scene} with a given name.
+     *
+     * @param name The name of the scene.
      */
-    public Scene(String string) {
-        name = string;
-        lights = new ArrayList<>();
+    public Scene(String name) {
+        this.name = name;
+        this.lights = new ArrayList<>();
     }
 
     /**
-     * a setter for the ambient light of the scene
-     * @param ambient the ambient light of the scene
-     * @return this
+     * Sets the ambient light of the scene.
+     *
+     * @param ambient The {@link AmbientLight} to set.
+     * @return This {@link Scene} object, allowing for method chaining.
      */
     public Scene setAmbientLight(AmbientLight ambient) {
         this.ambientLight = ambient;
@@ -55,19 +64,21 @@ public final class Scene {
     }
 
     /**
-     * a setter for the background of the scene
-     * @param backGround the color of the background
-     * @return this
+     * Sets the background color of the scene.
+     *
+     * @param background The background {@link Color} to set.
+     * @return This {@link Scene} object, allowing for method chaining.
      */
-    public Scene setBackground(Color backGround) {
-        this.background = backGround;
+    public Scene setBackground(Color background) {
+        this.background = background;
         return this;
     }
 
     /**
-     * a setter for geometries of the scene
-     * @param geometries of the scene
-     * @return this
+     * Sets the collection of geometries for the scene.
+     *
+     * @param geometries The {@link Geometries} collection to set.
+     * @return This {@link Scene} object, allowing for method chaining.
      */
     public Scene setGeometries(Geometries geometries) {
         this.geometries = geometries;
@@ -77,9 +88,9 @@ public final class Scene {
     @Override
     public String toString() {
         return "Scene '" + name + "' {\n" +
-               "  background: " + background + ",\n" +
-               "  ambientLight: " + ambientLight + ",\n" +
-               "  " + geometries.toString().replace("\n", "\n  ") + "\n" +
-               "}";
+                "  background: " + background + ",\n" +
+                "  ambientLight: " + ambientLight + ",\n" +
+                "  " + geometries.toString().replace("\n", "\n  ") + "\n" +
+                "}";
     }
 }

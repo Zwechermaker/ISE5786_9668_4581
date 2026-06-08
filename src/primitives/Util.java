@@ -33,17 +33,17 @@ public final class Util {
     * Extracts the unbiased exponent of a {@code double}.
     * <p>
     * IEEE-754 double format:
-    * 
+    *
     * <pre>
     * sign | exponent (11 bits) | mantissa (52 bits)
     * </pre>
-    * 
+    *
     * The actual number represented is:
-    * 
+    *
     * <pre>
     * value = mantissa * 2 ^ exponent
     * </pre>
-    * 
+    *
     * where the stored exponent is biased by 1023.
     * @param  num the number
     * @return     the unbiased exponent

@@ -1,19 +1,21 @@
 package parser;
+
 /**
- * Enumerates the available parsing options.
+ * Enumerates the available types of scene parsers.
  * <p>
- * Used to select which file type should be parsed.
+ * This enum is used by {@link ParserFactory} to create the appropriate parser
+ * based on the desired file format.
+ *
+ * @author Elad Zwecher and Benjamin Godfrey
  */
 public enum ParserType {
     /**
-     * An XML parser.
+     * Represents a parser for XML files.
      */
     XML,
 
     /**
-     * A JSON parser.
+     * Represents a parser for JSON files.
      */
     JSON
 }
-
-
