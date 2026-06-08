@@ -119,7 +119,6 @@ class XmlAdvancedTests {
     /**
      * Renders the custom Snow Globe scene to fulfill Bonus 1 requirements.
      */
-    @Disabled
     @Test
     void testXmlSnowGlobe() {
         // Camera pulled back further and elevated for a perfect viewing angle
