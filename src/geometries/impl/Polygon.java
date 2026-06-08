@@ -1,6 +1,5 @@
 package geometries.impl;
 
-import static java.lang.Boolean.TRUE;
 import static primitives.Util.isZero;
 
 import java.util.List;
@@ -28,87 +27,110 @@ public class Polygon extends Geometry {
    /** Number of vertices */
    private final int           _size;
 
-   /**
-    * Constructs a convex polygon from ordered vertices.
-    * <p>
-    * The vertices must:
-    * </p>
-    * <ul>
-    * <li>Contain at least three points</li>
-    * <li>Be ordered along the polygon edge path</li>
-    * <li>Lie in the same plane</li>
-    * <li>Form a convex polygon</li>
-    * </ul>
-    * @param  vertices                 polygon vertices in edge order
-    * @throws IllegalArgumentException if the vertices do not form a valid convex
-    *                                  polygon
-    */
-   public Polygon(Point... vertices) {
-      if (vertices.length < 3)
-         throw new IllegalArgumentException("A polygon can't have less than 3 vertices");
-      _vertices = List.of(vertices);
-      _size     = vertices.length;
+    /**
+     * Constructs a convex polygon from an ordered list of vertices.
+     * <p>
+     * The constructor validates that the provided vertices form a valid convex polygon.
+     * The validation includes the following checks:
+     * </p>
+     * <ul>
+     *   <li>The polygon must have at least three vertices.</li>
+     *   <li>All vertices must lie on the same plane.</li>
+     *   <li>The vertices must be ordered sequentially along the polygon's edge path.</li>
+     *   <li>The polygon must be convex. This is verified by checking that the cross product
+     *       of consecutive edge vectors consistently points in the same direction relative
+     *       to the polygon's normal.</li>
+     * </ul>
+     *
+     * @param vertices An ordered array of the polygon's vertices.
+     * @throws IllegalArgumentException if the vertices do not form a valid convex polygon.
+     */
+    public Polygon(Point... vertices) {
+        if (vertices.length < 3)
+            throw new IllegalArgumentException("A polygon must have at least 3 vertices.");
+        _vertices = List.of(vertices);
+        _size = vertices.length;
 
-      // Create the supporting plane using the first three vertices.
-      // The plane stores the constant normal of the polygon.
-      _plane    = new Plane(vertices[0], vertices[1], vertices[2]);
-      if (_size == 3) return; // no need for more tests for a Triangle
+        // The supporting plane is created from the first three vertices.
+        // This plane also provides the constant normal for the polygon.
+        _plane = new Plane(vertices[0], vertices[1], vertices[2]);
+        if (_size == 3) return; // A triangle is always a valid polygon.
 
-      Vector  n        = _plane.getNormal(vertices[0]);
-      // Subtracting identical vertices would create a zero vector (illegal)
-      Vector  edge1    = vertices[_size - 1].subtract(vertices[_size - 2]);
-      Vector  edge2    = vertices[0].subtract(vertices[_size - 1]);
+        Vector n = _plane.getNormal(null); // Normal is constant for the plane.
 
-      // Cross product of consecutive edges determines orientation.
-      // All edge pairs must produce the same sign relative to the normal,
-      // otherwise the polygon is concave or vertices are unordered.
-      boolean positive = edge1.crossProduct(edge2).dotProduct(n) > 0;
-      for (var i = 1; i < _size; ++i) {
-         // Test that the point is in the same plane as calculated originally
-         if (!isZero(vertices[i].subtract(vertices[0]).dotProduct(n)))
-            throw new IllegalArgumentException("All vertices of a polygon must lay in the same plane");
-         // Test the consequent edges have
-         edge1 = edge2;
-         edge2 = vertices[i].subtract(vertices[i - 1]);
-         if (positive != (edge1.crossProduct(edge2).dotProduct(n) > 0))
-            throw new IllegalArgumentException("All vertices must be ordered and the polygon must be convex");
-      }
-   }
+        // Check for convexity and coplanarity.
+        Vector edge1 = vertices[_size - 1].subtract(vertices[_size - 2]);
+        Vector edge2 = vertices[0].subtract(vertices[_size - 1]);
 
-   @Override
-   public Vector getNormal(Point point) { return _plane.getNormal(point); }
-   @Override
-  public List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance){
+        // The sign of the dot product of the cross product of consecutive edges and the normal
+        // must be consistent for all edges if the polygon is convex and the vertices are ordered.
+        boolean positive = edge1.crossProduct(edge2).dotProduct(n) > 0;
+        for (var i = 1; i < _size; ++i) {
+            // Verify that all vertices lie on the same plane.
+            if (!isZero(vertices[i].subtract(vertices[0]).dotProduct(n)))
+                throw new IllegalArgumentException("All vertices of a polygon must lie on the same plane.");
 
-      List<Point> lst = _plane.findIntersections(ray, maxDistance);
+            // Check for consistent orientation of edges.
+            edge1 = edge2;
+            edge2 = vertices[i].subtract(vertices[i - 1]);
+            if (positive != (edge1.crossProduct(edge2).dotProduct(n) > 0))
+                throw new IllegalArgumentException("All vertices must be ordered, and the polygon must be convex.");
+        }
+    }
 
-      //If there were no intersections with the plane to begin with.
-      if (lst == null){
-         return null;
-      }
+    @Override
+    public Vector getNormal(Point point) {
+        return _plane.getNormal(point);
+    }
 
-      //check if the point intersects the polygon inside the plane.
-      Vector vecIterate1 = _vertices.getFirst().subtract(ray.origin());
-      Boolean positive = null;
-      for (int i = 0; i < _size; i++){
-          //set up the next edge to check.
-          Vector vecIterate2 = _vertices.get((i + 1) % _size).subtract(ray.origin());
+    /**
+     * Calculates the intersection point of a ray with the polygon.
+     * <p>
+     * The method first finds the intersection of the ray with the plane containing the polygon.
+     * If an intersection point exists, it then checks if this point lies inside the polygon.
+     * <p>
+     * The inside-outside test is performed by constructing triangles from the ray's origin and each
+     * edge of the polygon. The normals of these triangles must all point in the same direction
+     * (either all towards or all away from a consistent viewpoint) for the intersection point
+     * to be inside the polygon.
+     *
+     * @param ray         The ray to intersect with the polygon.
+     * @param maxDistance The maximum distance to consider for intersections.
+     * @return A {@link List} containing the {@link Intersection} point if the ray intersects the polygon, otherwise {@code null}.
+     */
+    @Override
+    public List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance) {
 
-          //set up the normal for the plane between the edge and the ray.
-          Vector normal = vecIterate1.crossProduct(vecIterate2);
-          double val = Util.alignZero(normal.dotProduct(ray.direction()));
+        List<Point> lst = _plane.findIntersections(ray, maxDistance);
 
-          if (i == 0){
-              positive = val > 0;
-          } if(positive != val > 0 || val == 0){
-              return null;
-          }
+        // If there were no intersections with the plane to begin with.
+        if (lst == null) {
+            return null;
+        }
 
-          vecIterate1 = vecIterate2;
-      }
+        // Check if the point intersects the polygon inside the plane.
+        Vector vecIterate1 = _vertices.get(0).subtract(ray.origin());
+        Boolean positive = null;
+        for (int i = 0; i < _size; i++) {
+            // Set up the next edge to check.
+            Vector vecIterate2 = _vertices.get((i + 1) % _size).subtract(ray.origin());
 
-      return List.of(new Intersection(this, lst.get(0)));
-   }
+            // Set up the normal for the plane between the edge and the ray.
+            Vector normal = vecIterate1.crossProduct(vecIterate2);
+            double val = Util.alignZero(normal.dotProduct(ray.direction()));
+
+            if (i == 0) {
+                positive = val > 0;
+            }
+            if (positive != (val > 0) || val == 0) {
+                return null;
+            }
+
+            vecIterate1 = vecIterate2;
+        }
+
+        return List.of(new Intersection(this, lst.get(0)));
+    }
 
     @Override
     public String toString() {

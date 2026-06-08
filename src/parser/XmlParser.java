@@ -17,11 +17,17 @@ import java.util.Deque;
 import java.util.List;
 
 /**
- * a parser for xml files
+ * A parser for XML files that describe a 3D scene.
+ * <p>
+ * This class implements the {@link Parser} interface and is responsible for reading an
+ * XML file and constructing a {@link Scene} object from it. It supports various geometric
+ * shapes, light sources, and scene properties.
+ *
+ * @author Elad Zwecher and Benjamin Godfrey
  */
 public class XmlParser implements Parser {
     /**
-     * Default constructor to satisfy JavaDoc generator
+     * Default constructor to satisfy the JavaDoc generator.
      */
     XmlParser() { /* to satisfy JavaDoc generator */
     }
@@ -397,19 +403,34 @@ public class XmlParser implements Parser {
         boolean hasMaterial = false;
 
         String kaStr = reader.getAttributeValue(null, "kA");
-        if (kaStr != null) { hasMaterial = true; applyMaterialProperty(material, kaStr, "kA"); }
+        if (kaStr != null) {
+            hasMaterial = true;
+            applyMaterialProperty(material, kaStr, "kA");
+        }
 
         String kdStr = reader.getAttributeValue(null, "kD");
-        if (kdStr != null) { hasMaterial = true; applyMaterialProperty(material, kdStr, "kD"); }
+        if (kdStr != null) {
+            hasMaterial = true;
+            applyMaterialProperty(material, kdStr, "kD");
+        }
 
         String ksStr = reader.getAttributeValue(null, "kS");
-        if (ksStr != null) { hasMaterial = true; applyMaterialProperty(material, ksStr, "kS"); }
+        if (ksStr != null) {
+            hasMaterial = true;
+            applyMaterialProperty(material, ksStr, "kS");
+        }
 
         String ktStr = reader.getAttributeValue(null, "kT");
-        if (ktStr != null) { hasMaterial = true; applyMaterialProperty(material, ktStr, "kT"); }
+        if (ktStr != null) {
+            hasMaterial = true;
+            applyMaterialProperty(material, ktStr, "kT");
+        }
 
         String krStr = reader.getAttributeValue(null, "kR");
-        if (krStr != null) { hasMaterial = true; applyMaterialProperty(material, krStr, "kR"); }
+        if (krStr != null) {
+            hasMaterial = true;
+            applyMaterialProperty(material, krStr, "kR");
+        }
 
         String shininessStr = reader.getAttributeValue(null, "nShininess");
         if (shininessStr != null) {

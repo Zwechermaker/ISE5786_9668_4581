@@ -3,14 +3,21 @@ package parser;
 import scene.Scene;
 
 /**
- * interface that defines a parser class
+ * An interface for scene parsers, which are responsible for constructing a {@link Scene} object from a file.
+ * <p>
+ * This interface defines a standard contract for different types of parsers (e.g., XML, JSON)
+ * to ensure they can be used interchangeably.
+ *
+ * @author Elad Zwecher and Benjamin Godfrey
  */
 public interface Parser {
     /**
-     * the parser function that makes the scene from the file
-     * @param fileName the file name
-     * @param scene the scene to build
-     * @return the constructed scene
+     * Parses a scene description file and populates a {@link Scene} object with the data.
+     *
+     * @param filePath The path to the scene file to be parsed.
+     * @param scene    The {@link Scene} object to be populated.
+     * @return The populated {@link Scene} object.
+     * @throws RuntimeException if there is an error during the parsing process.
      */
-    Scene parse(String fileName, Scene scene);
+    Scene parse(String filePath, Scene scene);
 }

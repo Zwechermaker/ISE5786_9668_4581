@@ -1,47 +1,49 @@
 package renderer;
 
+import primitives.Color;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-
-import primitives.Color;
-
 /**
- * Writes pixel data to an image file.
+ * A class for writing pixel data to an image file.
  * <p>
- * This class wraps a {@link BufferedImage}, allows setting individual pixel
- * colors, and exports the result as a PNG file.
+ * This class wraps a {@link BufferedImage} to allow setting individual pixel colors
+ * and then exporting the final image as a PNG file.
+ *
  * @author Dan Zilberstein
  */
 final class ImageWriter {
     /**
-     * Output directory for generated image files, relative to the working
-     * directory.
+     * The output directory for the generated image files, relative to the project's working directory.
      */
     private static final String FOLDER_PATH = System.getProperty("user.dir") + "/images";
 
-    /** Internal image buffer (matrix of pixel colors) */
+    /**
+     * The internal image buffer where pixel color data is stored.
+     */
     private final BufferedImage _image;
 
     /**
-     * Creates an image writer for the given resolution.
-     * @param  nX                       the horizontal resolution, in pixels
-     * @param  nY                       the vertical resolution, in pixels
-     * @throws IllegalArgumentException if {@code nX} or {@code nY} is not positive
+     * Constructs an {@link ImageWriter} for a specified resolution.
+     *
+     * @param nX The horizontal resolution (width) of the image in pixels.
+     * @param nY The vertical resolution (height) of the image in pixels.
+     * @throws IllegalArgumentException if the width or height is not a positive number.
      */
     ImageWriter(int nX, int nY) {
         if (nX <= 0 || nY <= 0)
-            throw new IllegalArgumentException("Image resolution must be positive");
+            throw new IllegalArgumentException("Image resolution must be positive.");
         _image = new BufferedImage(nX, nY, BufferedImage.TYPE_INT_RGB);
     }
 
     /**
-     * Writes the buffered image to a PNG file in the images directory.
-     * @param  fileName              the output file name, without the {@code .png}
-     *                               extension
-     * @throws IllegalStateException if the image cannot be written
+     * Writes the buffered image to a PNG file in the default output directory.
+     *
+     * @param fileName The name of the output file (without the .png extension).
+     * @throws IllegalStateException if the output directory cannot be created or if there is an I/O error.
      */
     void writeToImage(String fileName) {
         try {
@@ -57,11 +59,13 @@ final class ImageWriter {
     }
 
     /**
-     * Writes a color to the specified pixel.
-     * @param xIndex the pixel x-coordinate
-     * @param yIndex the pixel y-coordinate
-     * @param color  the color to write
+     * Sets the color of a specific pixel in the image buffer.
+     *
+     * @param xIndex The x-coordinate (column) of the pixel.
+     * @param yIndex The y-coordinate (row) of the pixel.
+     * @param color  The {@link Color} to write to the pixel.
      */
-    void writePixel(int xIndex, int yIndex, Color color) { _image.setRGB(xIndex, yIndex, color.getColor().getRGB()); }
-
+    void writePixel(int xIndex, int yIndex, Color color) {
+        _image.setRGB(xIndex, yIndex, color.getColor().getRGB());
+    }
 }

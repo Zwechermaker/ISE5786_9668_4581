@@ -1,44 +1,53 @@
 package primitives;
 
 /**
- * passive data structure that holds the values of a material.
+ * A class representing the material properties of a geometric object.
+ * <p>
+ * This class is a passive data structure (struct-like) that holds coefficients
+ * for how a material interacts with light, including its diffuse, specular,
+ * and reflective properties. It uses a fluent API for setting properties.
+ *
+ * @author Elad Zwecher and Benjamin Godfrey
  */
 public final class Material {
     /**
-     * attenuation factor for emission light.
-     */
-    /** Default constructor to satisfy JavaDoc generator */
-    public Material() { /* to satisfy JavaDoc generator */ }
-
-    /**
-     * the attenuation factor for ambient light
+     * The ambient reflection coefficient. This determines how the material reflects ambient light.
+     * It is often set to the same color as the diffuse reflection.
      */
     public Double3 _kA = Double3.ONE;
     /**
-     * the attenuation factor for diffuse light
+     * The diffuse reflection coefficient. This determines the color of the material under direct, even lighting.
      */
     public Double3 _kD = Double3.ZERO;
     /**
-     * the attenuation factor for specular light
+     * The specular reflection coefficient. This determines the color of highlights on the material's surface.
      */
     public Double3 _kS = Double3.ZERO;
     /**
-     * the attenuation factor for the transparency light
+     * The transparency coefficient. This determines how much light passes through the material.
      */
     public Double3 _kT = Double3.ZERO;
     /**
-     * the attenuation factor for the reflection light
+     * The reflection coefficient. This determines how much light is reflected off the material's surface.
      */
     public Double3 _kR = Double3.ZERO;
     /**
-     * the shininess value
+     * The shininess exponent. This controls the size and intensity of specular highlights.
+     * A higher value results in smaller, sharper highlights.
      */
-    public int _nShininess = 0;
+    public int _nShininess = 1;
 
     /**
-     * a setter for the attenuation factor of the transparency light
-     * @param kT the attenuation factor parameter
-     * @return the object for concantenation
+     * Default constructor for creating a {@link Material} with default property values.
+     */
+    public Material() { /* to satisfy JavaDoc generator */
+    }
+
+    /**
+     * Sets the transparency coefficient {@code kT}.
+     *
+     * @param kT The transparency coefficient.
+     * @return This {@link Material} object, allowing for method chaining.
      */
     public Material setKT(Double3 kT) {
         _kT = kT;
@@ -46,9 +55,10 @@ public final class Material {
     }
 
     /**
-     * a setter for the attenuation factor of the transparency light
-     * @param kT the attenuation factor parameter
-     * @return the object for concantenation
+     * Sets the transparency coefficient {@code kT} to a uniform value for all color channels.
+     *
+     * @param kT The uniform transparency value.
+     * @return This {@link Material} object, allowing for method chaining.
      */
     public Material setKT(double kT) {
         _kT = new Double3(kT);
@@ -56,9 +66,10 @@ public final class Material {
     }
 
     /**
-     * a setter for the attenuation factor of the reflection light
-     * @param kR the attenuation factor parameter
-     * @return the object for concantenation
+     * Sets the reflection coefficient {@code kR}.
+     *
+     * @param kR The reflection coefficient.
+     * @return This {@link Material} object, allowing for method chaining.
      */
     public Material setKR(Double3 kR) {
         _kR = kR;
@@ -66,83 +77,90 @@ public final class Material {
     }
 
     /**
-     * a setter for the attenuation factor of the reflection light
-     * @param kR the attenuation factor parameter
-     * @return the object for concantenation
+     * Sets the reflection coefficient {@code kR} to a uniform value for all color channels.
+     *
+     * @param kR The uniform reflection value.
+     * @return This {@link Material} object, allowing for method chaining.
      */
     public Material setKR(double kR) {
         _kR = new Double3(kR);
         return this;
     }
+
     /**
-     * setter for ka attenuation factor
-     * @param kA the attenuation factor parameter
-     * @return this object to allow concantenation
+     * Sets the ambient reflection coefficient {@code kA}.
+     *
+     * @param kA The ambient reflection coefficient.
+     * @return This {@link Material} object, allowing for method chaining.
      */
-    public Material setKA(Double3 kA){
+    public Material setKA(Double3 kA) {
         _kA = kA;
         return this;
     }
 
     /**
-     * setter for ka the attenuation factor
-     * @param kA the attenuation factor for all colors
-     * @return this object to allow concantenation
+     * Sets the ambient reflection coefficient {@code kA} to a uniform value for all color channels.
+     *
+     * @param kA The uniform ambient reflection value.
+     * @return This {@link Material} object, allowing for method chaining.
      */
-    public Material setKA(double kA){
+    public Material setKA(double kA) {
         _kA = new Double3(kA);
         return this;
     }
 
     /**
-     * setter for kd attenuation factor
-     * @param kD the attenuation factor parameter
-     * @return this object to allow concantenation
+     * Sets the diffuse reflection coefficient {@code kD}.
+     *
+     * @param kD The diffuse reflection coefficient.
+     * @return This {@link Material} object, allowing for method chaining.
      */
-    public Material setKD(Double3 kD){
+    public Material setKD(Double3 kD) {
         _kD = kD;
         return this;
     }
 
     /**
-     * setter for kd the attenuation factor
-     * @param kD the attenuation factor for all colors
-     * @return this object to allow concantenation
+     * Sets the diffuse reflection coefficient {@code kD} to a uniform value for all color channels.
+     *
+     * @param kD The uniform diffuse reflection value.
+     * @return This {@link Material} object, allowing for method chaining.
      */
-    public Material setKD(double kD){
+    public Material setKD(double kD) {
         _kD = new Double3(kD);
         return this;
     }
 
     /**
-     * setter for ks attenuation factor
-     * @param kS the attenuation factor parameter
-     * @return this object to allow concantenation
+     * Sets the specular reflection coefficient {@code kS}.
+     *
+     * @param kS The specular reflection coefficient.
+     * @return This {@link Material} object, allowing for method chaining.
      */
-    public Material setKS(Double3 kS){
+    public Material setKS(Double3 kS) {
         _kS = kS;
         return this;
     }
 
     /**
-     * setter for ks the attenuation facctor
-     * @param kS the attenuation factor for all colors
-     * @return this object to allow concantenation
+     * Sets the specular reflection coefficient {@code kS} to a uniform value for all color channels.
+     *
+     * @param kS The uniform specular reflection value.
+     * @return This {@link Material} object, allowing for method chaining.
      */
-    public Material setKS(double kS){
+    public Material setKS(double kS) {
         _kS = new Double3(kS);
         return this;
     }
 
     /**
-     * setter for shininess value
-     * @param nShininess the shininess value
-     * @return this object to allow concantenation
+     * Sets the shininess exponent {@code nShininess}.
+     *
+     * @param nShininess The shininess exponent.
+     * @return This {@link Material} object, allowing for method chaining.
      */
-    public Material setShininess(int nShininess){
+    public Material setShininess(int nShininess) {
         _nShininess = nShininess;
         return this;
     }
-
-
 }
