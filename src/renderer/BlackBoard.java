@@ -1,8 +1,12 @@
 package renderer;
 
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
+import primitives.Util;
 
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BlackBoard {
@@ -26,7 +30,29 @@ public class BlackBoard {
      * The center point of the view plane.
      */
     private Point _center;
-    public List<Point>generatePoints(Sampler sampler){
-        return null;
+
+    public BlackBoard(Vector vUp, Vector vRight, double width, double height, Point center){
+        _vUp = vUp;
+        _vRight = vRight;
+        _width = width;
+        _height = height;
+        _center = center;
+    }
+
+    public Point mapToBoard(Point2D offset){
+        Point target = _center;
+
+        if (!Util(offset.x())) target = target.add(_vRight.scale(offset.x()));
+        if (!Util(offset.y())) target = target.add(_vUp.scale(offset.y()));
+
+        return target;
+    }
+
+    public List<Ray> generateBeam(Point origin, Sampler sampler) {
+        List<Ray> beam = new ArrayList<>();
+        for (Point2D offset : sampler.generateAll()) {
+            beam.add(new Ray(origin, mapToBoard(offset).subtract(origin)));
+        }
+        return beam;
     }
 }

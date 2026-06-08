@@ -9,13 +9,30 @@ import java.util.List;
  */
 public abstract class Sampler {
     /**
-     * the x resolution
+     * Horizontal resolution
      */
-    private final int _resolutionX;
+    protected final int _resolutionX;
     /**
-     * the y resolution
+     * Vertical resolution.
      */
-    private final int _resolutionY;
+    protected final int _resolutionY;
+    /**
+     * a constructor
+     * @param resolutionX parameter
+     * @param resolutionY parameter
+     */
+    public Sampler(int resolutionX, int resolutionY) {
+        this._resolutionX = resolutionX;
+        this._resolutionY = resolutionY;
+    }
+
+    /**
+     * a constructor
+     * @param resolution parameter
+     */
+    public Sampler(int resolution) {
+        this(resolution, resolution);
+    }
 
     /**
      * returns an offset for a spescific index of a pixel
@@ -23,7 +40,7 @@ public abstract class Sampler {
      * @param column kernri
      * @return an offset
      */
-    public Point2D sample(int row, int column){
+    public Point2D getOffset(int row, int column){
         return null;
     }
 
@@ -42,22 +59,5 @@ public abstract class Sampler {
     }
 
 
-    /**
-     * a constructor
-     * @param resolutionX parameter
-     * @param resolutionY parameter
-     */
-    public Sampler(int resolutionX, int resolutionY) {
-        this.resolutionX = resolutionX;
-        this.resolutionY = resolutionY;
-    }
 
-    /**
-     * a constructor
-     * @param resolution parameter
-     */
-    public Sampler(int resolution) {
-        this.resolutionX = resolution;
-        this.resolutionY = resolution;
-    }
 }
