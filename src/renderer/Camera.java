@@ -31,44 +31,6 @@ public class Camera implements Cloneable {
      */
     private Point _p0 = null;
     /**
-     * The forward vector, pointing towards the scene.
-     */
-    private Vector _vTo = null;
-    /**
-     * The upward vector, defining the camera's orientation.
-     */
-    private Vector _vUp = null;
-    /**
-     * The rightward vector, defining the camera's orientation.
-     */
-    private Vector _vRight = null;
-
-    /**
-     * The width of the view plane.
-     */
-    private double _width;
-    /**
-     * The height of the view plane.
-     */
-    private double _height;
-    /**
-     * The distance from the camera to the view plane.
-     */
-    private double _distance;
-    /**
-     * The center point of the view plane.
-     */
-    private Point _vpCenter;
-    /**
-     * The width of a single pixel in the view plane.
-     */
-    private double _pixelWidth;
-    /**
-     * The height of a single pixel in the view plane.
-     */
-    private double _pixelHeight;
-
-    /**
      * The number of pixels along the x-axis (width) of the image.
      */
     private int _nX = DEFAULT_PIXEL_NUM;
@@ -76,6 +38,10 @@ public class Camera implements Cloneable {
      * The number of pixels along the y-axis (height) of the image.
      */
     private int _nY = DEFAULT_PIXEL_NUM;
+    /**
+     * the object holding the view-plane
+     */
+    private BlackBoard _viewPlane;
     /**
      * The image writer used to create the final image file.
      */

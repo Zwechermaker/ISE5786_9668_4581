@@ -36,7 +36,10 @@ public final class Material {
      * A higher value results in smaller, sharper highlights.
      */
     public int _nShininess = 1;
-
+    /**
+     * the mattness factor of the material
+     */
+    public double _mattness = 0;
     /**
      * Default constructor for creating a {@link Material} with default property values.
      */
@@ -161,6 +164,16 @@ public final class Material {
      */
     public Material setShininess(int nShininess) {
         _nShininess = nShininess;
+        return this;
+    }
+
+    /**
+     * a setter
+     * @param mattness of the material
+     * @return This {@link Material} object, allowing for method chaining.
+     */
+    public Material setMattness(double mattness) {
+        _mattness = mattness;
         return this;
     }
 }
