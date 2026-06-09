@@ -141,4 +141,37 @@ class XmlAdvancedTests {
                 .renderImage()
                 .writeToImage("snowGlobeBonus");
     }
+    /**
+     * Renders the custom Snow Globe scene with the new mattness attribute
+     * to demonstrate blurry transparency/glossy reflection using super-sampling.
+     */
+    @Test
+    void testXmlSnowGlobeMattness() {
+        // Camera pulled back further and elevated for a perfect viewing angle
+        Point cameraLoc = new Point(0, -300, 45);
+        Vector cameraVUp = new Vector(0, 0, 1);
+        Vector cameraVTo = Point.ZERO.subtract(cameraLoc).normalize();
+
+        Scene scene = new Scene("XML Scene: Snow Globe Mattness");
+        Parser parser = ParserFactory.getParser(ParserType.XML);
+
+        // Parse the new XML file with the mattness attribute
+        parser.parse(XML_DIR + "snowGlobeMatt.xml", scene);
+
+        // Create the tracer and ENABLE super-sampling (9x9 = 81 rays) so the mattness is visible
+        SimpleRayTracer tracer = new SimpleRayTracer(scene).setSuperSamplingResolution(9);
+
+        Camera.getBuilder()
+                .setRayTracer(tracer) // Inject the custom tracer
+                .setLocation(cameraLoc)
+                .setDirection(cameraVTo, cameraVUp)
+                .setVpDistance(1000)
+                .setVpSize(200, 200)
+                .setResolution(800, 800) // High res for the final image!
+                .setMultithreading(-2)   // Multithreading is highly recommended here!
+                .setDebugPrint(1.0)
+                .build()
+                .renderImage()
+                .writeToImage("snowGlobeMattness");
+    } 
 }

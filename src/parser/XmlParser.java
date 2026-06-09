@@ -438,6 +438,12 @@ public class XmlParser implements Parser {
             material.setShininess(Integer.parseInt(shininessStr));
         }
 
+        String mattnessStr = reader.getAttributeValue(null, "mattness");
+        if (mattnessStr != null) {
+            hasMaterial = true;
+            material.setMattness(Double.parseDouble(mattnessStr));
+        }
+
         if (hasMaterial) {
             geom.setMaterial(material);
         }

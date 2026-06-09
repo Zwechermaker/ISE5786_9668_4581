@@ -220,8 +220,7 @@ public class SimpleRayTracer extends RayTracerBase {
         vRight = ray.direction().crossProduct(vRight).normalize();
         vUp = vRight.crossProduct(ray.direction());
 
-        BlackBoard targetArea = new BlackBoard(vRight,vUp , mattness, mattness, center);
-
+        BlackBoard targetArea = new BlackBoard(vUp, vRight, mattness, mattness, center);
         Sampler sampler = new Jittered(_superSamplingResolution);
 
         return targetArea.generateBeam(ray.origin(), sampler);
@@ -324,6 +323,10 @@ public class SimpleRayTracer extends RayTracerBase {
             avg = avg.add(calcGlobalEffect(ray, level, k, kx));
         }
         return avg.reduce(beam.size());
+    }
+    public SimpleRayTracer setSuperSamplingResolution(int resolution) {
+        this._superSamplingResolution = resolution;
+        return this;
     }
 
 }

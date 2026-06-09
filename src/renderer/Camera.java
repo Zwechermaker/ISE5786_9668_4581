@@ -170,7 +170,7 @@ public class Camera implements Cloneable {
             threads.add(new Thread(() -> {
                 PixelManager.Pixel pixel;
                 while ((pixel = pixelManager.nextPixel()) != null)
-                    castRay(pixel.col(), pixel.row());
+                    castRay(pixel.row(), pixel.col());
             }));
         for (var thread : threads) thread.start();
         try {
@@ -367,6 +367,10 @@ public class Camera implements Cloneable {
             return this;
         }
 
+        public Builder setRayTracer(RayTracerBase rayTracer) {
+            this._rayTracer = rayTracer;
+            return this;
+        }
         /**
          * Configures the multi-threading profile for the render engine.
          * <ul>
