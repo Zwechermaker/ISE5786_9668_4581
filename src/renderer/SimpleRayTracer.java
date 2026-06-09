@@ -203,6 +203,29 @@ public class SimpleRayTracer extends RayTracerBase {
         Vector delta = intersection.normal.scale(rn < 0 ? -DELTA : DELTA);
         return new Ray(intersection.point.add(delta), r);
     }
+
+    /**
+     * a function that generates a beam of rays through the black board that it generates according to the ra and the mattness.
+     * @param ray the secondary ray
+     * @return a list of rays to shoot through the blackboard
+     */
+    private List<Ray> generateBeam(Ray ray, double mattness){
+        Point center = ray.getPoint(1);
+
+        Vector vRight = Vector.AXIS_Y;
+        Vector vUp = null;
+        if (vRight.areParallel(ray.direction())){
+            vRight = Vector.AXIS_Z;
+        }
+        vRight = ray.direction().crossProduct(vRight).normalize();
+        vUp = vRight.crossProduct(ray.direction());
+
+        BlackBoard targetArea = new BlackBoard(vRight,vUp , mattness, mattness, center);
+
+        Sampler sampler = new Jittered(_superSamplingResolution);
+
+        return targetArea.generateBeam(ray.origin(), sampler);
+    }
     /**
      * A function that generates a beam of reflection rays.
      * Shoots the beam through a Blackboard.
@@ -211,7 +234,7 @@ public class SimpleRayTracer extends RayTracerBase {
      * @return A list of rays (beam) of reflection rays.
      */
     private List<Ray> constructReflectionRays(Intersection intersection) {
-        return generateBeam(constructReflectionRay(intersection), intersection.material.kG);
+        return generateBeam(constructReflectionRay(intersection), intersection.material._mattness);
     }
 
     /**
@@ -233,7 +256,7 @@ public class SimpleRayTracer extends RayTracerBase {
      * @return A list of rays (beam) of transparency rays.
      */
     private List<Ray> constructTransparencyRays(Intersection intersection) {
-        return generateBeam(constructTransparencyRay(intersection), intersection.material.kG);
+        return generateBeam(constructTransparencyRay(intersection), intersection.material._mattness);
     }
 
     /**
@@ -302,4 +325,5 @@ public class SimpleRayTracer extends RayTracerBase {
         }
         return avg.reduce(beam.size());
     }
+
 }
