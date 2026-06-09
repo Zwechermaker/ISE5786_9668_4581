@@ -2,10 +2,7 @@ package renderer;
 
 import geometries.api.Intersectable.Intersection;
 import lighting.api.LightSource;
-import primitives.Color;
-import primitives.Double3;
-import primitives.Ray;
-import primitives.Vector;
+import primitives.*;
 import scene.Scene;
 
 import java.util.List;
@@ -41,6 +38,11 @@ public class SimpleRayTracer extends RayTracerBase {
      */
     private static final Double3 INITIAL_K = Double3.ONE;
 
+    /**
+     * The number of rays (_superSamplingResolution by _superSamplingResolution) for super sampling.
+     * Turned off by default.
+     */
+    private int _superSamplingResolution = 1;
     /**
      * Constructs a {@link SimpleRayTracer} for a given scene.
      *
@@ -116,8 +118,22 @@ public class SimpleRayTracer extends RayTracerBase {
      * @return The color resulting from global effects.
      */
     private Color calcGlobalEffects(Intersection intersection, int level, Double3 k) {
-        return calcGlobalEffect(constructTransparencyRay(intersection), level, k, intersection.material._kT)
-                .add(calcGlobalEffect(constructReflectionRay(intersection), level, k, intersection.material._kR));
+        Color color = Color.BLACK;
+        //reflection
+        if (_superSamplingResolution <= 1 || Util.isZero(intersection.material._mattness)) {
+            color = color.add(calcGlobalEffect(constructReflectionRay(intersection), level, k, intersection.material._kR));
+        } else {
+            color = color.add(avgCalcGlobalEffect(constructReflectionRays(intersection), level, k, intersection.material._kR));
+        }
+
+        // transparency
+        if (_superSamplingResolution <= 1 || Util.isZero(intersection.material._mattness)) {
+            color = color.add(calcGlobalEffect(constructTransparencyRay(intersection), level, k, intersection.material._kT));
+        } else {
+            color = color.add(avgCalcGlobalEffect(constructTransparencyRays(intersection), level, k, intersection.material._kT));
+        }
+
+        return color;
     }
 
     /**
@@ -187,6 +203,16 @@ public class SimpleRayTracer extends RayTracerBase {
         Vector delta = intersection.normal.scale(rn < 0 ? -DELTA : DELTA);
         return new Ray(intersection.point.add(delta), r);
     }
+    /**
+     * A function that generates a beam of reflection rays.
+     * Shoots the beam through a Blackboard.
+     *
+     * @param intersection The intersection point.
+     * @return A list of rays (beam) of reflection rays.
+     */
+    private List<Ray> constructReflectionRays(Intersection intersection) {
+        return generateBeam(constructReflectionRay(intersection), intersection.material.kG);
+    }
 
     /**
      * Constructs a transparency ray from an intersection point.
@@ -197,6 +223,17 @@ public class SimpleRayTracer extends RayTracerBase {
     private Ray constructTransparencyRay(Intersection intersection) {
         Vector delta = intersection.normal.scale(intersection.vNormal < 0 ? -DELTA : DELTA);
         return new Ray(intersection.point.add(delta), intersection.v);
+    }
+
+    /**
+     * A function that generates a beam of transparency rays.
+     * Shoots the beam through a Blackboard.
+     *
+     * @param intersection The intersection point.
+     * @return A list of rays (beam) of transparency rays.
+     */
+    private List<Ray> constructTransparencyRays(Intersection intersection) {
+        return generateBeam(constructTransparencyRay(intersection), intersection.material.kG);
     }
 
     /**
@@ -246,5 +283,23 @@ public class SimpleRayTracer extends RayTracerBase {
     private Double3 calcSpecular(Intersection intersection) {
         Vector r = intersection.l.subtract(intersection.normal.scale(2 * intersection.lNormal));
         double vr = -intersection.v.dotProduct(r);
-        return intersection.material._kS.scale(Math.pow(Math.max(0, vr), intersection.material._nShininess));    }
+        return intersection.material._kS.scale(Math.pow(Math.max(0, vr), intersection.material._nShininess));
+    }
+
+    /**
+     * A function that calculates the average color a beam returns.
+     *
+     * @param beam  A list of rays to trace.
+     * @param level The current recursion depth.
+     * @param k     The accumulated attenuation factor.
+     * @param kx    The local attenuation factor for the effect (kR or kT).
+     * @return The average color the beam gets.
+     */
+    Color avgCalcGlobalEffect(List<Ray> beam, int level, Double3 k, Double3 kx){
+        Color avg = Color.BLACK;
+        for (Ray ray : beam) {
+            avg = avg.add(calcGlobalEffect(ray, level, k, kx));
+        }
+        return avg.reduce(beam.size());
+    }
 }
