@@ -39,6 +39,26 @@ public class BlackBoard {
         _center = center;
     }
 
+    public Vector getVUp() {
+        return _vUp;
+    }
+
+    public Vector getVRight() {
+        return _vRight;
+    }
+
+    public double getWidth() {
+        return _width;
+    }
+
+    public double getHeight() {
+        return _height;
+    }
+
+    public Point getCenter() {
+        return _center;
+    }
+
     public Point mapToBoard(Point2D offset){
         Point target = _center;
 

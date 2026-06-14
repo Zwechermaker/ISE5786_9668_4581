@@ -4,6 +4,7 @@ import primitives.*;
 import scene.Scene;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.stream.IntStream;
 
@@ -25,6 +26,18 @@ public class Camera implements Cloneable {
      * The number of threads to spare when using all available cores for rendering.
      */
     private static final int SPARE_THREADS = 2;
+    /**
+     * The number of threads to use for rendering.
+     */
+    private int threadsCount = 3;
+    /**
+     * The interval (in seconds) for printing debug progress messages.
+     */
+    private double printInterval = 0;
+    /**
+     * The pixel manager for handling multi-threaded rendering and progress reporting.
+     */
+    private PixelManager pixelManager;
 
     // ================= Fields =================
 
@@ -59,20 +72,10 @@ public class Camera implements Cloneable {
      * The ray tracer used to calculate the color of each pixel.
      */
     private RayTracerBase _rayTracer;
-
     /**
-     * The number of threads to use for rendering.
+     * amount of rays sampled for each pixel (n by n), 1 means feature is disabled.
      */
-    private int threadsCount = 3;
-    /**
-     * The interval (in seconds) for printing debug progress messages.
-     */
-    private double printInterval = 0;
-    /**
-     * The pixel manager for handling multi-threaded rendering and progress reporting.
-     */
-    private PixelManager pixelManager;
-
+    private int _antiAliasingResolution = 1;
     /**
      * Private constructor to enforce instantiation strictly via the {@link Builder}.
      */
@@ -102,6 +105,33 @@ public class Camera implements Cloneable {
         return new Ray(_p0, target.subtract(_p0));
     }
 
+    /**
+     *
+     * @param column index to generate rays through.
+     * @param row index to generate rays through.
+     * @return A list a rays through the pixel.
+     */
+    public List<Ray> constructRays(int column, int row) {
+        Point2D offset = _viewPlaneSampler.getOffset(column, row);
+        Point pixelCenter = _viewPlane.mapToBoard(offset);
+
+        // Calculate the dimensions of a single pixel
+        double pixelWidth = _viewPlane.getWidth() / _nX;
+        double pixelHeight = _viewPlane.getHeight() / _nY;
+
+        // Build blackBoard for the specific pixel.
+        BlackBoard miniBoard = new BlackBoard(
+                _viewPlane.getVUp(),
+                _viewPlane.getVRight(),
+                pixelWidth,
+                pixelHeight,
+                pixelCenter
+        );
+
+        Sampler subSampler = new Jittered(_antiAliasingResolution);
+        return miniBoard.generateBeam(_p0, subSampler);
+    }
+
     // ================= Rendering Pipeline =================
 
     /**
@@ -129,9 +159,20 @@ public class Camera implements Cloneable {
      * @param yIndex The y-coordinate (row) of the pixel.
      */
     private void castRay(int xIndex, int yIndex) {
-        Ray ray = constructRay(xIndex, yIndex);
-        Color color = _rayTracer.traceRay(ray);
-        _imageWriter.writePixel(xIndex, yIndex, color);
+        if (_antiAliasingResolution == 1) {
+            // Anti-aliasing disabled
+            Ray ray = constructRay(xIndex, yIndex);
+            Color color = _rayTracer.traceRay(ray);
+            _imageWriter.writePixel(xIndex, yIndex, color);
+        } else {
+            // Anti-aliasing enabled
+            List<Ray> beam = constructRays(xIndex, yIndex);
+            Color color = Color.BLACK;
+            for (Ray ray : beam) {
+                color = color.add(_rayTracer.traceRay(ray));
+            }
+            _imageWriter.writePixel(xIndex, yIndex, color.reduce(beam.size()));
+        }
         pixelManager.pixelDone();
     }
 
@@ -250,6 +291,7 @@ public class Camera implements Cloneable {
         // --- Engine Configuration ---
         private int _threadsCount = 3;
         private double _printInterval = 0;
+        private int _antiAliasingResolution = 1;
 
         /**
          * Default constructor.
@@ -408,6 +450,20 @@ public class Camera implements Cloneable {
         }
 
         /**
+         * Sets the anti-aliasing resolution.
+         *
+         * @param resolution The number of samples per pixel axis (e.g., 2 for 4 samples).
+         * @return This {@link Builder} object.
+         */
+        public Builder setAntiAliasing(int resolution) {
+            if (resolution <= 0) {
+                throw new IllegalArgumentException("Anti-aliasing resolution must be positive.");
+            }
+            this._antiAliasingResolution = resolution;
+            return this;
+        }
+
+        /**
          * Applies a Yaw (Pan) rotation around the camera's local vertical axis.
          *
          * @param angleDegrees Angle of rotation in degrees.
@@ -520,6 +576,7 @@ public class Camera implements Cloneable {
             camera._rayTracer = this._rayTracer;
             camera.threadsCount = this._threadsCount;
             camera.printInterval = this._printInterval;
+            camera._antiAliasingResolution = this._antiAliasingResolution;
 
             return camera;
         }
