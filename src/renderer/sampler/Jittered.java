@@ -1,4 +1,4 @@
-package renderer;
+package renderer.sampler;
 
 import primitives.Point2D;
 
@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Elad Zwecher and Benjamin Godfrey
  */
 public class Jittered extends Sampler {
+
     /**
      * Constructs a {@link Jittered} sampler with a specified resolution.
      *
@@ -38,9 +39,6 @@ public class Jittered extends Sampler {
         double randomX = ThreadLocalRandom.current().nextDouble();
         double randomY = ThreadLocalRandom.current().nextDouble();
 
-        double xOffset = (column + randomX) / _resolutionX - 0.5;
-        double yOffset = -(row + randomY) / _resolutionY + 0.5;
-
-        return new Point2D(xOffset, yOffset);
+        return calculateOffset(column, row, randomX, randomY);
     }
 }

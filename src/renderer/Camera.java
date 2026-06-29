@@ -1,6 +1,9 @@
 package renderer;
 
 import primitives.*;
+import renderer.sampler.Jittered;
+import renderer.sampler.RegularGrid;
+import renderer.sampler.Sampler;
 import scene.Scene;
 
 import java.util.LinkedList;
@@ -93,7 +96,6 @@ public class Camera implements Cloneable {
      * <li>Maps the 2D offset to a physical 3D coordinate on the {@link BlackBoard}.</li>
      * <li>Draws a vector from the camera origin to the mapped coordinate.</li>
      * </ol>
-     * </p>
      *
      * @param column The column index of the pixel (0 to _nX - 1).
      * @param row    The row index of the pixel (0 to _nY - 1).
@@ -106,6 +108,7 @@ public class Camera implements Cloneable {
     }
 
     /**
+     * A method that constructs all rays through a pixel.
      *
      * @param column index to generate rays through.
      * @param row index to generate rays through.
@@ -271,26 +274,91 @@ public class Camera implements Cloneable {
      */
     public static class Builder {
         // --- Temporary Geometric State ---
+
+        /**
+         * The spatial origin point of the camera.
+         */
         private Point _p0 = null;
+
+        /**
+         * The forward direction vector of the camera.
+         */
         private Vector _vTo = null;
+
+        /**
+         * The final upward orientation vector of the camera.
+         */
         private Vector _vUp = null;
+
+        /**
+         * The rightward orientation vector of the camera.
+         */
         private Vector _vRight = null;
+
+        /**
+         * A temporary upward vector used to calculate the orthonormal basis.
+         */
         private Vector _vUpTemp = null;
+
+        /**
+         * A temporary point of interest the camera is looking at, used to calculate the forward vector.
+         */
         private Point _target = null;
 
+        /**
+         * The physical width of the projection plane.
+         */
         private double _width;
+
+        /**
+         * The physical height of the projection plane.
+         */
         private double _height;
+
+        /**
+         * The focal length distance from the camera origin to the projection plane.
+         */
         private double _distance;
 
         // --- Output State ---
+
+        /**
+         * The horizontal pixel resolution of the output image.
+         */
         private int _nX = DEFAULT_PIXEL_NUM;
+
+        /**
+         * The vertical pixel resolution of the output image.
+         */
         private int _nY = DEFAULT_PIXEL_NUM;
+
+        /**
+         * The utility responsible for writing the rendered pixel data to an image file.
+         */
         private ImageWriter _imageWriter;
+
+        /**
+         * The ray tracing engine used to calculate pixel colors.
+         */
         private RayTracerBase _rayTracer;
 
         // --- Engine Configuration ---
+
+        /**
+         * The thread count configuration for multi-threading
+         * (-2 for auto, -1 for streams, 0 for disabled, >0 for explicit threads).
+         */
         private int _threadsCount = 3;
+
+        /**
+         * The interval (in seconds) for printing debug progress messages to the console.
+         */
         private double _printInterval = 0;
+
+        /**
+         * The grid size for super-sampled anti-aliasing (e.g., 3 means a 3x3 sub-pixel grid).
+         * A value of 1 means the feature is disabled.
+         */
         private int _antiAliasingResolution = 1;
 
         /**
@@ -409,6 +477,11 @@ public class Camera implements Cloneable {
             return this;
         }
 
+        /**
+         * A setter for the ray Tracer.
+         * @param rayTracer argument to set as the ray Tracer.
+         * @return This {@link Builder} object.
+         */
         public Builder setRayTracer(RayTracerBase rayTracer) {
             this._rayTracer = rayTracer;
             return this;

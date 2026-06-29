@@ -3,6 +3,8 @@ package renderer;
 import geometries.api.Intersectable.Intersection;
 import lighting.api.LightSource;
 import primitives.*;
+import renderer.sampler.Jittered;
+import renderer.sampler.Sampler;
 import scene.Scene;
 
 import java.util.List;
@@ -43,6 +45,12 @@ public class SimpleRayTracer extends RayTracerBase {
      * Turned off by default.
      */
     private int _superSamplingResolution = 1;
+
+    /**
+     * The cached sampler for generating target rays.
+     */
+    private Sampler _sampler = new Jittered(_superSamplingResolution);
+
     /**
      * Constructs a {@link SimpleRayTracer} for a given scene.
      *
@@ -119,7 +127,8 @@ public class SimpleRayTracer extends RayTracerBase {
      */
     private Color calcGlobalEffects(Intersection intersection, int level, Double3 k) {
         Color color = Color.BLACK;
-        //reflection
+
+        // reflection
         if (_superSamplingResolution <= 1 || Util.isZero(intersection.material._mattness)) {
             color = color.add(calcGlobalEffect(constructReflectionRay(intersection), level, k, intersection.material._kR));
         } else {
@@ -192,24 +201,40 @@ public class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Constructs a reflection ray from an intersection point.
+     * Helper method that reflects a given vector across a normal vector.
+     * Prevents logic duplication between global reflection and specular reflection math.
+     *
+     * @param vec        The incoming vector to reflect.
+     * @param normal     The normal vector of the surface.
+     * @param dotProduct The pre-calculated dot product between the incoming vector and the normal.
+     * @return The reflected {@link Vector}.
+     */
+    private Vector reflectVector(Vector vec, Vector normal, double dotProduct) {
+        return vec.subtract(normal.scale(2 * dotProduct));
+    }
+
+    /**
+     * Constructs a single reflection ray from an intersection point.
      *
      * @param intersection The intersection point.
      * @return The reflected ray.
      */
     private Ray constructReflectionRay(Intersection intersection) {
-        Vector r = intersection.v.subtract(intersection.normal.scale(2 * intersection.vNormal));
+        Vector r = reflectVector(intersection.v, intersection.normal, intersection.vNormal);
         double rn = alignZero(r.dotProduct(intersection.normal));
         Vector delta = intersection.normal.scale(rn < 0 ? -DELTA : DELTA);
         return new Ray(intersection.point.add(delta), r);
     }
 
     /**
-     * a function that generates a beam of rays through the black board that it generates according to the ra and the mattness.
-     * @param ray the secondary ray
-     * @return a list of rays to shoot through the blackboard
+     * A function that generates a beam of rays through the black board that it generates
+     * according to the ray and the mattness.
+     *
+     * @param ray      The secondary center ray.
+     * @param mattness The spread size of the target area.
+     * @return A list of rays to shoot through the blackboard.
      */
-    private List<Ray> generateBeam(Ray ray, double mattness){
+    private List<Ray> generateBeam(Ray ray, double mattness) {
         Point center = ray.getPoint(1);
 
         Vector vRight = Vector.AXIS_Y;
@@ -221,13 +246,12 @@ public class SimpleRayTracer extends RayTracerBase {
         vUp = vRight.crossProduct(ray.direction());
 
         BlackBoard targetArea = new BlackBoard(vUp, vRight, mattness, mattness, center);
-        Sampler sampler = new Jittered(_superSamplingResolution);
 
-        return targetArea.generateBeam(ray.origin(), sampler);
+        return targetArea.generateBeam(ray.origin(), _sampler);
     }
+
     /**
-     * A function that generates a beam of reflection rays.
-     * Shoots the beam through a Blackboard.
+     * A function that generates a beam of reflection rays for glossy surfaces.
      *
      * @param intersection The intersection point.
      * @return A list of rays (beam) of reflection rays.
@@ -237,7 +261,7 @@ public class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Constructs a transparency ray from an intersection point.
+     * Constructs a single transparency ray from an intersection point.
      *
      * @param intersection The intersection point.
      * @return The transparency ray.
@@ -248,8 +272,7 @@ public class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * A function that generates a beam of transparency rays.
-     * Shoots the beam through a Blackboard.
+     * A function that generates a beam of transparency rays for diffuse glass surfaces.
      *
      * @param intersection The intersection point.
      * @return A list of rays (beam) of transparency rays.
@@ -303,7 +326,7 @@ public class SimpleRayTracer extends RayTracerBase {
      * @return The specular reflection factor.
      */
     private Double3 calcSpecular(Intersection intersection) {
-        Vector r = intersection.l.subtract(intersection.normal.scale(2 * intersection.lNormal));
+        Vector r = reflectVector(intersection.l, intersection.normal, intersection.lNormal);
         double vr = -intersection.v.dotProduct(r);
         return intersection.material._kS.scale(Math.pow(Math.max(0, vr), intersection.material._nShininess));
     }
@@ -324,9 +347,16 @@ public class SimpleRayTracer extends RayTracerBase {
         }
         return avg.reduce(beam.size());
     }
+
+    /**
+     * Sets the super-sampling resolution and instantly updates the cached sampler.
+     *
+     * @param resolution The resolution for super-sampling (e.g. 3 for a 3x3 grid).
+     * @return This {@link SimpleRayTracer} instance for method chaining.
+     */
     public SimpleRayTracer setSuperSamplingResolution(int resolution) {
         this._superSamplingResolution = resolution;
+        this._sampler = new Jittered(resolution);
         return this;
     }
-
 }

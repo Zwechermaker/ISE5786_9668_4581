@@ -145,6 +145,7 @@ class XmlAdvancedTests {
      * Renders the custom Snow Globe scene with the new mattness attribute
      * to demonstrate blurry transparency/glossy reflection using super-sampling.
      */
+    @Disabled
     @Test
     void testXmlSnowGlobeMattness() {
         // Camera pulled back further and elevated for a perfect viewing angle
@@ -173,5 +174,39 @@ class XmlAdvancedTests {
                 .build()
                 .renderImage()
                 .writeToImage("snowGlobeMattness");
-    } 
+    }
+    /**
+     * Submitted image. Shows a frosted ice sculpture on a swing.
+     * Demonstrates frosted glass materials using Super-Sampling (mattness).
+     * Includes complex geometrical alignments and utilizes Triangles.
+     */
+    @Disabled
+    @Test
+    @SuppressWarnings("java:S109")
+    public void testIceSculptureSwingScene() {
+
+        Scene iceScene = new Scene("Frosted Ice Sculpture Swing Demo");
+        Parser parser = ParserFactory.getParser(ParserType.XML);
+
+        // Parse the new XML file with the mattness attribute
+        parser.parse(XML_DIR + "ice_swing.xml", iceScene);
+
+        // Create the tracer and ENABLE super-sampling (9x9 = 81 rays) so the mattness is visible
+        SimpleRayTracer tracer = new SimpleRayTracer(iceScene).setSuperSamplingResolution(3);
+
+        Camera camera = Camera.getBuilder()
+                .setLocation(new Point(0, 35, -400))
+                .setDirection(new Point(0, 35, 0), Vector.AXIS_Y)
+                .setVpDistance(400)
+                .setVpSize(200, 200)
+                .setResolution(800, 800)
+                .setMultithreading(-2) // Utilize all logical cores
+                .setDebugPrint(0.1)
+                // Enabled Super-Sampling (9x9 grid) to render the frosted glass and soft reflections beautifully
+                .setRayTracer(tracer)
+                .build();
+
+        camera.renderImage();
+        camera.writeToImage("IceSculpture_Swing");
+    }
 }

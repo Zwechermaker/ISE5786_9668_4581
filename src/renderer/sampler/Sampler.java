@@ -1,4 +1,4 @@
-package renderer;
+package renderer.sampler;
 
 import primitives.Point2D;
 
@@ -53,6 +53,22 @@ public abstract class Sampler {
      * @return A {@link Point2D} representing the offset.
      */
     public abstract Point2D getOffset(int column, int row);
+
+    /**
+     * A unified mathematical helper for calculating normalized offsets on a 2D plane.
+     * This prevents DRY violations between different grid-based samplers.
+     *
+     * @param column The column index of the pixel.
+     * @param row    The row index of the pixel.
+     * @param shiftX The horizontal shift (0.0 to 1.0) applied within the sub-pixel.
+     * @param shiftY The vertical shift (0.0 to 1.0) applied within the sub-pixel.
+     * @return A {@link Point2D} representing the calculated offset.
+     */
+    protected Point2D calculateOffset(int column, int row, double shiftX, double shiftY) {
+        double xOffset = (column + shiftX) / _resolutionX - 0.5;
+        double yOffset = -(row + shiftY) / _resolutionY + 0.5;
+        return new Point2D(xOffset, yOffset);
+    }
 
     /**
      * Generates a list of all sample offsets for the entire grid.

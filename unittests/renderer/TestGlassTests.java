@@ -101,6 +101,10 @@ class DiffuseGlassTests {
         );
     }
 
+    /**
+     * Test case for rendering a scene with four balls and four glass elements,
+     * with super-sampling anti-aliasing disabled (resolution set to 1).
+     */
     @Test
     @SuppressWarnings("java:S109")
     void test4Balls4GlassesDisabled() {
@@ -116,6 +120,10 @@ class DiffuseGlassTests {
                 .writeToImage("DiffuseGlass_Disabled");
     }
 
+    /**
+     * Test case for rendering a scene with four balls and four glass elements,
+     * with super-sampling anti-aliasing enabled (9x9 grid, 81 rays per beam).
+     */
     @Test
     @SuppressWarnings("java:S109")
     void test4Balls4GlassesEnabled() {

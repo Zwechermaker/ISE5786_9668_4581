@@ -1,0 +1,105 @@
+<scene background-color="10 15 25">
+    <!-- Ambient Light: Subtle cool night glow -->
+    <ambient-light color="10 15 20" />
+
+    <!-- Light Source 1: Main front light -->
+    <point-light color="600 500 400" position="-50 60 -50" kL="0.0001" kQ="0.00001" />
+
+    <!-- Light Source 2: Strong blue backlight to illuminate the frost from behind -->
+    <point-light color="100 200 600" position="0 40 80" kL="0.0005" kQ="0.00005" />
+
+    <!-- Light Source 3: Spotlight aiming down at the massive snowman -->
+    <spot-light color="400 400 400" position="0 120 -20" direction="0 -1 0.2" kL="0.0001" kQ="0.00001" />
+
+    <geometries>
+        <!-- ================= THE ENVIRONMENT ================= -->
+        <!-- 1. The Ground (Deep Brown Dirt/Wood) -->
+        <polygon p0="-200 -30 -200" p1="200 -30 -200" p2="200 -30 200" p3="-200 -30 200"
+                 kD="0.3 0.15 0.08" kS="0.05" nShininess="10" />
+
+        <!-- ================= SWING FRAME ================= -->
+        <!-- 2. Left A-Frame Front Leg -->
+        <cylinder axis-origin="-45 -30 25" axis-direction="0 0.975 -0.222" radius="2" height="112.8"
+                  kD="0.4 0.25 0.15" kS="0.1" nShininess="20" />
+        <!-- 3. Left A-Frame Back Leg -->
+        <cylinder axis-origin="-45 -30 -25" axis-direction="0 0.975 0.222" radius="2" height="112.8"
+                  kD="0.4 0.25 0.15" kS="0.1" nShininess="20" />
+        <!-- 4. Right A-Frame Front Leg -->
+        <cylinder axis-origin="45 -30 25" axis-direction="0 0.975 -0.222" radius="2" height="112.8"
+                  kD="0.4 0.25 0.15" kS="0.1" nShininess="20" />
+        <!-- 5. Right A-Frame Back Leg -->
+        <cylinder axis-origin="45 -30 -25" axis-direction="0 0.975 0.222" radius="2" height="112.8"
+                  kD="0.4 0.25 0.15" kS="0.1" nShininess="20" />
+        <!-- 6. Top Crossbar -->
+        <cylinder axis-origin="-50 80 0" axis-direction="1 0 0" radius="2.5" height="100"
+                  kD="0.4 0.25 0.15" kS="0.1" nShininess="20" />
+
+        <!-- ================= THE SWING ================= -->
+        <!-- 7. Left Rope -->
+        <cylinder axis-origin="-30 80 0" axis-direction="0 -1 0" radius="0.4" height="85"
+                  kD="0.8 0.8 0.8" kS="0.05" nShininess="5" />
+        <!-- 8. Right Rope -->
+        <cylinder axis-origin="30 80 0" axis-direction="0 -1 0" radius="0.4" height="85"
+                  kD="0.8 0.8 0.8" kS="0.05" nShininess="5" />
+        <!-- 9. The Flat Wooden Seat -->
+        <polygon p0="-34 -5 6" p1="34 -5 6" p2="34 -5 -6" p3="-34 -5 -6"
+                 kD="0.5 0.3 0.15" kS="0.1" nShininess="30" />
+
+        <!-- ================= MASSIVE ICE SCULPTURE ================= -->
+        <!-- 10. Base Ball (Radius 18) -->
+        <sphere center="0 13 0" radius="18"
+                emission="2 5 8"
+                kD="0.05 0.1 0.15" kS="0.9" nShininess="300" kT="0.9" kR="0.1" mattness="0.1" />
+        <!-- 11. Middle Ball (Radius 13. Sinks into base for solidity) -->
+        <sphere center="0 40 0" radius="13"
+                emission="2 5 8"
+                kD="0.05 0.1 0.15" kS="0.9" nShininess="300" kT="0.9" kR="0.1" mattness="0.1" />
+        <!-- 12. Head Ball (Radius 10. Sinks into middle for solidity) -->
+        <sphere center="0 60 0" radius="10"
+                emission="2 5 8"
+                kD="0.05 0.1 0.15" kS="0.9" nShininess="300" kT="0.9" kR="0.1" mattness="0.1" />
+
+        <!-- ================= FACE FEATURES ================= -->
+        <!-- 13. Left Coal Eye -->
+        <sphere center="-4 64 9" radius="1.3"
+                kD="0.05 0.05 0.05" kS="0.5" nShininess="50" />
+        <!-- 14. Right Coal Eye -->
+        <sphere center="4 64 9" radius="1.3"
+                kD="0.05 0.05 0.05" kS="0.5" nShininess="50" />
+
+        <!-- The Carrot Nose (Vivid Orange Emission) -->
+        <!-- 15. Base Triangle (Flat against the face) -->
+        <triangle p0="-1.5 61 9.5" p1="1.5 61 9.5" p2="0 58.5 9.5"
+                  emission="80 30 0" kD="0.9 0.4 0.0" kS="0.2" nShininess="20" />
+        <!-- 16. Left Side of Carrot -->
+        <triangle p0="-1.5 61 9.5" p1="0 58.5 9.5" p2="0 60 21"
+                  emission="80 30 0" kD="0.9 0.4 0.0" kS="0.2" nShininess="20" />
+        <!-- 17. Right Side of Carrot -->
+        <triangle p0="1.5 61 9.5" p1="0 58.5 9.5" p2="0 60 21"
+                  emission="80 30 0" kD="0.9 0.4 0.0" kS="0.2" nShininess="20" />
+        <!-- 18. Top Side of Carrot -->
+        <triangle p0="-1.5 61 9.5" p1="1.5 61 9.5" p2="0 60 21"
+                  emission="80 30 0" kD="0.9 0.4 0.0" kS="0.2" nShininess="20" />
+
+        <!-- ================= BRANCH HANDS ================= -->
+        <!-- 19. Right Main Branch -->
+        <cylinder axis-origin="13 40 0" axis-direction="0.973 -0.229 0" radius="0.6" height="17.46"
+                  kD="0.4 0.2 0.1" kS="0.1" nShininess="10" />
+        <!-- 20. Right Finger 1 -->
+        <cylinder axis-origin="30 36 0" axis-direction="0 -0.6 0.8" radius="0.3" height="3"
+                  kD="0.4 0.2 0.1" kS="0.1" nShininess="10" />
+        <!-- 21. Right Finger 2 -->
+        <cylinder axis-origin="30 36 0" axis-direction="0 -0.6 -0.8" radius="0.3" height="3"
+                  kD="0.4 0.2 0.1" kS="0.1" nShininess="10" />
+
+        <!-- 22. Left Main Branch -->
+        <cylinder axis-origin="-13 40 0" axis-direction="-0.973 -0.229 0" radius="0.6" height="17.46"
+                  kD="0.4 0.2 0.1" kS="0.1" nShininess="10" />
+        <!-- 23. Left Finger 1 -->
+        <cylinder axis-origin="-30 36 0" axis-direction="0 -0.6 0.8" radius="0.3" height="3"
+                  kD="0.4 0.2 0.1" kS="0.1" nShininess="10" />
+        <!-- 24. Left Finger 2 -->
+        <cylinder axis-origin="-30 36 0" axis-direction="0 -0.6 -0.8" radius="0.3" height="3"
+                  kD="0.4 0.2 0.1" kS="0.1" nShininess="10" />
+    </geometries>
+</scene>
