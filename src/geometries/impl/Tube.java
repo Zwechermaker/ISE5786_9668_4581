@@ -136,6 +136,11 @@ public class Tube extends RadialGeometry {
     }
 
     @Override
+    public void createBoundingBox() {
+        // Infinite geometry, no bounding box
+        this.box = null;
+    }
+    @Override
     public String toString() {
         return super.toString() + ", axis: " + _axis;
     }

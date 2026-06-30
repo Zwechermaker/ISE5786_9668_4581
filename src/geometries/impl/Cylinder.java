@@ -1,9 +1,6 @@
 package geometries.impl;
 
-import primitives.Point;
-import primitives.Ray;
-import primitives.Util;
-import primitives.Vector;
+import primitives.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -55,6 +52,24 @@ public final class Cylinder extends Tube {
         _topPlane = new Plane(_topCenter, axis.direction().scale(-1));
         _bottomPlane = new Plane(_axis.origin(), axis.direction());
     }
+
+    @Override
+    public void createBoundingBox() {
+        Point p1 = _axis.origin();
+        Point p2 = _topCenter;
+        Vector v = _axis.direction();
+        double r = getRadius();
+
+        double minX = Math.min(p1.getX(), p2.getX()) - r;
+        double minY = Math.min(p1.getY(), p2.getY()) - r;
+        double minZ = Math.min(p1.getZ(), p2.getZ()) - r;
+        double maxX = Math.max(p1.getX(), p2.getX()) + r;
+        double maxY = Math.max(p1.getY(), p2.getY()) + r;
+        double maxZ = Math.max(p1.getZ(), p2.getZ()) + r;
+
+        box = new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+    }
+
 
     /**
      * Helper method to find the intersection of a ray with a circular cylinder cap.

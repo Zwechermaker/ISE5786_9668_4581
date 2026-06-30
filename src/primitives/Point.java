@@ -40,6 +40,27 @@ public class Point {
         _xyz = xyz;
     }
 
+    public double getX() {
+        return _xyz._d1();
+    }
+
+    public double getY() {
+        return _xyz._d2();
+    }
+
+    public double getZ() {
+        return _xyz._d3();
+    }
+
+    public double getCoord(int index) {
+        return switch (index) {
+            case 0 -> getX();
+            case 1 -> getY();
+            case 2 -> getZ();
+            default -> throw new IndexOutOfBoundsException("Index can be only 0, 1 or 2");
+        };
+    }
+
     /**
      * Calculates the vector from this point to another point.
      *

@@ -58,6 +58,12 @@ public final class Plane extends Geometry {
         this._normal = normal.normalize();
     }
 
+    @Override
+    public void createBoundingBox() {
+        // Infinite geometry, no bounding box
+        this.box = null;
+    }
+
     /**
      * Returns the normal vector of the plane.
      * For a plane, the normal is constant at every point on its surface.

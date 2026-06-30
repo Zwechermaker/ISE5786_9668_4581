@@ -85,12 +85,21 @@ public final class Scene {
         return this;
     }
 
+    /**
+     * Returns the collection of geometries in the scene.
+     *
+     * @return The geometries.
+     */
+    public Geometries getGeometries() {
+        return geometries;
+    }
+
     @Override
     public String toString() {
-        return "Scene '" + name + "' {\n" +
-                "  background: " + background + ",\n" +
-                "  ambientLight: " + ambientLight + ",\n" +
-                "  " + geometries.toString().replace("\n", "\n  ") + "\n" +
+        return "Scene '" + name + "' {\\n" +
+                "  background: " + background + ",\\n" +
+                "  ambientLight: " + ambientLight + ",\\n" +
+                "  " + geometries.toString().replace("\\n", "\\n  ") + "\\n" +
                 "}";
     }
 }

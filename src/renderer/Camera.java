@@ -1,5 +1,6 @@
 package renderer;
 
+import geometries.impl.Geometries;
 import primitives.*;
 import renderer.sampler.Jittered;
 import renderer.sampler.RegularGrid;
@@ -79,6 +80,7 @@ public class Camera implements Cloneable {
      * amount of rays sampled for each pixel (n by n), 1 means feature is disabled.
      */
     private int _antiAliasingResolution = 1;
+
     /**
      * Private constructor to enforce instantiation strictly via the {@link Builder}.
      */
@@ -361,6 +363,10 @@ public class Camera implements Cloneable {
          */
         private int _antiAliasingResolution = 1;
 
+        private boolean _cbrEnabled = false;
+        private boolean _bvhEnabled = false;
+
+
         /**
          * Default constructor.
          */
@@ -536,6 +542,24 @@ public class Camera implements Cloneable {
             return this;
         }
 
+        public Builder setCbrEnabled(boolean cbrEnabled) {
+            _cbrEnabled = cbrEnabled;
+            return this;
+        }
+
+        public Builder enableCBR() {
+            return setCbrEnabled(true);
+        }
+
+        public Builder setBvhEnabled(boolean bvhEnabled) {
+            _bvhEnabled = bvhEnabled;
+            return this;
+        }
+
+        public Builder enableBVH() {
+            return setBvhEnabled(true);
+        }
+
         /**
          * Applies a Yaw (Pan) rotation around the camera's local vertical axis.
          *
@@ -629,6 +653,14 @@ public class Camera implements Cloneable {
 
             if (this._rayTracer == null) {
                 setRayTracer(new Scene("test"), RayTracerType.SIMPLE);
+            }
+
+            if (_cbrEnabled) {
+                _rayTracer.getScene().getGeometries().createBoundingBox();
+            }
+
+            if (_bvhEnabled) {
+                _rayTracer.getScene().getGeometries().buildBVH();
             }
 
             // 1. Calculate the exact center of the physical view plane

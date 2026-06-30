@@ -1,10 +1,7 @@
 package geometries.api;
 
 import lighting.api.LightSource;
-import primitives.Material;
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
+import primitives.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,10 +17,20 @@ import java.util.Objects;
  */
 public abstract class Intersectable {
     /**
+     * The bounding box of the object.
+     */
+    public BoundingBox box;
+
+    /**
      * Default constructor for the {@link Intersectable} class.
      * This constructor is provided to satisfy the JavaDoc generator and for basic initialization.
      */
     public Intersectable() { /* to satisfy JavaDoc generator */ }
+
+    /**
+     * Creates the bounding box for the object.
+     */
+    public abstract void createBoundingBox();
 
     /**
      * Finds the intersection points of a ray with the object.
@@ -77,6 +84,9 @@ public abstract class Intersectable {
      * @return A {@link List} of {@link Intersection} objects within the given distance, or {@code null} if there are no such intersections.
      */
     public final List<Intersection> calcIntersections(Ray ray, double maxDistance) {
+        if (box != null && !box.intersects(ray)) {
+            return null;
+        }
         return calcIntersectionsHelper(ray, maxDistance);
     }
 

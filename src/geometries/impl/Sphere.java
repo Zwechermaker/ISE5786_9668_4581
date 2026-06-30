@@ -1,5 +1,6 @@
 package geometries.impl;
 
+import primitives.BoundingBox;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Util;
@@ -32,6 +33,15 @@ public final class Sphere extends RadialGeometry {
         _center = point;
     }
 
+    @Override
+    public void createBoundingBox() {
+        double x = _center.getX();
+        double y = _center.getY();
+        double z = _center.getZ();
+        double r = _radius;
+        box = new BoundingBox(x - r, y - r, z - r, x + r, y + r, z + r);
+    }
+
     /**
      * Calculates the normal vector to the sphere at a given point.
      * <p>
@@ -56,7 +66,7 @@ public final class Sphere extends RadialGeometry {
      *   <li>Find the shortest distance from the sphere's center to the ray.</li>
      *   <li>If this distance is greater than or equal to the radius, the ray does not intersect the sphere.</li>
      *   <li>Otherwise, use the Pythagorean theorem to find the distance from the projection point to the intersection points.</li>
-     *   <li>Calculate the final distances {@code t1} and {@code t2} along the ray to the two intersection points.</li>
+     *   <li>Calculate the final distances {@code t1} and {@to} along the ray to the two intersection points.</li>
      * </ol>
      *
      * @param ray         The ray to intersect with the sphere.

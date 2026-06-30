@@ -34,4 +34,13 @@ abstract class RayTracerBase {
      * @return The calculated {@link Color} for the ray.
      */
     abstract Color traceRay(Ray ray);
+
+    /**
+     * Returns the scene associated with the ray tracer.
+     *
+     * @return The scene.
+     */
+    public Scene getScene() {
+        return _scene;
+    }
 }

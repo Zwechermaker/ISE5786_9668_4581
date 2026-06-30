@@ -79,6 +79,25 @@ public class Polygon extends Geometry {
     }
 
     @Override
+    public void createBoundingBox() {
+        double minX = Double.POSITIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY;
+        double minZ = Double.POSITIVE_INFINITY;
+        double maxX = Double.NEGATIVE_INFINITY;
+        double maxY = Double.NEGATIVE_INFINITY;
+        double maxZ = Double.NEGATIVE_INFINITY;
+        for (Point p : _vertices) {
+            minX = Math.min(minX, p.getX());
+            minY = Math.min(minY, p.getY());
+            minZ = Math.min(minZ, p.getZ());
+            maxX = Math.max(maxX, p.getX());
+            maxY = Math.max(maxY, p.getY());
+            maxZ = Math.max(maxZ, p.getZ());
+        }
+        box = new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+    }
+
+    @Override
     public Vector getNormal(Point point) {
         return _plane.getNormal(point);
     }

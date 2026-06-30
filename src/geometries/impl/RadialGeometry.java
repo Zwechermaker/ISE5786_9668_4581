@@ -37,6 +37,15 @@ public abstract class RadialGeometry extends Geometry {
         _radiusSquared = radius * radius;
     }
 
+    /**
+     * Returns the radius of the geometry.
+     *
+     * @return The radius.
+     */
+    public double getRadius() {
+        return _radius;
+    }
+
     @Override
     public String toString() {
         return "radius: " + _radius;
