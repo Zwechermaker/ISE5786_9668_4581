@@ -9,36 +9,60 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A composite class that represents a collection of {@link Intersectable} objects.
- * <p>
- * This class allows multiple geometric objects to be grouped and treated as a single
- * {@link Intersectable} entity. It is useful for managing complex scenes with many objects.
+ * This class can also manage a Bounding Volume Hierarchy (BVH) for acceleration.
  *
  * @author Elad Zwecher and Benjamin Godfrey
  */
 public class Geometries extends Intersectable {
-    /**
-     * A list to hold the {@link Intersectable} objects in the collection.
-     */
+
     private final List<Intersectable> geometries = new ArrayList<>();
     private static final int MAX_OBJECTS_IN_LEAF = 2;
 
+    private boolean cbrEnabled = false;
+    private boolean bvhEnabled = false;
+
     /**
-     * Constructs a {@link Geometries} collection with an initial set of intersectable objects.
+     * Constructs a {@link Geometries} collection.
      *
-     * @param geometries A variable number of {@link Intersectable} objects to add to the collection.
+     * @param geometries A variable number of {@link Intersectable} objects to add.
      */
     public Geometries(Intersectable... geometries) {
         add(geometries);
     }
 
     /**
-     * Adds one or more {@link Intersectable} objects to the collection.
+     * Enables or disables Conservative Bounding Region (CBR).
      *
-     * @param geometries A variable number of {@link Intersectable} objects to add.
+     * @param enabled true to enable CBR.
+     * @return This {@link Geometries} object for chaining.
+     */
+    public Geometries setCbrEnabled(boolean enabled) {
+        this.cbrEnabled = enabled;
+        return this;
+    }
+
+    /**
+     * Enables or disables Bounding Volume Hierarchy (BVH).
+     * Enabling BVH will also implicitly enable CBR.
+     *
+     * @param enabled true to enable BVH.
+     * @return This {@link Geometries} object for chaining.
+     */
+    public Geometries setBvhEnabled(boolean enabled) {
+        this.bvhEnabled = enabled;
+        if (enabled) {
+            this.cbrEnabled = true;
+        }
+        return this;
+    }
+
+    /**
+     * Adds intersectable objects to the collection.
+     *
+     * @param geometries A variable number of objects to add.
      */
     public void add(Intersectable... geometries) {
         if (geometries != null) {
@@ -46,10 +70,27 @@ public class Geometries extends Intersectable {
         }
     }
 
+    /**
+     * Builds the acceleration structures (CBR or BVH) based on the flags set.
+     * This method should be called after all geometries have been added and before rendering.
+     */
+    public void buildAccelerationStructures() {
+        if (bvhEnabled) {
+            buildBVH();
+        } else if (cbrEnabled) {
+            createBoundingBox();
+        }
+    }
+
     @Override
     public void createBoundingBox() {
         if (geometries.isEmpty()) {
+            box = null;
             return;
+        }
+
+        for (Intersectable geo : geometries) {
+            geo.createBoundingBox();
         }
 
         double minX = Double.POSITIVE_INFINITY;
@@ -60,7 +101,6 @@ public class Geometries extends Intersectable {
         double maxZ = Double.NEGATIVE_INFINITY;
 
         for (Intersectable geo : geometries) {
-            geo.createBoundingBox();
             if (geo.box != null) {
                 minX = Math.min(minX, geo.box.min.getX());
                 minY = Math.min(minY, geo.box.min.getY());
@@ -70,21 +110,20 @@ public class Geometries extends Intersectable {
                 maxZ = Math.max(maxZ, geo.box.max.getZ());
             }
         }
-        if (Double.isInfinite(minX)) {
-            box = null;
-        } else {
-            box = new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
-        }
+
+        box = Double.isInfinite(minX) ? null : new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
+    /**
+     * Builds the Bounding Volume Hierarchy tree.
+     */
     public void buildBVH() {
-        if (geometries.size() <= MAX_OBJECTS_IN_LEAF) {
-            return;
-        }
+        if (geometries.isEmpty()) return;
+
+        createBoundingBox(); // Ensure all children have boxes first
 
         List<Intersectable> finites = new ArrayList<>();
         List<Intersectable> infinites = new ArrayList<>();
-
         for (Intersectable geo : geometries) {
             if (geo.box != null) {
                 finites.add(geo);
@@ -99,46 +138,41 @@ public class Geometries extends Intersectable {
         if (!finites.isEmpty()) {
             geometries.add(buildBVHRecursive(finites, 0));
         }
-        createBoundingBox();
+        createBoundingBox(); // Recalculate the root box
     }
 
     private Geometries buildBVHRecursive(List<Intersectable> objects, int depth) {
+        // This is the critical fix: The new node must be configured for BVH.
+        Geometries node = new Geometries().setBvhEnabled(true);
+
         if (objects.size() <= MAX_OBJECTS_IN_LEAF) {
-            Geometries leaf = new Geometries();
-            leaf.add(objects.toArray(new Intersectable[0]));
-            leaf.createBoundingBox();
-            return leaf;
+            node.add(objects.toArray(new Intersectable[0]));
+            node.createBoundingBox();
+            return node;
         }
 
         int axis = depth % 3;
         objects.sort(Comparator.comparingDouble(o -> o.box.getCenter().getCoord(axis)));
 
         int mid = objects.size() / 2;
-        List<Intersectable> left = objects.subList(0, mid);
-        List<Intersectable> right = objects.subList(mid, objects.size());
+        List<Intersectable> left = new ArrayList<>(objects.subList(0, mid));
+        List<Intersectable> right = new ArrayList<>(objects.subList(mid, objects.size()));
 
-        Geometries node = new Geometries();
-        node.add(buildBVHRecursive(new ArrayList<>(left), depth + 1));
-        node.add(buildBVHRecursive(new ArrayList<>(right), depth + 1));
+        node.add(buildBVHRecursive(left, depth + 1));
+        node.add(buildBVHRecursive(right, depth + 1));
         node.createBoundingBox();
         return node;
     }
 
-
-    /**
-     * Calculates the intersections of a ray with all the geometries in the collection.
-     * <p>
-     * This method iterates through each {@link Intersectable} in the collection and
-     * aggregates their individual intersection points into a single list.
-     *
-     * @param ray         The ray to intersect with the geometries.
-     * @param maxDistance The maximum distance to consider for intersections.
-     * @return A {@link List} of all {@link Intersection} points, or {@code null} if no intersections are found.
-     */
     @Override
     protected List<Intersection> calcIntersectionsHelper(Ray ray, double maxDistance) {
-        List<Intersection> result = null;
+        // This check is now sufficient. For BVH, it will be called recursively.
+        // For CBR, it will be called only once at the top level.
+        if (cbrEnabled && box != null && !box.intersects(ray)) {
+            return null;
+        }
 
+        List<Intersection> result = null;
         for (Intersectable geo : geometries) {
             List<Intersection> intersections = geo.calcIntersections(ray, maxDistance);
             if (intersections != null) {
@@ -153,12 +187,6 @@ public class Geometries extends Intersectable {
 
     @Override
     public String toString() {
-        String result = "geometries: [\\n";
-
-        for (Intersectable geo : geometries) {
-            result += "  " + geo.toString().replace("\\n", "\\n  ") + "\\n";
-        }
-        result += "]";
-        return result;
+        return "Geometries{" + "geometries=" + geometries + '}';
     }
 }

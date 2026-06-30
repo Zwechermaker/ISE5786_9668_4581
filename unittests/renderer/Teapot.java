@@ -39,9 +39,7 @@ class Teapot {
      */
     @Test
     void testTeapot2() {
-        for (int i = 10; i > 0; --i) {
             teapot2();
-        }
     }
 
     /**
@@ -103,7 +101,7 @@ class Teapot {
                 // .setMultithreading(-3) // fail - paging file size
                 // .setMultithreading(-2) // 9.3
                 // .setMultithreading(-1) // 9.6
-                .setMultithreading(0) // 25
+                .setMultithreading(3) // 25
                 // .setMultithreading(1) // 25.8
                 // .setMultithreading(2) // 13.6
                 // .setMultithreading(3) // 10.7

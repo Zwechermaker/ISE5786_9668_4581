@@ -14,17 +14,10 @@ import java.util.stream.IntStream;
 
 /**
  * A class representing a camera in a 3D scene, which defines the viewpoint and projection for rendering.
- * <p>
- * The camera is defined by its position, orientation (forward, up, and right vectors),
- * and a view plane through which the scene is projected. It is responsible for constructing
- * rays from the viewpoint through each pixel of the view plane.
  *
  * @author Elad Zwecher and Benjamin Godfrey
  */
 public class Camera implements Cloneable {
-    /**
-     * The default number of pixels for the resolution if not otherwise specified.
-     */
     private static final int DEFAULT_PIXEL_NUM = 1;
     /**
      * The number of threads to spare when using all available cores for rendering.
@@ -542,22 +535,15 @@ public class Camera implements Cloneable {
             return this;
         }
 
-        public Builder setCbrEnabled(boolean cbrEnabled) {
-            _cbrEnabled = cbrEnabled;
-            return this;
-        }
-
         public Builder enableCBR() {
-            return setCbrEnabled(true);
-        }
-
-        public Builder setBvhEnabled(boolean bvhEnabled) {
-            _bvhEnabled = bvhEnabled;
+            this._cbrEnabled = true;
             return this;
         }
 
         public Builder enableBVH() {
-            return setBvhEnabled(true);
+            this._bvhEnabled = true;
+            this._cbrEnabled = true; // BVH implies CBR
+            return this;
         }
 
         /**
@@ -655,12 +641,14 @@ public class Camera implements Cloneable {
                 setRayTracer(new Scene("test"), RayTracerType.SIMPLE);
             }
 
+            Geometries geometries = _rayTracer.getScene().getGeometries();
             if (_cbrEnabled) {
-                _rayTracer.getScene().getGeometries().createBoundingBox();
+                geometries.setCbrEnabled(true);
+                geometries.createBoundingBox();
             }
-
             if (_bvhEnabled) {
-                _rayTracer.getScene().getGeometries().buildBVH();
+                geometries.setBvhEnabled(true);
+                geometries.buildBVH();
             }
 
             // 1. Calculate the exact center of the physical view plane

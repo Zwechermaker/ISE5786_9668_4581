@@ -86,65 +86,85 @@ public class BoundingBox {
     }
 
     /**
-     * Checks if the ray intersects the box.
+     * Checks if the ray intersects the box using the optimized slab method.
+     * This implementation is allocation-free and handles axis-parallel rays.
      *
      * @param ray The ray to check.
      * @return True if the ray intersects the box, false otherwise.
      */
     public boolean intersects(Ray ray) {
-        double tmin = (min.getX() - ray.origin().getX()) / ray.direction().getX();
-        double tmax = (max.getX() - ray.origin().getX()) / ray.direction().getX();
+        double tMin = 0.0;
+        double tMax = Double.POSITIVE_INFINITY;
 
-        if (tmin > tmax) {
-            double temp = tmin;
-            tmin = tmax;
-            tmax = temp;
+        Point rayP0 = ray.origin();
+        Vector rayDir = ray.direction();
+
+        // Slab test for X dimension
+        double dirX = rayDir.getX();
+        if (Math.abs(dirX) < 1e-6) { // Ray is parallel to X plane
+            if (rayP0.getX() < min.getX() || rayP0.getX() > max.getX()) {
+                return false; // Parallel and outside of the slab
+            }
+        } else {
+            double t1 = (min.getX() - rayP0.getX()) / dirX;
+            double t2 = (max.getX() - rayP0.getX()) / dirX;
+            if (t1 > t2) {
+                double temp = t1;
+                t1 = t2;
+                t2 = temp;
+            }
+            tMin = Math.max(tMin, t1);
+            tMax = Math.min(tMax, t2);
+            if (tMin > tMax) {
+                return false;
+            }
         }
 
-        double tymin = (min.getY() - ray.origin().getY()) / ray.direction().getY();
-        double tymax = (max.getY() - ray.origin().getY()) / ray.direction().getY();
-
-        if (tymin > tymax) {
-            double temp = tymin;
-            tymin = tymax;
-            tymax = temp;
+        // Slab test for Y dimension
+        double dirY = rayDir.getY();
+        if (Math.abs(dirY) < 1e-6) { // Ray is parallel to Y plane
+            if (rayP0.getY() < min.getY() || rayP0.getY() > max.getY()) {
+                return false; // Parallel and outside of the slab
+            }
+        } else {
+            double t1 = (min.getY() - rayP0.getY()) / dirY;
+            double t2 = (max.getY() - rayP0.getY()) / dirY;
+            if (t1 > t2) {
+                double temp = t1;
+                t1 = t2;
+                t2 = temp;
+            }
+            tMin = Math.max(tMin, t1);
+            tMax = Math.min(tMax, t2);
+            if (tMin > tMax) {
+                return false;
+            }
         }
 
-        if ((tmin > tymax) || (tymin > tmax)) {
-            return false;
-        }
-
-        if (tymin > tmin) {
-            tmin = tymin;
-        }
-
-        if (tymax < tmax) {
-            tmax = tymax;
-        }
-
-        double tzmin = (min.getZ() - ray.origin().getZ()) / ray.direction().getZ();
-        double tzmax = (max.getZ() - ray.origin().getZ()) / ray.direction().getZ();
-
-        if (tzmin > tzmax) {
-            double temp = tzmin;
-            tzmin = tzmax;
-            tzmax = temp;
-        }
-
-        if ((tmin > tzmax) || (tzmin > tmax)) {
-            return false;
-        }
-
-        if (tzmin > tmin) {
-            tmin = tzmin;
-        }
-
-        if (tzmax < tmax) {
-            tmax = tzmax;
+        // Slab test for Z dimension
+        double dirZ = rayDir.getZ();
+        if (Math.abs(dirZ) < 1e-6) { // Ray is parallel to Z plane
+            if (rayP0.getZ() < min.getZ() || rayP0.getZ() > max.getZ()) {
+                return false; // Parallel and outside of the slab
+            }
+        } else {
+            double t1 = (min.getZ() - rayP0.getZ()) / dirZ;
+            double t2 = (max.getZ() - rayP0.getZ()) / dirZ;
+            if (t1 > t2) {
+                double temp = t1;
+                t1 = t2;
+                t2 = temp;
+            }
+            tMin = Math.max(tMin, t1);
+            tMax = Math.min(tMax, t2);
+            if (tMin > tMax) {
+                return false;
+            }
         }
 
         return true;
     }
+
 
     /**
      * Returns the center of the bounding box.
