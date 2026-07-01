@@ -191,4 +191,31 @@ class SphereTest {
         result = SPHERE.calcIntersections(ray, 4);
         assertEquals(1, result.size(), "maxDistance exactly on first intersection should return 1 point");
     }
+
+    /**
+     * Test method for bounding box intersection.
+     */
+    @Test
+    void testIntersects() {
+        SPHERE.createBoundingBox();
+        assertNotNull(SPHERE.box, "Bounding box should be created");
+
+        // ============ Equivalence Partitions Tests ==============
+        // TC31: Ray intersects the bounding box
+        Ray rayHits = new Ray(new Point(-10, 0, 0), new Vector(1, 0, 0));
+        assertTrue(SPHERE.box.intersects(rayHits), "EP: Ray should intersect the bounding box");
+
+        // TC32: Ray misses the bounding box
+        Ray rayMisses = new Ray(new Point(-10, 10, 10), new Vector(1, 0, 0));
+        assertFalse(SPHERE.box.intersects(rayMisses), "EP: Ray should miss the bounding box");
+
+        // =============== Boundary Values Tests ==================
+        // TC33: Ray starts inside the bounding box
+        Ray rayInside = new Ray(new Point(1, 1, 1), new Vector(1, 0, 0));
+        assertTrue(SPHERE.box.intersects(rayInside), "BVA: Ray starting inside should intersect the box");
+
+        // TC34: Ray is parallel to a bounding box axis but strictly outside
+        Ray rayParallelMiss = new Ray(new Point(10, 0, 0), new Vector(0, 1, 0));
+        assertFalse(SPHERE.box.intersects(rayParallelMiss), "BVA: Ray parallel to axis and outside should miss the box");
+    }
 }

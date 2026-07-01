@@ -37,7 +37,8 @@ public final class Material {
      */
     public int _nShininess = 1;
     /**
-     * the mattness factor of the material
+     * The mattness factor of the material. A value of 0 means perfect specular reflection (mirror-like),
+     * while a higher value introduces blurriness to reflections and refractions.
      */
     public double _mattness = 0;
     /**
@@ -168,8 +169,11 @@ public final class Material {
     }
 
     /**
-     * a setter
-     * @param mattness of the material
+     * Sets the mattness (or glossiness) of the material.
+     * A value of 0 results in perfect specular (mirror-like) reflections/refractions.
+     * Higher values introduce more blur, simulating a rougher or frosted surface.
+     *
+     * @param mattness The mattness factor of the material.
      * @return This {@link Material} object, allowing for method chaining.
      */
     public Material setMattness(double mattness) {

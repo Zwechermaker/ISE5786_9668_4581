@@ -176,14 +176,12 @@ class XmlAdvancedTests {
                 .writeToImage("snowGlobeMattness");
     }
     /**
-     * Submitted image. Shows a frosted ice sculpture on a swing.
-     * Demonstrates frosted glass materials using Super-Sampling (mattness).
-     * Includes complex geometrical alignments and utilizes Triangles.
+     * Test case for rendering the ice sculpture swing scene with BVH enabled,
+     * but Super-Sampling DISABLED (no frosted glass effect).
      */
-    @Disabled
     @Test
     @SuppressWarnings("java:S109")
-    public void testIceSculptureSwingScene() {
+    public void testIceSculptureSwingScene_NoSuperSampling() {
 
         Scene iceScene = new Scene("Frosted Ice Sculpture Swing Demo");
         Parser parser = ParserFactory.getParser(ParserType.XML);
@@ -191,7 +189,40 @@ class XmlAdvancedTests {
         // Parse the new XML file with the mattness attribute
         parser.parse(XML_DIR + "ice_swing.xml", iceScene);
 
-        // Create the tracer and ENABLE super-sampling (9x9 = 81 rays) so the mattness is visible
+        // DISABLE super-sampling (1 ray per pixel) so the mattness is ignored
+        SimpleRayTracer tracer = new SimpleRayTracer(iceScene).setSuperSamplingResolution(1);
+
+        Camera camera = Camera.getBuilder()
+                .setLocation(new Point(0, 35, -400))
+                .setDirection(new Point(0, 35, 0), Vector.AXIS_Y)
+                .setVpDistance(400)
+                .setVpSize(200, 200)
+                .setResolution(800, 800)
+                .setMultithreading(-2) // Utilize all logical cores
+                .setDebugPrint(0.1)
+                .enableBVH() // BVH turned ON
+                .setRayTracer(tracer)
+                .build();
+
+        camera.renderImage();
+        camera.writeToImage("IceSculpture_Swing_No_SS");
+    }
+
+    /**
+     * Test case for rendering the ice sculpture swing scene with BVH enabled,
+     * and Super-Sampling ENABLED (beautiful frosted glass effect).
+     */
+    @Test
+    @SuppressWarnings("java:S109")
+    public void testIceSculptureSwingScene_WithSuperSampling() {
+
+        Scene iceScene = new Scene("Frosted Ice Sculpture Swing Demo");
+        Parser parser = ParserFactory.getParser(ParserType.XML);
+
+        // Parse the new XML file with the mattness attribute
+        parser.parse(XML_DIR + "ice_swing.xml", iceScene);
+
+        // ENABLE super-sampling (9x9 = 81 rays) so the mattness is visible
         SimpleRayTracer tracer = new SimpleRayTracer(iceScene).setSuperSamplingResolution(3);
 
         Camera camera = Camera.getBuilder()
@@ -202,11 +233,11 @@ class XmlAdvancedTests {
                 .setResolution(800, 800)
                 .setMultithreading(-2) // Utilize all logical cores
                 .setDebugPrint(0.1)
-                // Enabled Super-Sampling (9x9 grid) to render the frosted glass and soft reflections beautifully
+                .enableBVH() // BVH turned ON
                 .setRayTracer(tracer)
                 .build();
 
         camera.renderImage();
-        camera.writeToImage("IceSculpture_Swing");
+        camera.writeToImage("IceSculpture_Swing_With_SS");
     }
 }

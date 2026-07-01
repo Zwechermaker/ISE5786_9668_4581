@@ -40,18 +40,36 @@ public class Point {
         _xyz = xyz;
     }
 
+    /**
+     * Gets the x-coordinate of the point.
+     * @return The x-coordinate.
+     */
     public double getX() {
         return _xyz._d1();
     }
 
+    /**
+     * Gets the y-coordinate of the point.
+     * @return The y-coordinate.
+     */
     public double getY() {
         return _xyz._d2();
     }
 
+    /**
+     * Gets the z-coordinate of the point.
+     * @return The z-coordinate.
+     */
     public double getZ() {
         return _xyz._d3();
     }
 
+    /**
+     * Gets a coordinate by its index.
+     * @param index The index of the coordinate (0 for X, 1 for Y, 2 for Z).
+     * @return The coordinate value.
+     * @throws IndexOutOfBoundsException if the index is not 0, 1, or 2.
+     */
     public double getCoord(int index) {
         return switch (index) {
             case 0 -> getX();

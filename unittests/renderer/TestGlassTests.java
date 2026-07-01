@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import geometries.impl.Polygon;
 import geometries.impl.Sphere;
+import geometries.impl.Cylinder;
+import geometries.impl.Triangle;
 import lighting.impl.AmbientLight;
 import lighting.impl.SpotLight;
 import primitives.*;
@@ -14,7 +16,7 @@ import scene.Scene;
 /**
  * Tests for Diffuse (Blurry) Glass functionality using super-sampling.
  * Demonstrates 4 glass panes with increasing mattness values revealing
- * objects behind them.
+ * objects behind them, arranged on a table with legs.
  * * @author Elad Zwecher and Benjamin Godfrey
  */
 class DiffuseGlassTests {
@@ -22,12 +24,12 @@ class DiffuseGlassTests {
     DiffuseGlassTests() { /* to satisfy JavaDoc generator */ }
 
     /** Scene for the tests */
-    private final Scene _scene = new Scene("Diffuse Glass Test Scene");
+    private final Scene _scene = new Scene("Diffuse Glass Test Scene on Table");
 
     /** Camera builder for the tests */
     private final Camera.Builder _cameraBuilder = Camera.getBuilder()
-            .setLocation(new Point(0, 0, 1000))
-            .setDirection(Point.ZERO, Vector.AXIS_Y)
+            .setLocation(new Point(0, 50, 1000)) // Raised camera slightly to look down at the table
+            .setDirection(new Point(0, 0, 0), Vector.AXIS_Y) // Pointing at the center
             .setVpDistance(1000)
             .setVpSize(1000, 500)
             .setResolution(1000, 500)
@@ -35,16 +37,73 @@ class DiffuseGlassTests {
             .setDebugPrint(1.0);
 
     /**
-     * Helper method to populate the scene with the 4 balls and 4 glasses.
+     * Helper method to populate the scene with the table, room, 4 balls, and 4 glasses.
      */
     private void buildScene() {
-        // --- The Background / Floor ---
+        // --- The Room (Floor and Wall) ---
         _scene.geometries.add(
-                new Polygon(new Point(-1000, -60, 1000), new Point(1000, -60, 1000),
-                        new Point(1000, -60, -1000), new Point(-1000, -60, -1000))
-                        .setEmission(new Color(40, 40, 40))
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setShininess(60))
+                // Floor (Under the table, Y = -150)
+                new Polygon(new Point(-1000, -150, 1000), new Point(1000, -150, 1000),
+                        new Point(1000, -150, -1000), new Point(-1000, -150, -1000))
+                        .setEmission(new Color(30, 30, 30))
+                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setShininess(60)),
+                // Back Wall
+                new Polygon(new Point(-1000, -150, -400), new Point(1000, -150, -400),
+                        new Point(1000, 1000, -400), new Point(-1000, 1000, -400))
+                        .setEmission(new Color(45, 55, 65)) // Soft blue-grey wall
+                        .setMaterial(new Material().setKD(0.6))
         );
+
+        // --- The Table ---
+        _scene.geometries.add(
+                // Table Top (Y = -50, so objects sit exactly on it)
+                new Polygon(new Point(-450, -50, 100), new Point(450, -50, 100),
+                        new Point(450, -50, -250), new Point(-450, -50, -250))
+                        .setEmission(new Color(80, 50, 30)) // Mahogany wood color
+                        .setMaterial(new Material().setKD(0.6).setKS(0.3).setShininess(40)),
+
+                // Table Front Edge (Gives the table 3D thickness)
+                new Polygon(new Point(-450, -70, 100), new Point(450, -70, 100),
+                        new Point(450, -50, 100), new Point(-450, -50, 100))
+                        .setEmission(new Color(50, 30, 15)) // Darker wood for the shadowed edge
+                        .setMaterial(new Material().setKD(0.6).setKS(0.1).setShininess(20))
+        );
+
+        // --- The Table Legs (Cylinders & Triangles) ---
+        Material legMaterial = new Material().setKD(0.4).setKS(0.6).setShininess(30);
+        Color legColor = new Color(20, 20, 22); // Dark metallic look
+        double legRadius = 6.0;
+        double legHeight = 100.0; // From floor (-150) to bottom of table (-50)
+        Vector upVector = new Vector(0, 1, 0);
+
+        // X and Z coordinates for the 4 table legs (inset slightly from the edges)
+        double[][] legPositions = {
+                {-420, 70},   // Front-Left
+                {420, 70},    // Front-Right
+                {420, -220},  // Back-Right
+                {-420, -220}  // Back-Left
+        };
+
+        for (double[] pos : legPositions) {
+            double lx = pos[0];
+            double lz = pos[1];
+
+            // 1. The Core Pillar (Cylinder)
+            Cylinder legCylinder = new Cylinder(legRadius, new Ray(new Point(lx, -150, lz), upVector), legHeight);
+            legCylinder.setEmission(legColor).setMaterial(legMaterial);
+            _scene.geometries.add(legCylinder);
+
+            // 2. The Reinforcement Bracket (Triangle)
+            // Extends from the top of the leg inward toward the center of the table
+            double bracketOffsetX = (lx < 0) ? 25.0 : -25.0; // Point inward
+            Triangle bracketTriangle = new Triangle(
+                    new Point(lx, -50.1, lz),                            // Top corner joint (touching table)
+                    new Point(lx + bracketOffsetX, -50.1, lz),           // Anchored to table top underneath
+                    new Point(lx, -80, lz)                               // Extended down the side of the leg cylinder
+            );
+            bracketTriangle.setEmission(legColor).setMaterial(legMaterial);
+            _scene.geometries.add(bracketTriangle);
+        }
 
         // --- The 4 Balls (Behind the glass) ---
         _scene.geometries.add(
@@ -117,7 +176,7 @@ class DiffuseGlassTests {
                 .setRayTracer(tracer)
                 .build()
                 .renderImage()
-                .writeToImage("DiffuseGlass_Disabled");
+                .writeToImage("DiffuseGlass_Disabled_Table");
     }
 
     /**
@@ -130,12 +189,12 @@ class DiffuseGlassTests {
         buildScene();
 
         // Inject RayTracer with 9x9 = 81 rays per beam (Enabled)
-        SimpleRayTracer tracer = new SimpleRayTracer(_scene).setSuperSamplingResolution(9);
+        SimpleRayTracer tracer = new SimpleRayTracer(_scene).setSuperSamplingResolution(3);
 
         _cameraBuilder
                 .setRayTracer(tracer)
                 .build()
                 .renderImage()
-                .writeToImage("DiffuseGlass_Enabled");
+                .writeToImage("DiffuseGlass_Enabled_Table");
     }
 }

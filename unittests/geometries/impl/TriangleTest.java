@@ -192,4 +192,32 @@ class TriangleTest {
         result = triangle.calcIntersections(ray, 2);
         assertEquals(1, result.size(), "maxDistance exactly on intersection should return 1 point");
     }
+
+    /**
+     * Test method for bounding box intersection.
+     */
+    @Test
+    void testIntersects() {
+        Triangle triangle = new Triangle(P1, P2, P3);
+        triangle.createBoundingBox();
+        assertNotNull(triangle.box, "Bounding box should be created");
+
+        // ============ Equivalence Partitions Tests ==============
+        // TC25: Ray intersects the bounding box
+        Ray rayHits = new Ray(new Point(0, 0, -1), new Vector(0, 0, 1));
+        assertTrue(triangle.box.intersects(rayHits), "EP: Ray should intersect the bounding box");
+
+        // TC26: Ray misses the bounding box
+        Ray rayMisses = new Ray(new Point(0, 5, -1), new Vector(0, 0, 1));
+        assertFalse(triangle.box.intersects(rayMisses), "EP: Ray should miss the bounding box");
+
+        // =============== Boundary Values Tests ==================
+        // TC27: Ray starts exactly inside the planar bounding box boundary
+        Ray rayInside = new Ray(new Point(0, 0, 1), new Vector(1, 0, 0));
+        assertTrue(triangle.box.intersects(rayInside), "BVA: Ray inside or directly on box boundary should intersect");
+
+        // TC28: Ray is parallel to the bounding box axes and misses completely
+        Ray rayParallelMiss = new Ray(new Point(2, 0, 0), new Vector(0, 1, 0));
+        assertFalse(triangle.box.intersects(rayParallelMiss), "BVA: Parallel ray strictly outside box should miss");
+    }
 }

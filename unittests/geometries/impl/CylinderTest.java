@@ -376,4 +376,32 @@ class CylinderTest {
         result = cylInt.calcIntersections(raySide, 15);
         assertEquals(2, result.size(), "maxDistance exactly on second intersection should return 2 points (side)");
     }
+
+    /**
+     * Test method for bounding box intersection.
+     */
+    @Test
+    void testIntersects() {
+        Cylinder cyl = new Cylinder(5.0, new Ray(new Point(0, 0, 0), V_UP), 20.0);
+        cyl.createBoundingBox();
+        assertNotNull(cyl.box, "Bounding box should be created");
+
+        // ============ Equivalence Partitions Tests ==============
+        // TC71: Ray intersects the bounding box
+        Ray rayHits = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+        assertTrue(cyl.box.intersects(rayHits), "EP: Ray should intersect the bounding box");
+
+        // TC72: Ray misses the bounding box
+        Ray rayMisses = new Ray(new Point(15, 0, 10), new Vector(0, 1, 0));
+        assertFalse(cyl.box.intersects(rayMisses), "EP: Ray should miss the bounding box");
+
+        // =============== Boundary Values Tests ==================
+        // TC73: Ray starts inside the bounding box
+        Ray rayInside = new Ray(new Point(1, 1, 10), new Vector(1, 0, 0));
+        assertTrue(cyl.box.intersects(rayInside), "BVA: Ray starting inside should intersect the box");
+
+        // TC74: Ray runs exactly parallel along an outside face
+        Ray rayParallelMiss = new Ray(new Point(6, 0, 0), new Vector(0, 0, 1)); // assuming box bound handles x up to 5, so 6 misses
+        assertFalse(cyl.box.intersects(rayParallelMiss), "BVA: Ray parallel to and completely outside the slab should miss");
+    }
 }

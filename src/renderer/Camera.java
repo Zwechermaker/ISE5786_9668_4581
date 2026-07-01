@@ -18,6 +18,9 @@ import java.util.stream.IntStream;
  * @author Elad Zwecher and Benjamin Godfrey
  */
 public class Camera implements Cloneable {
+    /**
+     * The default number of pixels for the resolution if not otherwise specified.
+     */
     private static final int DEFAULT_PIXEL_NUM = 1;
     /**
      * The number of threads to spare when using all available cores for rendering.
@@ -356,7 +359,13 @@ public class Camera implements Cloneable {
          */
         private int _antiAliasingResolution = 1;
 
+        /**
+         * A flag to indicate whether Conservative Bounding Region (CBR) should be enabled.
+         */
         private boolean _cbrEnabled = false;
+        /**
+         * A flag to indicate whether Bounding Volume Hierarchy (BVH) should be enabled.
+         */
         private boolean _bvhEnabled = false;
 
 
@@ -535,11 +544,20 @@ public class Camera implements Cloneable {
             return this;
         }
 
+        /**
+         * Enables Conservative Bounding Region (CBR) for the scene.
+         * @return This {@link Builder} object for chaining.
+         */
         public Builder enableCBR() {
             this._cbrEnabled = true;
             return this;
         }
 
+        /**
+         * Enables Bounding Volume Hierarchy (BVH) for the scene.
+         * This implicitly enables CBR as well.
+         * @return This {@link Builder} object for chaining.
+         */
         public Builder enableBVH() {
             this._bvhEnabled = true;
             this._cbrEnabled = true; // BVH implies CBR

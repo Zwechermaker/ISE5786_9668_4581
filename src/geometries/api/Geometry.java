@@ -6,74 +6,89 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * an abstract class that represents a geometry in space
+ * An abstract class representing a geometric shape in 3D space.
+ * It extends {@link Intersectable} and adds properties common to all geometries,
+ * such as emission color and material.
+ *
+ * @author Elad Zwecher and Benjamin Godfrey
  */
 public abstract class Geometry extends Intersectable {
     /**
-     * A constructor for a geometry (for javadoc purposes)
-     */
-    public Geometry(){}
-
-    /**
-     * emission color of a geometry.
+     * The emission color of the geometry, representing light emitted from the surface.
+     * Defaults to black (no emission).
      */
     private Color _emission = Color.BLACK;
 
     /**
-     *a material variable that defines a geometry.
+     * The material properties of the geometry, defining how it interacts with light.
      */
     private Material _material = new Material();
+
     /**
-     * a function that calculates the normal of a geometry
-     * @return a normal for the geometry
-     * @param point a point to find the normal to.
+     * Default constructor for a geometry.
+     */
+    public Geometry() {
+    }
+
+    /**
+     * Calculates the normal vector to the surface of the geometry at a given point.
+     * The normal is essential for lighting and shading calculations.
+     *
+     * @param point A point on the surface of the geometry.
+     * @return The normal vector at the specified point.
      */
     public abstract Vector getNormal(Point point);
 
     /**
-     * a setter for emission color.
-     * @param emission color of emission
-     * @return renewed object to allow for concatenation
+     * Sets the emission color of the geometry.
+     *
+     * @param emission The emission color.
+     * @return This {@link Geometry} object, allowing for method chaining.
      */
-    public Geometry setEmission(Color emission){
+    public Geometry setEmission(Color emission) {
         _emission = emission;
         return this;
     }
+
     /**
-     * getter for emission color.
-     * @return emission color
+     * Gets the emission color of the geometry.
+     *
+     * @return The emission color.
      */
-    public Color getEmission(){
+    public Color getEmission() {
         return _emission;
     }
+
     /**
-     * a setter for material.
-     * @param material a material to set
-     * @return renewed object to allow for concatenation
+     * Sets the material of the geometry.
+     *
+     * @param material The material to set.
+     * @return This {@link Geometry} object, allowing for method chaining.
      */
-    public Geometry setMaterial(Material material){
+    public Geometry setMaterial(Material material) {
         _material = material;
         return this;
     }
 
     /**
-     * getter for the material
-     * @return the material
+     * Gets the material of the geometry.
+     *
+     * @return The material.
      */
-    public Material getMaterial(){
+    public Material getMaterial() {
         return _material;
     }
 
-
     /**
-     *  A function that takes parameters found in findIntersections function
-     *  and calculates a list of points on the ray based on the parameters.
-     * @param ray to find the point in.
-     * @param maxDistance limits the distance we are looking for.
-     * @param tValues the distances from the ray's origin to the intersection points
-     * @return A list of intersection
+     * A helper function that constructs a list of {@link Intersection} points from distances along a ray.
+     * It filters out intersections that are behind the ray's origin or beyond a specified maximum distance.
+     *
+     * @param ray         The ray for which to calculate the intersection points.
+     * @param maxDistance The maximum distance to consider for valid intersections.
+     * @param tValues     The distances (parameters) from the ray's origin to the intersection points.
+     * @return A {@link List} of valid {@link Intersection} objects, or {@code null} if no valid intersections are found.
      */
-    protected List<Intersection> getPoints(Ray ray,double maxDistance,  double... tValues) {
+    protected List<Intersection> getPoints(Ray ray, double maxDistance, double... tValues) {
         List<Intersection> result = null;
         for (double t : tValues) {
             if (Util.alignZero(t) > 0 && Util.alignZero(t - maxDistance) <= 0) {

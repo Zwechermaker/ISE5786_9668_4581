@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -190,5 +193,33 @@ class PolygonTests {
       // TC19: maxDistance is exactly at the intersection - BVA
       result = poly.calcIntersections(ray, dist);
       assertEquals(1, result.size(), "maxDistance exactly on intersection should return 1 point");
+   }
+
+   /**
+    * Test method for bounding box intersection.
+    */
+   @Test
+   void testIntersects() {
+      Polygon poly = new Polygon(POINT_Z, POINT_X, POINT_Y, POINT1);
+      poly.createBoundingBox();
+      assertNotNull(poly.box, "Bounding box should be created");
+
+      // ============ Equivalence Partitions Tests ==============
+      // TC20: Ray intersects the bounding box
+      Ray rayHits = new Ray(new Point(0, -2, 0.5), new Vector(0, 1, 0));
+      assertTrue(poly.box.intersects(rayHits), "EP: Ray should intersect the bounding box");
+
+      // TC21: Ray misses the bounding box
+      Ray rayMisses = new Ray(new Point(0, -2, 5), new Vector(0, 1, 0));
+      assertFalse(poly.box.intersects(rayMisses), "EP: Ray should miss the bounding box");
+
+      // =============== Boundary Values Tests ==================
+      // TC22: Ray starts exactly on the bounding box minimum
+      Ray rayOnBox = new Ray(poly.box.min, new Vector(1, 1, 1));
+      assertTrue(poly.box.intersects(rayOnBox), "BVA: Ray starting on boundary should intersect the box");
+
+      // TC23: Ray runs parallel to one dimension outside the bounding box
+      Ray rayParallelMiss = new Ray(new Point(2, 2, 2), new Vector(0, 0, 1));
+      assertFalse(poly.box.intersects(rayParallelMiss), "BVA: Parallel ray outside box should miss");
    }
 }

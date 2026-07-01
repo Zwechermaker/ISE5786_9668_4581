@@ -135,6 +135,7 @@ public class Tube extends RadialGeometry {
         return this.getPoints(ray, maxDistance, t1, t2);
     }
 
+
     @Override
     public void createBoundingBox() {
         // Infinite geometry, no bounding box

@@ -18,10 +18,22 @@ import java.util.List;
  */
 public class Geometries extends Intersectable {
 
+    /**
+     * A list that describes the collection of {@link Intersectable} objects.
+     */
     private final List<Intersectable> geometries = new ArrayList<>();
+    /**
+     * A constant value that defines the maximum number of objects allowed in a leaf node of the BVH tree.
+     */
     private static final int MAX_OBJECTS_IN_LEAF = 2;
 
+    /**
+     * A boolean variable that indicates whether CBR acceleration is enabled.
+     */
     private boolean cbrEnabled = false;
+    /**
+     * A boolean variable that indicates whether BVH acceleration is enabled.
+     */
     private boolean bvhEnabled = false;
 
     /**
@@ -141,6 +153,13 @@ public class Geometries extends Intersectable {
         createBoundingBox(); // Recalculate the root box
     }
 
+    /**
+     * A method for building BVH trees recursively.
+     *
+     * @param objects A geometries to build the BVH from.
+     * @param depth The depth of the recursive call.
+     * @return A root node to a sub-BVH Tree.
+     */
     private Geometries buildBVHRecursive(List<Intersectable> objects, int depth) {
         // This is the critical fix: The new node must be configured for BVH.
         Geometries node = new Geometries().setBvhEnabled(true);

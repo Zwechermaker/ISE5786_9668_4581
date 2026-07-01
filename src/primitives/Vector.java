@@ -52,6 +52,16 @@ public final class Vector extends Point {
     }
 
     /**
+     * Subtracts another vector from this vector.
+     *
+     * @param other The vector to subtract.
+     * @return A new {@link Vector} representing the difference between the two vectors.
+     */
+    public Vector subtract(Vector other) {
+        return new Vector(this._xyz.subtract(other._xyz));
+    }
+
+    /**
      * Adds another vector to this vector.
      *
      * @param other The vector to add.
@@ -91,7 +101,7 @@ public final class Vector extends Point {
      * <p>
      * The cross product results in a new vector that is perpendicular to both original vectors.
      * Its magnitude is equal to {@code |a| |b| sin(theta)}.
-     *
+     *6
      * @param other The other vector.
      * @return A new {@link Vector} that is the cross product of the two vectors.
      */

@@ -104,4 +104,35 @@ class GeometriesTest {
         assertNotNull(result, "Should not return null when there are intersections");
         assertEquals(4, result.size(), "BVA: All geometries intersect - wrong number of points returned");
     }
+
+    /**
+     * Test method for bounding box intersection.
+     */
+    @Test
+    void testIntersects() {
+        Sphere sphere = new Sphere(new Point(0, 0, 2), 1);
+        Triangle triangle = new Triangle(new Point(0, 1, 4), new Point(1, -1, 4), new Point(-1, -1, 4));
+        Geometries geometries = new Geometries(sphere, triangle);
+        geometries.createBoundingBox();
+
+        assertNotNull(geometries.box, "Bounding box should be created for finite geometries");
+
+        // ============ Equivalence Partitions Tests ==============
+        // TC06: Ray intersects the combined bounding box
+        Ray rayHits = new Ray(new Point(0, 0, 0), new Vector(0, 0, 1));
+        assertTrue(geometries.box.intersects(rayHits), "EP: Ray should intersect the combined bounding box");
+
+        // TC07: Ray misses the combined bounding box
+        Ray rayMisses = new Ray(new Point(0, 5, 0), new Vector(0, 0, 1));
+        assertFalse(geometries.box.intersects(rayMisses), "EP: Ray should miss the combined bounding box");
+
+        // =============== Boundary Values Tests ==================
+        // TC08: Ray starts inside the combined bounding box
+        Ray rayInside = new Ray(new Point(0, 0, 2), new Vector(0, 0, 1));
+        assertTrue(geometries.box.intersects(rayInside), "BVA: Ray starting inside should intersect the box");
+
+        // TC09: Ray hits exactly the boundary of the combined box (parallel)
+        Ray rayParallelMiss = new Ray(new Point(10, 0, 0), new Vector(0, 1, 0));
+        assertFalse(geometries.box.intersects(rayParallelMiss), "BVA: Ray parallel to axis and outside should miss the box");
+    }
 }
