@@ -82,17 +82,6 @@ public class Geometries extends Intersectable {
         }
     }
 
-    /**
-     * Builds the acceleration structures (CBR or BVH) based on the flags set.
-     * This method should be called after all geometries have been added and before rendering.
-     */
-    public void buildAccelerationStructures() {
-        if (bvhEnabled) {
-            buildBVH();
-        } else if (cbrEnabled) {
-            createBoundingBox();
-        }
-    }
 
     @Override
     public void createBoundingBox() {
@@ -161,7 +150,6 @@ public class Geometries extends Intersectable {
      * @return A root node to a sub-BVH Tree.
      */
     private Geometries buildBVHRecursive(List<Intersectable> objects, int depth) {
-        // This is the critical fix: The new node must be configured for BVH.
         Geometries node = new Geometries().setBvhEnabled(true);
 
         if (objects.size() <= MAX_OBJECTS_IN_LEAF) {

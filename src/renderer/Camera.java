@@ -669,20 +669,20 @@ public class Camera implements Cloneable {
                 geometries.buildBVH();
             }
 
-            // 1. Calculate the exact center of the physical view plane
+            // Calculate center of view plane.
             Point center = this._p0.add(this._vTo.scale(this._distance));
 
-            // 2. Initialize the lightweight Camera
+            // Initialize the camera.
             Camera camera = new Camera();
             camera._p0 = this._p0;
             camera._nX = this._nX;
             camera._nY = this._nY;
 
-            // 3. Construct and inject the core architecture dependencies
+            // Construct the view plane and the sampler
             camera._viewPlane = new BlackBoard(this._vUp, this._vRight, this._width, this._height, center);
             camera._viewPlaneSampler = new RegularGrid(this._nX, this._nY);
 
-            // 4. Inject runtime dependencies
+            // Initialize runtime parameters.
             camera._imageWriter = this._imageWriter;
             camera._rayTracer = this._rayTracer;
             camera.threadsCount = this._threadsCount;
